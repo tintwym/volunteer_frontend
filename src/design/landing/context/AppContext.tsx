@@ -3,6 +3,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import confetti from 'canvas-confetti';
+import { useTheme } from '@/components/theme/ThemeProvider';
 import { 
   PageView, 
   Language, 
@@ -92,7 +93,9 @@ interface AppContextType {
   navigateLightbox: (direction: 'next' | 'prev') => void;
   
   isDarkMode: boolean;
+  themePreference: 'light' | 'dark' | 'system';
   toggleDarkMode: () => void;
+  setThemePreference: (theme: 'light' | 'dark' | 'system') => void;
   language: Language;
   setLanguage: (lang: Language) => void;
   t: Translations;
@@ -214,9 +217,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [activeApplyOpportunity, setActiveApplyOpportunity] = useState<Opportunity | null>(null);
   const [lightboxPhoto, setLightboxPhoto] = useState<GalleryPhoto | null>(null);
 
-  const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
-    return localStorage.getItem('cg_dark_mode') === 'true';
-  });
+  const {
+    theme: themePreference,
+    isDark: isDarkMode,
+    setTheme: setThemePreference,
+    cycleThemePreference,
+  } = useTheme();
 
   const [language, setLanguageState] = useState<Language>(() => {
     const saved = localStorage.getItem('cg_lang');
@@ -228,16 +234,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
-  // Sync dark mode to html tag
-  useEffect(() => {
-    if (isDarkMode) {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('cg_dark_mode', 'true');
-    } else {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('cg_dark_mode', 'false');
-    }
-  }, [isDarkMode]);
+  const toggleDarkMode = () => {
+    cycleThemePreference();
+  };
 
   // Sync state to local storage for persistent data
   useEffect(() => {
@@ -276,10 +275,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const setLanguage = (lang: Language) => {
     setLanguageState(lang);
     localStorage.setItem('cg_lang', lang);
-  };
-
-  const toggleDarkMode = () => {
-    setIsDarkMode(prev => !prev);
   };
 
   const addToast = (toast: Omit<ToastMessage, 'id'>) => {
@@ -719,7 +714,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         navigateLightbox,
         
         isDarkMode,
+        themePreference,
         toggleDarkMode,
+        setThemePreference,
         language,
         setLanguage,
         t,

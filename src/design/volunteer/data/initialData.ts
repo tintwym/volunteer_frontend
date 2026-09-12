@@ -1441,7 +1441,7 @@ export const initialSettings: AppSettings = {
   vibrateOnScan: true,
   defaultCheckInMethod: 'QR',
 
-  themeMode: 'light',
+  themeMode: 'system',
   highContrastMode: false,
   compactView: false,
   fontSizeScale: 'normal',

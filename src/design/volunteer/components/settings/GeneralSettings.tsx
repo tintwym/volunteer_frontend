@@ -2,8 +2,10 @@
 // @ts-nocheck
 
 import React from 'react';
-import { Globe, Calendar, Car, Bus, Bike, Footprints, Check, CalendarSync } from 'lucide-react';
+import { Globe, Calendar, Car, Bus, Bike, Footprints, Check, CalendarSync, Monitor, Sun, Moon } from 'lucide-react';
 import { AppSettings } from '../../types';
+import { useTheme } from '@/components/theme/ThemeProvider';
+import type { ThemePreference } from '@/lib/theme';
 
 interface GeneralSettingsProps {
   settings: AppSettings;
@@ -11,6 +13,13 @@ interface GeneralSettingsProps {
 }
 
 export const GeneralSettings: React.FC<GeneralSettingsProps> = ({ settings, onChange }) => {
+  const { theme, setTheme } = useTheme();
+
+  const handleThemeChange = (next: ThemePreference) => {
+    onChange({ themeMode: next });
+    setTheme(next);
+  };
+
   const handleDownloadIcs = () => {
     const icsContent = [
       'BEGIN:VCALENDAR',
@@ -127,6 +136,47 @@ export const GeneralSettings: React.FC<GeneralSettingsProps> = ({ settings, onCh
               <option value="Tiếng Việt">Tiếng Việt (Vietnamese)</option>
               <option value="Tagalog">Tagalog (Filipino)</option>
             </select>
+          </div>
+
+          <div>
+            <label className="text-xs font-semibold text-slate-700 block mb-1.5">
+              Color Theme
+            </label>
+            <div className="grid grid-cols-3 gap-2">
+              {(
+                [
+                  { id: 'system', label: 'System', icon: Monitor, hint: 'Match device' },
+                  { id: 'light', label: 'Light', icon: Sun, hint: 'Always light' },
+                  { id: 'dark', label: 'Dark', icon: Moon, hint: 'Always dark' },
+                ] as const
+              ).map((option) => {
+                const Icon = option.icon;
+                const selected = (settings.themeMode || theme) === option.id;
+                return (
+                  <button
+                    key={option.id}
+                    type="button"
+                    onClick={() => handleThemeChange(option.id)}
+                    className={`p-2.5 rounded-xl border text-left transition-all ${
+                      selected
+                        ? 'bg-emerald-50 border-emerald-400 ring-1 ring-emerald-400'
+                        : 'bg-slate-50 border-slate-200 hover:bg-slate-100'
+                    }`}
+                  >
+                    <div className="flex items-center gap-1.5 mb-0.5">
+                      <Icon className={`w-3.5 h-3.5 ${selected ? 'text-emerald-700' : 'text-slate-500'}`} />
+                      <span className={`text-xs font-bold ${selected ? 'text-emerald-950' : 'text-slate-800'}`}>
+                        {option.label}
+                      </span>
+                    </div>
+                    <span className="text-[10px] text-slate-400">{option.hint}</span>
+                  </button>
+                );
+              })}
+            </div>
+            <p className="text-[11px] text-slate-400 mt-1.5">
+              System follows your OS appearance and updates automatically.
+            </p>
           </div>
         </div>
       </div>

@@ -9,19 +9,21 @@ import {
   Search,
   Bell,
   Sun,
-  Moon,
-  Globe,
-  Menu,
-  X,
-  User,
-  LogOut,
+  Moon, 
+  Globe, 
+  Menu, 
+  X, 
+  User, 
+  LogOut, 
   LayoutDashboard,
   ChevronDown,
   LogIn,
   ExternalLink,
+  Monitor,
 } from 'lucide-react';
 import { clearAuth, dashboardPathForRole, enterDemo } from '@/lib/auth';
 import { useAuth } from '@/components/auth/AuthProvider';
+import { useTheme } from '@/components/theme/ThemeProvider';
 
 export const Navbar: React.FC = () => {
   const {
@@ -33,14 +35,13 @@ export const Navbar: React.FC = () => {
     logout,
     setIsSearchModalOpen, 
     setIsNotificationsModalOpen,
-    isDarkMode, 
-    toggleDarkMode,
     language,
     setLanguage,
     t,
     openAuthModal,
   } = useApp();
   const { logout: logoutAuth } = useAuth();
+  const { theme, cycleThemePreference, isDark } = useTheme();
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
@@ -184,12 +185,24 @@ export const Navbar: React.FC = () => {
 
           <button
             type="button"
-            onClick={toggleDarkMode}
+            onClick={cycleThemePreference}
             className="p-2.5 rounded-xl text-stone-600 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors"
-            title={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-            aria-label="Toggle dark mode"
+            title={
+              theme === 'system'
+                ? 'Theme: System (click for Light)'
+                : theme === 'light'
+                  ? 'Theme: Light (click for Dark)'
+                  : 'Theme: Dark (click for System)'
+            }
+            aria-label={`Color theme: ${theme}. Click to change.`}
           >
-            {isDarkMode ? <Sun className="w-5 h-5 text-amber-400" /> : <Moon className="w-5 h-5" />}
+            {theme === 'system' ? (
+              <Monitor className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+            ) : isDark ? (
+              <Sun className="w-5 h-5 text-amber-400" />
+            ) : (
+              <Moon className="w-5 h-5" />
+            )}
           </button>
 
           <div className="relative" ref={langMenuRef}>

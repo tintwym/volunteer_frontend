@@ -62,6 +62,8 @@ import { LogHoursModal } from './components/LogHoursModal';
 import { ShareMilestoneModal } from './components/ShareMilestoneModal';
 import { EventDetailModal } from './components/EventDetailModal';
 import { AnimatedPage, motion } from '@/components/motion/ui';
+import { useTheme } from '@/components/theme/ThemeProvider';
+import type { ThemePreference } from '@/lib/theme';
 
 export default function App() {
   // State with LocalStorage Fallback
@@ -141,6 +143,15 @@ export default function App() {
     return saved ? JSON.parse(saved) : initialSettings;
   });
 
+  const { theme, setTheme } = useTheme();
+
+  // Keep portal settings aligned with global theme preference
+  useEffect(() => {
+    setSettings((prev) =>
+      prev.themeMode === theme ? prev : { ...prev, themeMode: theme as ThemePreference }
+    );
+  }, [theme]);
+
   // Navigation & Modals State
   const [activeTab, setActiveTab] = useState<string>('dashboard');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
@@ -204,6 +215,7 @@ export default function App() {
   const handleResetSettings = () => {
     setSettings(initialSettings);
     localStorage.removeItem('vms_settings');
+    setTheme(initialSettings.themeMode);
   };
 
   // Derived counts
@@ -689,7 +701,10 @@ export default function App() {
             <SettingsView
               settings={settings}
               profile={profile}
-              onUpdateSettings={(updated) => setSettings(updated)}
+              onUpdateSettings={(updated) => {
+                setSettings(updated);
+                if (updated.themeMode) setTheme(updated.themeMode);
+              }}
               onUpdateProfile={(updated) => setProfile(updated)}
               onResetSettings={handleResetSettings}
             />

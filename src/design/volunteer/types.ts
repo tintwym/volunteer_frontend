@@ -457,7 +457,7 @@ export interface AppSettings {
   defaultCheckInMethod: 'QR' | 'GPS' | 'PIN';
 
   // Appearance & Accessibility
-  themeMode: 'light' | 'system';
+  themeMode: 'light' | 'dark' | 'system';
   highContrastMode: boolean;
   compactView: boolean;
   fontSizeScale: 'normal' | 'large';
