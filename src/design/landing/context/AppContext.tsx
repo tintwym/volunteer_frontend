@@ -304,21 +304,25 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     role: UserRole = 'volunteer',
     userData?: { name?: string; email?: string }
   ) => {
-    // Real auth routes: OAuth + volunteer → /login; organization create → /signup
+    // OAuth placeholders still go through real auth pages
     if (provider === 'google' || provider === 'github') {
       window.location.href = '/login';
       return;
     }
-    if (role === 'organization') {
-      window.location.href = '/signup';
-      return;
-    }
-    if (role === 'volunteer') {
-      window.location.href = '/login';
-      return;
-    }
 
-    // Admin (and other demo roles): keep mock login for design preview
+    // 1-click demo → role portals (no API required)
+    const demoRole =
+      role === 'organization'
+        ? 'ORGANIZER'
+        : role === 'admin'
+          ? 'VOLUNTEER_LEADER'
+          : 'VOLUNTEER';
+
+    void import('@/lib/auth').then(({ enterDemo, dashboardPathForRole }) => {
+      enterDemo(demoRole);
+      window.location.href = dashboardPathForRole(demoRole);
+    });
+
     setIsLoggedIn(true);
     localStorage.setItem('cg_is_logged_in', 'true');
     setUserRole(role);

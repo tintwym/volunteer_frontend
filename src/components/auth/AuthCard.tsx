@@ -1,7 +1,7 @@
 "use client";
 
 import { useAuth } from "@/components/auth/AuthProvider";
-import { login, signup, dashboardPathForRole, isRole } from "@/lib/auth";
+import { login, signup, dashboardPathForRole, isRole, enterDemo, type Role } from "@/lib/auth";
 import { validateLogin, validateSignup } from "@/lib/validation";
 import { ModalMotion } from "@/components/motion/ui";
 import {
@@ -96,6 +96,14 @@ export function AuthCard({
     } finally {
       setSubmitting(false);
     }
+  }
+
+  function onDemoEnter(role: Role) {
+    setFormError(null);
+    setFieldErrors({});
+    const res = enterDemo(role);
+    setSession(res);
+    router.push(dashboardPathForRole(role));
   }
 
   const inputClass = (hasError: boolean) =>
@@ -363,38 +371,24 @@ export function AuthCard({
           <div className="grid grid-cols-3 gap-1.5">
             <button
               type="button"
-              onClick={() => {
-                setAccountType("volunteer");
-                setFieldErrors({});
-                setFormError(null);
-              }}
+              onClick={() => onDemoEnter("VOLUNTEER")}
               className="rounded-lg border border-stone-200 bg-white px-2 py-1.5 text-center text-[11px] font-medium text-stone-700 transition-colors hover:border-emerald-500"
             >
               Volunteer
             </button>
             <button
               type="button"
-              onClick={() => {
-                setAccountType("organization");
-                setFieldErrors({});
-                setFormError(null);
-              }}
+              onClick={() => onDemoEnter("ORGANIZER")}
               className="rounded-lg border border-stone-200 bg-white px-2 py-1.5 text-center text-[11px] font-medium text-stone-700 transition-colors hover:border-teal-500"
             >
               Organization
             </button>
             <button
               type="button"
-              onClick={() => {
-                setAccountType("organization");
-                setFieldErrors({});
-                setFormError(
-                  "Admin uses an organizer account. Create or sign in as Organization."
-                );
-              }}
+              onClick={() => onDemoEnter("VOLUNTEER_LEADER")}
               className="rounded-lg border border-stone-200 bg-white px-2 py-1.5 text-center text-[11px] font-medium text-stone-700 transition-colors hover:border-amber-500"
             >
-              Admin
+              Leader
             </button>
           </div>
         </div>

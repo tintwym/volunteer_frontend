@@ -9,6 +9,7 @@ import {
   AuthResponse,
   getStoredUser,
   normalizeUser,
+  isDemoToken,
 } from "@/lib/auth";
 import {
   createContext,
@@ -23,6 +24,7 @@ import {
 type AuthContextValue = {
   user: AuthUser | null;
   loading: boolean;
+  isDemo: boolean;
   setSession: (response: AuthResponse) => void;
   refresh: () => Promise<void>;
   logout: () => void;
@@ -32,12 +34,21 @@ const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(() => getStoredUser());
-  const [loading, setLoading] = useState(() => Boolean(getStoredToken()));
+  const [loading, setLoading] = useState(() => {
+    const token = getStoredToken();
+    if (!token) return false;
+    return !isDemoToken(token);
+  });
 
   const refresh = useCallback(async () => {
     const token = getStoredToken();
     if (!token) {
       setUser(null);
+      setLoading(false);
+      return;
+    }
+    if (isDemoToken(token)) {
+      setUser(getStoredUser());
       setLoading(false);
       return;
     }
@@ -57,6 +68,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const token = getStoredToken();
     if (!token) {
+      return;
+    }
+
+    if (isDemoToken(token)) {
+      setUser(getStoredUser());
+      setLoading(false);
       return;
     }
 
@@ -105,9 +122,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setLoading(false);
   }, []);
 
+  const isDemo = Boolean(user?.id.startsWith("demo-"));
+
   const value = useMemo(
-    () => ({ user, loading, setSession, refresh, logout }),
-    [user, loading, setSession, refresh, logout]
+    () => ({ user, loading, isDemo, setSession, refresh, logout }),
+    [user, loading, isDemo, setSession, refresh, logout]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

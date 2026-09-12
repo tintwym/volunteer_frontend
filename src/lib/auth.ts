@@ -18,11 +18,45 @@ export interface AuthResponse {
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080";
 const TOKEN_KEY = "cg_access_token";
 const USER_KEY = "cg_user";
+export const DEMO_TOKEN = "cg_demo_token";
 
 const ROLES: Role[] = ["ORGANIZER", "VOLUNTEER_LEADER", "VOLUNTEER"];
 
+const DEMO_PROFILES: Record<
+  Role,
+  {
+    fullName: string;
+    email: string;
+    organizationName: string;
+  }
+> = {
+  ORGANIZER: {
+    fullName: "Marcus Vance",
+    email: "marcus@greenroots.org",
+    organizationName: "Green Roots Collective",
+  },
+  VOLUNTEER_LEADER: {
+    fullName: "Jordan Lee",
+    email: "jordan.lee@commonground.org",
+    organizationName: "Green Roots Collective",
+  },
+  VOLUNTEER: {
+    fullName: "Alex Rivera",
+    email: "alex.rivera@commonground.org",
+    organizationName: "Green Roots Collective",
+  },
+};
+
 export function getApiUrl() {
   return API_URL;
+}
+
+export function isDemoToken(token: string | null | undefined): boolean {
+  return token === DEMO_TOKEN;
+}
+
+export function isDemoSession(): boolean {
+  return isDemoToken(getStoredToken());
 }
 
 export function isRole(value: unknown): value is Role {
@@ -185,6 +219,25 @@ export async function login(input: { email: string; password: string }) {
   const normalized = { ...data, user };
   storeAuth(normalized);
   return normalized;
+}
+
+/** Instant prototype-style access — no API required. */
+export function enterDemo(role: Role): AuthResponse {
+  const profile = DEMO_PROFILES[role];
+  const response: AuthResponse = {
+    accessToken: DEMO_TOKEN,
+    tokenType: "Bearer",
+    user: {
+      id: `demo-${role.toLowerCase()}`,
+      email: profile.email,
+      fullName: profile.fullName,
+      role,
+      organizationId: "demo-org-id",
+      organizationName: profile.organizationName,
+    },
+  };
+  storeAuth(response);
+  return response;
 }
 
 export async function acceptInvite(input: {

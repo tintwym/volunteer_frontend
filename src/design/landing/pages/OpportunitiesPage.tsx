@@ -133,7 +133,7 @@ export const OpportunitiesPage: React.FC = () => {
               <select
                 value={selectedCause}
                 onChange={(e) => setSelectedCause(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-100 outline-none"
+                className="w-full pl-3 pr-9 py-2 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-100 outline-none"
               >
                 {causes.map(c => <option key={c} value={c}>{c}</option>)}
               </select>
@@ -147,7 +147,7 @@ export const OpportunitiesPage: React.FC = () => {
               <select
                 value={selectedCommitment}
                 onChange={(e) => setSelectedCommitment(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-100 outline-none"
+                className="w-full pl-3 pr-9 py-2 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-100 outline-none"
               >
                 {commitments.map(c => <option key={c} value={c}>{c}</option>)}
               </select>
@@ -161,7 +161,7 @@ export const OpportunitiesPage: React.FC = () => {
               <select
                 value={selectedLocation}
                 onChange={(e) => setSelectedLocation(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-100 outline-none"
+                className="w-full pl-3 pr-9 py-2 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-100 outline-none"
               >
                 {locations.map(l => <option key={l} value={l}>{l}</option>)}
               </select>
@@ -175,7 +175,7 @@ export const OpportunitiesPage: React.FC = () => {
               <select
                 value={selectedSkill}
                 onChange={(e) => setSelectedSkill(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-100 outline-none"
+                className="w-full pl-3 pr-9 py-2 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-100 outline-none"
               >
                 {skillsList.map(s => <option key={s} value={s}>{s}</option>)}
               </select>
