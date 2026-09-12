@@ -310,7 +310,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       return;
     }
 
-    // 1-click demo → role portals (no API required)
+    // Prototype 1-click: stay on landing so the profile dropdown works
     const demoRole =
       role === 'organization'
         ? 'ORGANIZER'
@@ -318,9 +318,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           ? 'VOLUNTEER_LEADER'
           : 'VOLUNTEER';
 
-    void import('@/lib/auth').then(({ enterDemo, dashboardPathForRole }) => {
+    void import('@/lib/auth').then(({ enterDemo }) => {
       enterDemo(demoRole);
-      window.location.href = dashboardPathForRole(demoRole);
     });
 
     setIsLoggedIn(true);
@@ -329,8 +328,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setCurrentUser(prev => ({
       ...prev,
       role: role,
-      name: userData?.name || (role === 'organization' ? 'Marcus Vance (Green Roots)' : 'Alex Rivera'),
-      email: userData?.email || (role === 'organization' ? 'marcus@greenroots.org' : 'alex.rivera@commonground.org')
+      name: userData?.name || (role === 'organization' ? 'Marcus Vance (Green Roots)' : role === 'admin' ? 'Jordan Lee' : 'Alex Rivera'),
+      email: userData?.email || (role === 'organization' ? 'marcus@greenroots.org' : role === 'admin' ? 'jordan.lee@commonground.org' : 'alex.rivera@commonground.org')
     }));
     setIsAuthModalOpen(false);
     addToast({

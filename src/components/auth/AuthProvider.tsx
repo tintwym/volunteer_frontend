@@ -56,7 +56,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       const me = await fetchMe();
       setUser(me);
-      localStorage.setItem("cg_user", JSON.stringify(me));
+      localStorage.setItem("cg_auth_user", JSON.stringify(me));
     } catch {
       clearAuth();
       setUser(null);
@@ -84,7 +84,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const me = await fetchMe();
         if (!cancelled) {
           setUser(me);
-          localStorage.setItem("cg_user", JSON.stringify(me));
+          localStorage.setItem("cg_auth_user", JSON.stringify(me));
         }
       } catch {
         if (!cancelled) {

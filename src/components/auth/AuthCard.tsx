@@ -24,12 +24,15 @@ type AuthCardProps = {
   initialType?: AccountType;
   variant?: "page" | "modal";
   onClose?: () => void;
+  /** When set (landing AuthModal), 1-click demo stays on the landing UI. */
+  onDemoAccess?: (role: Role) => void;
 };
 
 export function AuthCard({
   initialType = "volunteer",
   variant = "page",
   onClose,
+  onDemoAccess,
 }: AuthCardProps) {
   const router = useRouter();
   const { user, setSession, loading } = useAuth();
@@ -43,10 +46,12 @@ export function AuthCard({
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
+    // Landing AuthModal keeps the user on the marketing UI (profile dropdown).
+    if (onDemoAccess) return;
     if (loading || !user || !isRole(user.role)) return;
     const path = dashboardPathForRole(user.role);
     if (path !== "/login") router.replace(path);
-  }, [user, loading, router]);
+  }, [user, loading, router, onDemoAccess]);
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
@@ -101,6 +106,10 @@ export function AuthCard({
   function onDemoEnter(role: Role) {
     setFormError(null);
     setFieldErrors({});
+    if (onDemoAccess) {
+      onDemoAccess(role);
+      return;
+    }
     const res = enterDemo(role);
     setSession(res);
     router.push(dashboardPathForRole(role));

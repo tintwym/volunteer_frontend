@@ -17,8 +17,11 @@ export interface AuthResponse {
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080";
 const TOKEN_KEY = "cg_access_token";
-const USER_KEY = "cg_user";
+/** Auth session user — keep separate from landing prototype `cg_user`. */
+const USER_KEY = "cg_auth_user";
 export const DEMO_TOKEN = "cg_demo_token";
+export const LANDING_USER_KEY = "cg_user";
+export const LANDING_LOGGED_IN_KEY = "cg_is_logged_in";
 
 const ROLES: Role[] = ["ORGANIZER", "VOLUNTEER_LEADER", "VOLUNTEER"];
 
