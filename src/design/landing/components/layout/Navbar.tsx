@@ -40,6 +40,7 @@ export const Navbar: React.FC = () => {
     setLanguage,
     t,
     openAuthModal,
+    switchAccount,
   } = useApp();
   const { logout: logoutAuth } = useAuth();
   const { theme, cycleThemePreference, isDark } = useTheme();
@@ -107,6 +108,15 @@ export const Navbar: React.FC = () => {
     logout();
     logoutAuth();
     clearAuth();
+  };
+
+  const handleSwitchAccount = () => {
+    setUserDropdownOpen(false);
+    setMobileMenuOpen(false);
+    // Clear JWT/demo session first so /login AuthCard won't bounce back to a portal
+    logoutAuth();
+    clearAuth();
+    switchAccount();
   };
 
   const languages: { code: Language; label: string; native: string }[] = [
@@ -341,10 +351,7 @@ export const Navbar: React.FC = () => {
                       <button
                         type="button"
                         role="menuitem"
-                        onClick={() => {
-                          setUserDropdownOpen(false);
-                          window.location.href = '/login';
-                        }}
+                        onClick={handleSwitchAccount}
                         className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-stone-700 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors"
                       >
                         <LogIn className="w-4 h-4 text-blue-600" />

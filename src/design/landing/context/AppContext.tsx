@@ -65,6 +65,8 @@ interface AppContextType {
   isLoggedIn: boolean;
   login: (provider: 'google' | 'github' | 'email', role?: UserRole, userData?: { name?: string; email?: string }) => void;
   logout: () => void;
+  /** Clear session and open auth so the user can pick another account. */
+  switchAccount: () => void;
   
   isAuthModalOpen: boolean;
   setIsAuthModalOpen: (open: boolean) => void;
@@ -346,6 +348,21 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       title: 'Signed Out',
       message: 'You have been safely signed out. See you soon!',
       durationMs: 5000,
+    });
+  };
+
+  const switchAccount = () => {
+    setIsLoggedIn(false);
+    localStorage.setItem('cg_is_logged_in', 'false');
+    setPageInternal('home');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setAuthModalMode('signin');
+    setIsAuthModalOpen(true);
+    addToast({
+      type: 'info',
+      title: 'Switch Account',
+      message: 'Sign in with a different account or use 1-click demo access.',
+      durationMs: 4000,
     });
   };
 
@@ -691,6 +708,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         isLoggedIn,
         login,
         logout,
+        switchAccount,
         
         isAuthModalOpen,
         setIsAuthModalOpen,
