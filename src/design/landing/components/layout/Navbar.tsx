@@ -91,7 +91,9 @@ export const Navbar: React.FC = () => {
           ? 'VOLUNTEER_LEADER'
           : 'VOLUNTEER';
     enterDemo(role);
-    window.location.href = dashboardPathForRole(role);
+    setUserDropdownOpen(false);
+    setMobileMenuOpen(false);
+    window.open(dashboardPathForRole(role), '_blank', 'noopener,noreferrer');
   };
 
   const requestSignOut = () => {
