@@ -247,4 +247,7 @@ export interface ToastMessage {
   type: 'success' | 'info' | 'warning' | 'error';
   title: string;
   message: string;
+  /** Auto-dismiss duration in ms (default 5000). */
+  durationMs?: number;
+  createdAt?: number;
 }

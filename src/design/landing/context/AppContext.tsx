@@ -279,10 +279,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const addToast = (toast: Omit<ToastMessage, 'id'>) => {
     const id = 'toast-' + Date.now() + Math.random().toString(36).substr(2, 4);
-    setToasts(prev => [...prev, { ...toast, id }]);
+    const durationMs = toast.durationMs ?? 5000;
+    setToasts(prev => [...prev, { ...toast, id, durationMs, createdAt: Date.now() }]);
     setTimeout(() => {
       removeToast(id);
-    }, 4500);
+    }, durationMs);
   };
 
   const removeToast = (id: string) => {
@@ -337,10 +338,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const logout = () => {
     setIsLoggedIn(false);
     localStorage.setItem('cg_is_logged_in', 'false');
+    setIsAuthModalOpen(false);
+    setPageInternal('home');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     addToast({
       type: 'info',
       title: 'Signed Out',
-      message: 'You have been safely signed out. See you soon!'
+      message: 'You have been safely signed out. See you soon!',
+      durationMs: 5000,
     });
   };
 

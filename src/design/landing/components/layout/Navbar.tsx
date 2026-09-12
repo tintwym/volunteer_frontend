@@ -24,6 +24,7 @@ import {
 import { clearAuth, dashboardPathForRole, enterDemo } from '@/lib/auth';
 import { useAuth } from '@/components/auth/AuthProvider';
 import { useTheme } from '@/components/theme/ThemeProvider';
+import { SignOutConfirmModal } from '../modals/SignOutConfirmModal';
 
 export const Navbar: React.FC = () => {
   const {
@@ -46,6 +47,7 @@ export const Navbar: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [langDropdownOpen, setLangDropdownOpen] = useState(false);
+  const [signOutConfirmOpen, setSignOutConfirmOpen] = useState(false);
   const userMenuRef = useRef(null);
   const langMenuRef = useRef(null);
 
@@ -92,11 +94,17 @@ export const Navbar: React.FC = () => {
     window.location.href = dashboardPathForRole(role);
   };
 
-  const handleSignOut = () => {
+  const requestSignOut = () => {
+    setUserDropdownOpen(false);
+    setMobileMenuOpen(false);
+    setSignOutConfirmOpen(true);
+  };
+
+  const confirmSignOut = () => {
+    setSignOutConfirmOpen(false);
     logout();
     logoutAuth();
     clearAuth();
-    setUserDropdownOpen(false);
   };
 
   const languages: { code: Language; label: string; native: string }[] = [
@@ -346,7 +354,7 @@ export const Navbar: React.FC = () => {
                       <button
                         type="button"
                         role="menuitem"
-                        onClick={handleSignOut}
+                        onClick={requestSignOut}
                         className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 text-xs font-medium transition-colors"
                       >
                         <LogOut className="w-4 h-4" />
@@ -457,10 +465,7 @@ export const Navbar: React.FC = () => {
                 </button>
                 <button
                   type="button"
-                  onClick={() => {
-                    handleSignOut();
-                    setMobileMenuOpen(false);
-                  }}
+                  onClick={requestSignOut}
                   className="w-full py-2.5 px-4 rounded-xl text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 text-xs font-medium flex items-center justify-center gap-2"
                 >
                   <LogOut className="w-4 h-4" />
@@ -471,6 +476,12 @@ export const Navbar: React.FC = () => {
           </div>
         </div>
       )}
+
+      <SignOutConfirmModal
+        open={signOutConfirmOpen}
+        onCancel={() => setSignOutConfirmOpen(false)}
+        onConfirm={confirmSignOut}
+      />
     </header>
   );
 };
