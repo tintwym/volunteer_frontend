@@ -39,6 +39,8 @@
   --font-sans: var(--font-plus-jakarta), "Plus Jakarta Sans", ui-sans-serif,
     system-ui, sans-serif;
   --font-editorial: var(--font-lora), Lora, Georgia, serif;
+  /* Between stone-800 (#292524) and stone-900 (#1c1917) — used across landing dark UI */
+  --color-stone-850: #231f1c;
 }
 
 .font-editorial {

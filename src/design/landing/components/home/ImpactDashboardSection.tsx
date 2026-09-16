@@ -118,7 +118,7 @@ export const ImpactDashboardSection: React.FC = () => {
           {stats.map((stat, index) => (
             <div
               key={index}
-              className={`relative overflow-hidden p-5 sm:p-6 rounded-2xl border border-stone-200/90 dark:border-stone-800 bg-stone-50/50 dark:bg-stone-850/60 transition-all hover:shadow-md hover:-translate-y-0.5 group ${
+              className={`relative overflow-hidden p-5 sm:p-6 rounded-2xl border border-stone-200/90 dark:border-stone-700 bg-stone-50/50 dark:bg-stone-850 transition-all hover:shadow-md hover:-translate-y-0.5 group ${
                 index === 4 ? 'col-span-2 lg:col-span-1' : ''
               }`}
             >
@@ -133,7 +133,7 @@ export const ImpactDashboardSection: React.FC = () => {
                 <span className="text-emerald-600 dark:text-emerald-400">{stat.suffix}</span>
               </div>
 
-              <div className="text-xs font-medium text-stone-600 dark:text-stone-400 mt-1 leading-snug">
+              <div className="text-xs font-medium text-stone-600 dark:text-stone-300 mt-1 leading-snug">
                 {stat.label}
               </div>
             </div>
