@@ -47,13 +47,16 @@ export const OrganizationsPage: React.FC = () => {
         {/* Filter bar */}
         <div className="bg-white dark:bg-stone-900 p-4 sm:p-5 rounded-2xl border border-stone-200/90 dark:border-stone-800 shadow-xs mb-8 flex flex-col sm:flex-row gap-4 justify-between items-center">
           <div className="relative w-full sm:w-80">
-            <Search className="w-4 h-4 text-stone-400 absolute left-3.5 top-3" />
+            <Search
+              className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-teal-600 dark:text-teal-400"
+              aria-hidden="true"
+            />
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search organizations by name, cause, city..."
-              className="w-full pl-10 pr-3 py-2 text-xs rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50/50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 outline-none focus:ring-2 focus:ring-teal-500"
+              className="w-full rounded-xl border border-stone-200 bg-stone-50/50 py-2 pl-10 pr-3 text-xs text-stone-900 outline-none focus:ring-2 focus:ring-teal-500 dark:border-stone-700 dark:bg-stone-800 dark:text-stone-100 dark:placeholder:text-stone-400"
             />
           </div>
 

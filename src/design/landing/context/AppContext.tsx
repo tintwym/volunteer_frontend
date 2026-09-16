@@ -75,6 +75,8 @@ interface AppContextType {
   openAuthModal: (mode?: 'signin' | 'signup') => void;
   isSearchModalOpen: boolean;
   setIsSearchModalOpen: (open: boolean) => void;
+  opportunitySearchQuery: string;
+  setOpportunitySearchQuery: (query: string) => void;
   isNotificationsModalOpen: boolean;
   setIsNotificationsModalOpen: (open: boolean) => void;
   isVolunteerApplyModalOpen: boolean;
@@ -214,6 +216,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authModalMode, setAuthModalMode] = useState<'signin' | 'signup'>('signin');
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
+  const [opportunitySearchQuery, setOpportunitySearchQuery] = useState('');
   const [isNotificationsModalOpen, setIsNotificationsModalOpen] = useState(false);
   const [isVolunteerApplyModalOpen, setIsVolunteerApplyModalOpen] = useState(false);
   const [activeApplyOpportunity, setActiveApplyOpportunity] = useState<Opportunity | null>(null);
@@ -717,6 +720,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         openAuthModal,
         isSearchModalOpen,
         setIsSearchModalOpen,
+        opportunitySearchQuery,
+        setOpportunitySearchQuery,
         isNotificationsModalOpen,
         setIsNotificationsModalOpen,
         isVolunteerApplyModalOpen,

@@ -64,8 +64,18 @@ export const Navbar: React.FC = () => {
         setLangDropdownOpen(false);
       }
     }
+    function handleKeyDown(e) {
+      if (e.key === 'Escape') {
+        setUserDropdownOpen(false);
+        setLangDropdownOpen(false);
+      }
+    }
     document.addEventListener('mousedown', handlePointerDown);
-    return () => document.removeEventListener('mousedown', handlePointerDown);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('mousedown', handlePointerDown);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
   }, []);
 
   const navLinks: { id: PageView; label: string }[] = [
@@ -184,7 +194,11 @@ export const Navbar: React.FC = () => {
         <div className="flex items-center gap-2 sm:gap-2.5">
           <button
             type="button"
-            onClick={() => setIsSearchModalOpen(true)}
+            onClick={() => {
+              setUserDropdownOpen(false);
+              setLangDropdownOpen(false);
+              setIsSearchModalOpen(true);
+            }}
             className="p-2.5 rounded-xl text-stone-600 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors"
             title="Search platform (Opportunities, News, Events)"
             aria-label="Search"

@@ -18,6 +18,7 @@ import {
   Trash2,
   Check
 } from 'lucide-react';
+import { FilterSelect } from '../components/ui/FilterSelect';
 
 export const OrgDashboardPage: React.FC = () => {
   const { 
@@ -240,20 +241,13 @@ export const OrgDashboardPage: React.FC = () => {
                     />
                   </div>
 
-                  <div>
-                    <label className="block text-xs font-semibold text-stone-600 dark:text-stone-400 mb-1">Cause / Focus Area</label>
-                    <select
-                      value={oppFormData.cause}
-                      onChange={(e) => setOppFormData({ ...oppFormData, cause: e.target.value })}
-                      className="w-full px-3 py-2 text-xs rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 outline-none"
-                    >
-                      <option value="Environment">Environment</option>
-                      <option value="Education">Education</option>
-                      <option value="Social Impact">Social Impact</option>
-                      <option value="Community">Community</option>
-                      <option value="Charity">Charity</option>
-                    </select>
-                  </div>
+                  <FilterSelect
+                    label="Cause / Focus Area"
+                    value={oppFormData.cause}
+                    options={['Environment', 'Education', 'Social Impact', 'Community', 'Charity']}
+                    onChange={(cause) => setOppFormData({ ...oppFormData, cause })}
+                    buttonClassName="bg-stone-50 dark:bg-stone-800"
+                  />
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -460,20 +454,13 @@ export const OrgDashboardPage: React.FC = () => {
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-xs font-semibold text-stone-600 dark:text-stone-400 mb-1">Category</label>
-                    <select
-                      value={newsFormData.category}
-                      onChange={(e) => setNewsFormData({ ...newsFormData, category: e.target.value })}
-                      className="w-full px-3 py-2 text-xs rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 outline-none"
-                    >
-                      <option value="Environment">Environment</option>
-                      <option value="Community">Community</option>
-                      <option value="Youth">Youth</option>
-                      <option value="Social Impact">Social Impact</option>
-                      <option value="Volunteer Updates">Volunteer Updates</option>
-                    </select>
-                  </div>
+                  <FilterSelect
+                    label="Category"
+                    value={newsFormData.category}
+                    options={['Environment', 'Community', 'Youth', 'Social Impact', 'Volunteer Updates']}
+                    onChange={(category) => setNewsFormData({ ...newsFormData, category })}
+                    buttonClassName="bg-stone-50 dark:bg-stone-800"
+                  />
 
                   <div>
                     <label className="block text-xs font-semibold text-stone-600 dark:text-stone-400 mb-1">Read Time Estimate</label>

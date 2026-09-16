@@ -15,6 +15,7 @@ import {
   Sparkles, 
   ArrowRight 
 } from 'lucide-react';
+import { FilterSelect } from '../components/ui/FilterSelect';
 
 export const GalleryPage: React.FC = () => {
   const { photos, openLightbox, setPage } = useApp();
@@ -106,25 +107,28 @@ export const GalleryPage: React.FC = () => {
         <div className="bg-white dark:bg-stone-900 p-5 rounded-2xl border border-stone-200/90 dark:border-stone-800 shadow-xs mb-8 space-y-4">
           <div className="flex flex-col sm:flex-row gap-4 justify-between items-center">
             <div className="relative w-full sm:w-80">
-              <Search className="w-4 h-4 text-stone-400 absolute left-3.5 top-3" />
+              <Search
+                className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-sky-600 dark:text-sky-400"
+                aria-hidden="true"
+              />
               <input
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Search photos by caption, location, photographer..."
-                className="w-full pl-10 pr-3 py-2 text-xs rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50/50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 outline-none focus:ring-2 focus:ring-sky-500"
+                className="w-full rounded-xl border border-stone-200 bg-stone-50/50 py-2 pl-10 pr-3 text-xs text-stone-900 outline-none focus:ring-2 focus:ring-sky-500 dark:border-stone-700 dark:bg-stone-800 dark:text-stone-100 dark:placeholder:text-stone-400"
               />
             </div>
 
-            <div className="flex items-center gap-3 w-full sm:w-auto text-xs">
-              <label className="text-stone-500 dark:text-stone-400 shrink-0 font-medium">Organization:</label>
-              <select
+            <div className="flex w-full items-center gap-3 text-xs sm:w-auto">
+              <label className="shrink-0 font-medium text-stone-500 dark:text-stone-400">Organization:</label>
+              <FilterSelect
+                aria-label="Filter by organization"
                 value={selectedOrg}
-                onChange={(e) => setSelectedOrg(e.target.value)}
-                className="px-3 py-2 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 text-stone-800 dark:text-stone-200 outline-none"
-              >
-                {organizations.map(org => <option key={org} value={org}>{org}</option>)}
-              </select>
+                options={organizations}
+                onChange={setSelectedOrg}
+                className="min-w-[14rem] flex-1 sm:flex-none"
+              />
             </div>
           </div>
 

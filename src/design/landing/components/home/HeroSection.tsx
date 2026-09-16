@@ -7,13 +7,17 @@ import { Search, MapPin, Calendar, ArrowRight, HeartHandshake, Sparkles, Users }
 import { FadeIn, motion } from '@/components/motion/ui';
 
 export const HeroSection: React.FC = () => {
-  const { setPage, setIsAuthModalOpen, t, setSelectedOpportunityId } = useApp();
+  const { setPage, setIsAuthModalOpen, t, setOpportunitySearchQuery } = useApp();
   const [interestQuery, setInterestQuery] = useState('');
   const [locationQuery, setLocationQuery] = useState('');
   const [dateQuery, setDateQuery] = useState('');
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const parts = [interestQuery, locationQuery, dateQuery]
+      .map((part) => part.trim())
+      .filter(Boolean);
+    setOpportunitySearchQuery(parts.join(' '));
     setPage('opportunities');
   };
 
@@ -82,9 +86,9 @@ export const HeroSection: React.FC = () => {
           <div className="bg-white/95 dark:bg-stone-900/95 backdrop-blur-md p-3 sm:p-4 rounded-2xl sm:rounded-3xl shadow-2xl border border-white/30 dark:border-stone-700/60 text-stone-900 dark:text-stone-100">
             <form onSubmit={handleSearchSubmit} className="grid grid-cols-1 sm:grid-cols-12 gap-2 sm:gap-3">
               <div className="sm:col-span-4 flex items-center gap-2.5 px-3 py-2 rounded-xl bg-stone-50 dark:bg-stone-800 border border-stone-200/80 dark:border-stone-700">
-                <Search className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                <div className="flex-1 text-left">
-                  <label className="block text-[10px] font-bold uppercase tracking-wider text-stone-400 dark:text-stone-400 leading-none mb-1">
+                <Search className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" aria-hidden="true" />
+                <div className="flex-1 text-left min-w-0">
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-stone-500 dark:text-stone-400 leading-none mb-1">
                     What are you interested in?
                   </label>
                   <input

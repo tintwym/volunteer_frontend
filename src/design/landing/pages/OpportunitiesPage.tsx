@@ -4,6 +4,7 @@
 import React, { useState, useMemo } from 'react';
 import { useApp } from '../context/AppContext';
 import { OpportunityCard } from '../components/opportunities/OpportunityCard';
+import { FilterSelect } from '../components/ui/FilterSelect';
 import { Opportunity } from '../types';
 import { 
   Search, 
@@ -28,16 +29,26 @@ export const OpportunitiesPage: React.FC = () => {
     setPage,
     setSelectedOrgId,
     organizations,
+    opportunitySearchQuery,
+    setOpportunitySearchQuery,
     t 
   } = useApp();
 
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState(opportunitySearchQuery || '');
   const [selectedCause, setSelectedCause] = useState('All');
   const [selectedLocation, setSelectedLocation] = useState('All');
   const [selectedCommitment, setSelectedCommitment] = useState('All');
   const [selectedSkill, setSelectedSkill] = useState('All');
   const [remoteOnly, setRemoteOnly] = useState(false);
   const [detailedModalOpp, setDetailedModalOpp] = useState<Opportunity | null>(null);
+
+  // Apply hero / global search seed when navigating here
+  React.useEffect(() => {
+    if (opportunitySearchQuery) {
+      setSearchTerm(opportunitySearchQuery);
+      setOpportunitySearchQuery('');
+    }
+  }, [opportunitySearchQuery, setOpportunitySearchQuery]);
 
   // If redirected with selectedOpportunityId, pop open detail modal
   React.useEffect(() => {
@@ -105,7 +116,7 @@ export const OpportunitiesPage: React.FC = () => {
         <div className="bg-white dark:bg-stone-900 p-5 rounded-2xl border border-stone-200/90 dark:border-stone-800 shadow-xs mb-8 space-y-4">
           {/* Main search bar */}
           <div className="relative">
-            <Search className="w-5 h-5 text-stone-400 absolute left-3.5 top-3" />
+            <Search className="w-5 h-5 text-emerald-600 dark:text-emerald-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" aria-hidden="true" />
             <input
               type="text"
               value={searchTerm}
@@ -115,8 +126,10 @@ export const OpportunitiesPage: React.FC = () => {
             />
             {searchTerm && (
               <button
+                type="button"
                 onClick={() => setSearchTerm('')}
-                className="absolute right-3.5 top-3 text-stone-400 hover:text-stone-600 dark:hover:text-stone-200"
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600 dark:hover:text-stone-200"
+                aria-label="Clear search"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -125,61 +138,30 @@ export const OpportunitiesPage: React.FC = () => {
 
           {/* Filter dropdowns grid */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-            {/* Cause filter */}
-            <div>
-              <label className="block text-[11px] font-semibold text-stone-500 dark:text-stone-400 mb-1">
-                Cause / Focus Area
-              </label>
-              <select
-                value={selectedCause}
-                onChange={(e) => setSelectedCause(e.target.value)}
-                className="w-full pl-3 pr-9 py-2 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-100 outline-none"
-              >
-                {causes.map(c => <option key={c} value={c}>{c}</option>)}
-              </select>
-            </div>
-
-            {/* Time commitment */}
-            <div>
-              <label className="block text-[11px] font-semibold text-stone-500 dark:text-stone-400 mb-1">
-                Time Commitment
-              </label>
-              <select
-                value={selectedCommitment}
-                onChange={(e) => setSelectedCommitment(e.target.value)}
-                className="w-full pl-3 pr-9 py-2 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-100 outline-none"
-              >
-                {commitments.map(c => <option key={c} value={c}>{c}</option>)}
-              </select>
-            </div>
-
-            {/* Location */}
-            <div>
-              <label className="block text-[11px] font-semibold text-stone-500 dark:text-stone-400 mb-1">
-                Location / Site
-              </label>
-              <select
-                value={selectedLocation}
-                onChange={(e) => setSelectedLocation(e.target.value)}
-                className="w-full pl-3 pr-9 py-2 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-100 outline-none"
-              >
-                {locations.map(l => <option key={l} value={l}>{l}</option>)}
-              </select>
-            </div>
-
-            {/* Skills */}
-            <div>
-              <label className="block text-[11px] font-semibold text-stone-500 dark:text-stone-400 mb-1">
-                Required Skills
-              </label>
-              <select
-                value={selectedSkill}
-                onChange={(e) => setSelectedSkill(e.target.value)}
-                className="w-full pl-3 pr-9 py-2 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-100 outline-none"
-              >
-                {skillsList.map(s => <option key={s} value={s}>{s}</option>)}
-              </select>
-            </div>
+            <FilterSelect
+              label="Cause / Focus Area"
+              value={selectedCause}
+              options={causes}
+              onChange={setSelectedCause}
+            />
+            <FilterSelect
+              label="Time Commitment"
+              value={selectedCommitment}
+              options={commitments}
+              onChange={setSelectedCommitment}
+            />
+            <FilterSelect
+              label="Location / Site"
+              value={selectedLocation}
+              options={locations}
+              onChange={setSelectedLocation}
+            />
+            <FilterSelect
+              label="Required Skills"
+              value={selectedSkill}
+              options={skillsList}
+              onChange={setSelectedSkill}
+            />
           </div>
 
           {/* Quick toggle chips */}

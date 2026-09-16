@@ -1,7 +1,7 @@
 'use client';
 // @ts-nocheck
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { useApp } from '../../context/AppContext';
 import { 
   X, 
@@ -34,6 +34,29 @@ export const GlobalSearchModal: React.FC = () => {
 
   const [query, setQuery] = useState('');
   const [activeType, setActiveType] = useState<string>('all');
+
+  const closeSearch = useCallback(() => {
+    setIsSearchModalOpen(false);
+    setQuery('');
+    setActiveType('all');
+  }, [setIsSearchModalOpen]);
+
+  useEffect(() => {
+    if (!isSearchModalOpen) return;
+
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') closeSearch();
+    };
+
+    document.addEventListener('keydown', onKey);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [isSearchModalOpen, closeSearch]);
 
   const filteredResults = useMemo(() => {
     const q = query.toLowerCase().trim();
@@ -99,18 +122,20 @@ export const GlobalSearchModal: React.FC = () => {
   return (
     <div 
       id="global-search-backdrop"
-      className="fixed inset-0 z-50 flex items-start justify-center p-4 pt-16 sm:pt-24 bg-stone-950/70 backdrop-blur-sm animate-in fade-in duration-200"
+      className="fixed inset-0 z-[100] flex items-start justify-center p-4 pt-16 sm:pt-24 bg-stone-950/70 backdrop-blur-sm"
       role="dialog"
       aria-modal="true"
       aria-labelledby="global-search-input"
+      onClick={closeSearch}
     >
       <div 
         id="global-search-container"
         className="relative w-full max-w-2xl bg-white dark:bg-stone-900 rounded-2xl shadow-2xl border border-stone-200 dark:border-stone-800 overflow-hidden flex flex-col max-h-[80vh]"
+        onClick={(e) => e.stopPropagation()}
       >
         {/* Search Bar Input */}
         <div className="p-4 border-b border-stone-200 dark:border-stone-800 flex items-center gap-3 bg-stone-50/50 dark:bg-stone-850">
-          <Search className="w-5 h-5 text-stone-400 shrink-0" />
+          <Search className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0" aria-hidden="true" />
           <input
             id="global-search-input"
             type="text"
@@ -122,6 +147,7 @@ export const GlobalSearchModal: React.FC = () => {
           />
           {query && (
             <button
+              type="button"
               onClick={() => setQuery('')}
               className="p-1 text-xs text-stone-400 hover:text-stone-600 dark:hover:text-stone-200"
             >
@@ -129,7 +155,8 @@ export const GlobalSearchModal: React.FC = () => {
             </button>
           )}
           <button
-            onClick={() => setIsSearchModalOpen(false)}
+            type="button"
+            onClick={closeSearch}
             className="p-1 rounded-lg text-stone-400 hover:text-stone-700 dark:hover:text-stone-200"
             aria-label="Close search"
           >
@@ -199,7 +226,7 @@ export const GlobalSearchModal: React.FC = () => {
                         onClick={() => {
                           setSelectedOpportunityId(opp.id);
                           setPage('opportunities');
-                          setIsSearchModalOpen(false);
+                          closeSearch();
                         }}
                         className="p-3 rounded-xl border border-stone-200 dark:border-stone-800 hover:border-emerald-500 dark:hover:border-emerald-500 hover:bg-emerald-50/40 dark:hover:bg-emerald-950/20 cursor-pointer transition-all flex items-center justify-between group"
                       >
@@ -234,7 +261,7 @@ export const GlobalSearchModal: React.FC = () => {
                         onClick={() => {
                           setSelectedOrgId(org.id);
                           setPage('organization-profile');
-                          setIsSearchModalOpen(false);
+                          closeSearch();
                         }}
                         className="p-3 rounded-xl border border-stone-200 dark:border-stone-800 hover:border-teal-500 hover:bg-teal-50/40 dark:hover:bg-teal-950/20 cursor-pointer transition-all flex items-center gap-3 group"
                       >
@@ -271,7 +298,7 @@ export const GlobalSearchModal: React.FC = () => {
                         onClick={() => {
                           setSelectedArticleId(article.id);
                           setPage('news-article');
-                          setIsSearchModalOpen(false);
+                          closeSearch();
                         }}
                         className="p-3 rounded-xl border border-stone-200 dark:border-stone-800 hover:border-amber-500 hover:bg-amber-50/40 dark:hover:bg-amber-950/20 cursor-pointer transition-all flex items-center justify-between group"
                       >
@@ -303,7 +330,7 @@ export const GlobalSearchModal: React.FC = () => {
                         key={photo.id}
                         onClick={() => {
                           openLightbox(photo);
-                          setIsSearchModalOpen(false);
+                          closeSearch();
                         }}
                         className="relative rounded-lg overflow-hidden group cursor-pointer aspect-square bg-stone-100 dark:bg-stone-800"
                       >
@@ -336,7 +363,7 @@ export const GlobalSearchModal: React.FC = () => {
                         key={event.id}
                         onClick={() => {
                           setPage('events');
-                          setIsSearchModalOpen(false);
+                          closeSearch();
                         }}
                         className="p-3 rounded-xl border border-stone-200 dark:border-stone-800 hover:border-indigo-500 hover:bg-indigo-50/40 dark:hover:bg-indigo-950/20 cursor-pointer transition-all flex items-center justify-between group"
                       >
@@ -370,7 +397,7 @@ export const GlobalSearchModal: React.FC = () => {
                         key={story.id}
                         onClick={() => {
                           setPage('stories');
-                          setIsSearchModalOpen(false);
+                          closeSearch();
                         }}
                         className="p-3 rounded-xl border border-stone-200 dark:border-stone-800 hover:border-rose-500 hover:bg-rose-50/40 dark:hover:bg-rose-950/20 cursor-pointer transition-all flex items-center justify-between group"
                       >
