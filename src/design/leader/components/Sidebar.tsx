@@ -22,6 +22,7 @@ import {
   HeartHandshake,
   Settings
 } from 'lucide-react';
+import { SignOutButton } from '@/components/auth/SignOutButton';
 
 interface SidebarProps {
   currentTab: string;
@@ -268,6 +269,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <ShieldCheck className="w-4 h-4 mx-auto" />
         </div>
       )}
+      <div className="px-3 pb-3">
+        <SignOutButton compact={isCollapsed} tone="dark" className={isCollapsed ? 'w-full' : ''} />
+      </div>
     </aside>
   );
 };

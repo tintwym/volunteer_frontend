@@ -34,12 +34,10 @@ type AuthContextValue = {
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<AuthUser | null>(() => getStoredUser());
-  const [loading, setLoading] = useState(() => {
-    const token = getStoredToken();
-    if (!token) return false;
-    return !isDemoToken(token);
-  });
+  // Storage is only readable in the browser, so the first render must match
+  // the server (no user, loading) and the session is restored after mount.
+  const [user, setUser] = useState<AuthUser | null>(null);
+  const [loading, setLoading] = useState(true);
 
   const refresh = useCallback(async () => {
     const token = getStoredToken();
@@ -67,16 +65,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    const token = getStoredToken();
-    // Demo sessions are fully restored by the initial useState values.
-    if (!token || isDemoToken(token)) {
-      return;
-    }
-
     let cancelled = false;
 
     void (async () => {
       try {
+        const token = getStoredToken();
+        if (!token || isDemoToken(token)) {
+          if (!cancelled) setUser(token ? getStoredUser() : null);
+          return;
+        }
         const me = await fetchMe();
         if (!cancelled) {
           setUser(me);

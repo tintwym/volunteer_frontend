@@ -27,6 +27,7 @@ import {
   Sparkles,
   Clock,
 } from 'lucide-react';
+import { SignOutButton } from '@/components/auth/SignOutButton';
 import { User } from '../types';
 
 export type ActiveTab =
@@ -383,6 +384,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </button>
           )}
         </div>
+        <SignOutButton compact={collapsed} className="mt-1" />
       </div>
     </aside>
   );

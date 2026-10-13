@@ -25,6 +25,7 @@ import {
   ChevronRight,
   Settings
 } from 'lucide-react';
+import { SignOutButton } from '@/components/auth/SignOutButton';
 import { VolunteerProfile } from '../types';
 
 interface SidebarProps {
@@ -310,6 +311,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <span>Milestone Badges</span>
             <ChevronRight className="w-3 h-3" />
           </button>
+          <SignOutButton className="mt-2" />
         </div>
       </aside>
     </>
