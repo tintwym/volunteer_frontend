@@ -6,7 +6,7 @@ import { useApp } from '../../context/AppContext';
 import { ArrowRight, HeartHandshake, Sparkles } from 'lucide-react';
 
 export const FinalCTASection: React.FC = () => {
-  const { setPage, setIsAuthModalOpen, t } = useApp();
+  const { setPage, openAuthModal, t } = useApp();
 
   return (
     <section 
@@ -54,7 +54,7 @@ export const FinalCTASection: React.FC = () => {
           </button>
 
           <button
-            onClick={() => setIsAuthModalOpen(true)}
+            onClick={() => openAuthModal('signup')}
             className="px-6 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-sm backdrop-blur-md border border-white/20 transition-colors shadow-sm"
           >
             {t.cta?.joinCommunity || t.sections?.joinCommunity || 'Join the Community'}

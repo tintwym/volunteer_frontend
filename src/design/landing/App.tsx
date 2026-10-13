@@ -26,7 +26,6 @@ import { UserProfilePage } from './pages/UserProfilePage';
 import { OrgDashboardPage } from './pages/OrgDashboardPage';
 
 // Modals
-import { AuthModal } from './components/modals/AuthModal';
 import { GlobalSearchModal } from './components/modals/GlobalSearchModal';
 import { NotificationsModal } from './components/modals/NotificationsModal';
 import { VolunteerApplyModal } from './components/modals/VolunteerApplyModal';
@@ -76,7 +75,6 @@ const AppShell: React.FC = () => {
       <Footer />
 
       {/* Global Application Modals */}
-      <AuthModal />
       <GlobalSearchModal />
       <NotificationsModal />
       <VolunteerApplyModal />

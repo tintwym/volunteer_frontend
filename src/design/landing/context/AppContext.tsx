@@ -3,6 +3,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import confetti from 'canvas-confetti';
+import { useRouter } from 'next/navigation';
 import { useTheme } from '@/components/theme/ThemeProvider';
 import { 
   PageView, 
@@ -213,7 +214,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const [userRole, setUserRole] = useState<UserRole>(currentUser.role || 'volunteer');
 
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const router = useRouter();
+  const isAuthModalOpen = false;
   const [authModalMode, setAuthModalMode] = useState<'signin' | 'signup'>('signin');
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
   const [opportunitySearchQuery, setOpportunitySearchQuery] = useState('');
@@ -295,9 +297,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setToasts(prev => prev.filter(t => t.id !== id));
   };
 
+  // Sign-in and sign-up live on the dedicated /login and /signup pages.
   const openAuthModal = (mode: 'signin' | 'signup' = 'signin') => {
     setAuthModalMode(mode);
-    setIsAuthModalOpen(true);
+    router.push(mode === 'signup' ? '/signup' : '/login');
+  };
+
+  const setIsAuthModalOpen = (open: boolean) => {
+    if (open) openAuthModal(authModalMode);
   };
 
   const login = (
@@ -358,9 +365,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setIsLoggedIn(false);
     localStorage.setItem('cg_is_logged_in', 'false');
     setPageInternal('home');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    setAuthModalMode('signin');
-    setIsAuthModalOpen(true);
+    openAuthModal('signin');
     addToast({
       type: 'info',
       title: 'Switch Account',

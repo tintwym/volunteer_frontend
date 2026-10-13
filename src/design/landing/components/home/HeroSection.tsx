@@ -7,7 +7,7 @@ import { Search, MapPin, Calendar, ArrowRight, HeartHandshake, Sparkles, Users }
 import { FadeIn, motion } from '@/components/motion/ui';
 
 export const HeroSection: React.FC = () => {
-  const { setPage, setIsAuthModalOpen, t, setOpportunitySearchQuery } = useApp();
+  const { setPage, openAuthModal, t, setOpportunitySearchQuery } = useApp();
   const [interestQuery, setInterestQuery] = useState('');
   const [locationQuery, setLocationQuery] = useState('');
   const [dateQuery, setDateQuery] = useState('');
@@ -74,7 +74,7 @@ export const HeroSection: React.FC = () => {
             </button>
 
             <button
-              onClick={() => setIsAuthModalOpen(true)}
+              onClick={() => openAuthModal('signup')}
               className="px-6 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-sm backdrop-blur-md border border-white/25 transition-all shadow-sm"
             >
               {t.hero.secondaryCta}
