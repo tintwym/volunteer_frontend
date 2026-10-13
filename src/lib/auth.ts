@@ -89,14 +89,19 @@ export function normalizeUser(raw: unknown): AuthUser | null {
   };
 }
 
+/** "Remember me" sessions live in localStorage; others only last for the tab. */
+function activeStorage(): Storage {
+  return sessionStorage.getItem(TOKEN_KEY) ? sessionStorage : localStorage;
+}
+
 export function getStoredToken(): string | null {
   if (typeof window === "undefined") return null;
-  return localStorage.getItem(TOKEN_KEY);
+  return activeStorage().getItem(TOKEN_KEY);
 }
 
 export function getStoredUser(): AuthUser | null {
   if (typeof window === "undefined") return null;
-  const raw = localStorage.getItem(USER_KEY);
+  const raw = activeStorage().getItem(USER_KEY);
   if (!raw) return null;
   try {
     const user = normalizeUser(JSON.parse(raw));
@@ -111,18 +116,32 @@ export function getStoredUser(): AuthUser | null {
   }
 }
 
-export function storeAuth(response: AuthResponse) {
+/** Omit `remember` to keep the current session's storage choice. */
+export function storeAuth(response: AuthResponse, remember?: boolean) {
   const user = normalizeUser(response.user);
   if (!user || !response.accessToken) {
     throw new Error("Login response was incomplete. Please try again.");
   }
-  localStorage.setItem(TOKEN_KEY, response.accessToken);
-  localStorage.setItem(USER_KEY, JSON.stringify(user));
+  const storage =
+    remember === undefined
+      ? activeStorage()
+      : remember
+        ? localStorage
+        : sessionStorage;
+  clearAuth();
+  storage.setItem(TOKEN_KEY, response.accessToken);
+  storage.setItem(USER_KEY, JSON.stringify(user));
+}
+
+export function storeUser(user: AuthUser) {
+  activeStorage().setItem(USER_KEY, JSON.stringify(user));
 }
 
 export function clearAuth() {
   localStorage.removeItem(TOKEN_KEY);
   localStorage.removeItem(USER_KEY);
+  sessionStorage.removeItem(TOKEN_KEY);
+  sessionStorage.removeItem(USER_KEY);
 }
 
 export function dashboardPathForRole(role: Role | string | null | undefined): string {
@@ -210,7 +229,10 @@ export async function signup(input: {
   return normalized;
 }
 
-export async function login(input: { email: string; password: string }) {
+export async function login(
+  input: { email: string; password: string },
+  remember = true
+) {
   const data = await apiFetch<AuthResponse>("/api/auth/login", {
     method: "POST",
     body: JSON.stringify(input),
@@ -220,7 +242,7 @@ export async function login(input: { email: string; password: string }) {
     throw new Error("Login succeeded but the account response was invalid.");
   }
   const normalized = { ...data, user };
-  storeAuth(normalized);
+  storeAuth(normalized, remember);
   return normalized;
 }
 

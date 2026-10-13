@@ -1,21 +1,13 @@
-"use client";
-
-import { AuthCard } from "@/components/auth/AuthCard";
-import dynamic from "next/dynamic";
-
-const LandingApp = dynamic(() => import("@/design/landing/App"), {
-  ssr: false,
-  loading: () => <div className="min-h-screen bg-stone-900" />,
-});
+import { AuthSplitLayout } from "@/components/auth/AuthSplitLayout";
+import { SignupForm } from "@/components/auth/SignupForm";
 
 export default function SignupPage() {
   return (
-    <>
-      {/* Prototype: auth modal sits over the live landing page */}
-      <div className="fixed inset-0 overflow-y-auto" aria-hidden>
-        <LandingApp />
-      </div>
-      <AuthCard key="signup" initialType="organization" variant="modal" />
-    </>
+    <AuthSplitLayout
+      title="Create your organization"
+      subtitle="Set up a workspace as the organizer. You can invite leaders and volunteers later."
+    >
+      <SignupForm />
+    </AuthSplitLayout>
   );
 }

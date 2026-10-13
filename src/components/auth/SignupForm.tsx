@@ -1,6 +1,13 @@
 "use client";
 
 import { useAuth } from "@/components/auth/AuthProvider";
+import {
+  FormNotice,
+  GoogleButton,
+  OrDivider,
+  PasswordField,
+  TextField,
+} from "@/components/auth/AuthFields";
 import { signup, dashboardPathForRole, isRole } from "@/lib/auth";
 import { validateSignup } from "@/lib/validation";
 import Link from "next/link";
@@ -14,8 +21,10 @@ export function SignupForm() {
   const [organizationName, setOrganizationName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [formError, setFormError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
@@ -33,9 +42,11 @@ export function SignupForm() {
       organizationName,
       email,
       password,
+      confirmPassword,
     });
     setFieldErrors(errors);
     setFormError(null);
+    setNotice(null);
 
     if (Object.keys(errors).length > 0) {
       return;
@@ -60,105 +71,101 @@ export function SignupForm() {
     }
   }
 
-  const inputClass = (hasError: boolean) =>
-    `w-full rounded-lg border bg-white px-3 py-2 text-sm outline-none ring-emerald-600 focus:ring-2 ${
-      hasError ? "border-rose-400" : "border-stone-300"
-    }`;
-
   return (
-    <form onSubmit={onSubmit} noValidate className="flex flex-col gap-3">
-      <p className="rounded-lg bg-emerald-50 px-3 py-2 text-sm leading-snug text-emerald-800">
-        New accounts are created as <strong>Organizer</strong> by default.
-      </p>
+    <div className="space-y-6">
+      <GoogleButton
+        onClick={() => {
+          setFormError(null);
+          setNotice("Google sign-up is coming soon. Please continue with email.");
+        }}
+      />
+      <OrDivider />
 
-      <div className="flex flex-col gap-1">
-        <label className="text-sm font-medium text-stone-700">Full name</label>
-        <input
+      <form onSubmit={onSubmit} noValidate className="space-y-4">
+        <TextField
+          label="Full name"
+          name="fullName"
           autoComplete="name"
+          placeholder="e.g. Alex Rivera"
           value={fullName}
+          error={fieldErrors.fullName}
           onChange={(e) => {
             setFullName(e.target.value);
             setFieldErrors((prev) => ({ ...prev, fullName: "" }));
           }}
-          className={inputClass(Boolean(fieldErrors.fullName))}
         />
-        {fieldErrors.fullName && (
-          <p className="text-xs text-rose-600">{fieldErrors.fullName}</p>
-        )}
-      </div>
 
-      <div className="flex flex-col gap-1">
-        <label className="text-sm font-medium text-stone-700">
-          Organization name
-        </label>
-        <input
+        <TextField
+          label="Organization name"
+          name="organizationName"
+          autoComplete="organization"
+          placeholder="e.g. Green Roots"
           value={organizationName}
+          error={fieldErrors.organizationName}
           onChange={(e) => {
             setOrganizationName(e.target.value);
             setFieldErrors((prev) => ({ ...prev, organizationName: "" }));
           }}
-          className={inputClass(Boolean(fieldErrors.organizationName))}
         />
-        {fieldErrors.organizationName && (
-          <p className="text-xs text-rose-600">
-            {fieldErrors.organizationName}
-          </p>
-        )}
-      </div>
 
-      <div className="flex flex-col gap-1">
-        <label className="text-sm font-medium text-stone-700">Email</label>
-        <input
+        <TextField
+          label="Work email"
+          name="email"
           type="email"
           autoComplete="email"
+          placeholder="name@organization.com"
           value={email}
+          error={fieldErrors.email}
           onChange={(e) => {
             setEmail(e.target.value);
             setFieldErrors((prev) => ({ ...prev, email: "" }));
           }}
-          className={inputClass(Boolean(fieldErrors.email))}
         />
-        {fieldErrors.email && (
-          <p className="text-xs text-rose-600">{fieldErrors.email}</p>
-        )}
-      </div>
 
-      <div className="flex flex-col gap-1">
-        <label className="text-sm font-medium text-stone-700">Password</label>
-        <input
-          type="password"
+        <PasswordField
+          label="Password"
+          name="password"
           autoComplete="new-password"
+          placeholder="At least 8 characters"
           value={password}
+          error={fieldErrors.password}
           onChange={(e) => {
             setPassword(e.target.value);
-            setFieldErrors((prev) => ({ ...prev, password: "" }));
+            setFieldErrors((prev) => ({ ...prev, password: "", confirmPassword: "" }));
           }}
-          className={inputClass(Boolean(fieldErrors.password))}
         />
-        {fieldErrors.password && (
-          <p className="text-xs text-rose-600">{fieldErrors.password}</p>
-        )}
-      </div>
 
-      {formError && (
-        <p className="rounded-lg bg-rose-50 px-3 py-2 text-sm text-rose-700">
-          {formError}
-        </p>
-      )}
+        <PasswordField
+          label="Confirm password"
+          name="confirmPassword"
+          autoComplete="new-password"
+          placeholder="Re-enter your password"
+          value={confirmPassword}
+          error={fieldErrors.confirmPassword}
+          onChange={(e) => {
+            setConfirmPassword(e.target.value);
+            setFieldErrors((prev) => ({ ...prev, confirmPassword: "" }));
+          }}
+        />
 
-      <button
-        type="submit"
-        disabled={submitting || loading}
-        className="w-full rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-emerald-500 disabled:opacity-60"
-      >
-        {submitting ? "Creating…" : "Create organizer account"}
-      </button>
+        {formError && <FormNotice tone="error">{formError}</FormNotice>}
+        {notice && <FormNotice tone="info">{notice}</FormNotice>}
+
+        <button
+          type="submit"
+          disabled={submitting || loading}
+          className="w-full rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-emerald-700 disabled:opacity-60"
+        >
+          {submitting ? "Creating account…" : "Create account"}
+        </button>
+      </form>
+
       <p className="text-center text-sm text-stone-600">
         Already have an account?{" "}
-        <Link href="/login" className="font-semibold text-emerald-700">
+        <Link href="/login" className="font-semibold text-emerald-700 hover:text-emerald-800">
           Sign in
         </Link>
       </p>
-    </form>
+    </div>
   );
 }

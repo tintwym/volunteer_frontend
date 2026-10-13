@@ -41,6 +41,7 @@ export function AuthCard({
   const [organizationName, setOrganizationName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -63,6 +64,7 @@ export function AuthCard({
         organizationName,
         email,
         password,
+        confirmPassword,
       });
       setFieldErrors(errors);
       if (Object.keys(errors).length > 0) return;
@@ -339,7 +341,11 @@ export function AuthCard({
                 value={password}
                 onChange={(e) => {
                   setPassword(e.target.value);
-                  setFieldErrors((prev) => ({ ...prev, password: "" }));
+                  setFieldErrors((prev) => ({
+                    ...prev,
+                    password: "",
+                    confirmPassword: "",
+                  }));
                 }}
                 placeholder="••••••••"
                 className={inputClass(Boolean(fieldErrors.password))}
@@ -349,6 +355,33 @@ export function AuthCard({
               <p className="mt-1 text-xs text-rose-600">{fieldErrors.password}</p>
             )}
           </div>
+
+          {accountType === "organization" && (
+            <div>
+              <label className="mb-1 block text-xs font-medium text-stone-700">
+                Confirm Password
+              </label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-3 h-4 w-4 text-stone-400" />
+                <input
+                  type="password"
+                  autoComplete="new-password"
+                  value={confirmPassword}
+                  onChange={(e) => {
+                    setConfirmPassword(e.target.value);
+                    setFieldErrors((prev) => ({ ...prev, confirmPassword: "" }));
+                  }}
+                  placeholder="Re-enter your password"
+                  className={inputClass(Boolean(fieldErrors.confirmPassword))}
+                />
+              </div>
+              {fieldErrors.confirmPassword && (
+                <p className="mt-1 text-xs text-rose-600">
+                  {fieldErrors.confirmPassword}
+                </p>
+              )}
+            </div>
+          )}
 
           {formError && (
             <p className="rounded-xl bg-rose-50 px-3 py-2 text-xs text-rose-700">

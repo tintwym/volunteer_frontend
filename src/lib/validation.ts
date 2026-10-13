@@ -30,6 +30,8 @@ export function validateSignup(input: {
   organizationName: string;
   email: string;
   password: string;
+  /** Omit when the form has no confirm-password field. */
+  confirmPassword?: string;
 }): FieldErrors {
   const errors: FieldErrors = {};
   const fullName = input.fullName.trim();
@@ -59,6 +61,14 @@ export function validateSignup(input: {
     errors.password = "Password is required.";
   } else if (password.length < 8) {
     errors.password = "Password must be at least 8 characters.";
+  }
+
+  if (input.confirmPassword !== undefined) {
+    if (!input.confirmPassword) {
+      errors.confirmPassword = "Please confirm your password.";
+    } else if (input.confirmPassword !== password) {
+      errors.confirmPassword = "Passwords don't match.";
+    }
   }
 
   return errors;

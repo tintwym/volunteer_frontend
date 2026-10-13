@@ -6,6 +6,7 @@ import {
   fetchMe,
   getStoredToken,
   storeAuth,
+  storeUser,
   AuthResponse,
   getStoredUser,
   normalizeUser,
@@ -56,7 +57,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       const me = await fetchMe();
       setUser(me);
-      localStorage.setItem("cg_auth_user", JSON.stringify(me));
+      storeUser(me);
     } catch {
       clearAuth();
       setUser(null);
@@ -67,13 +68,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const token = getStoredToken();
-    if (!token) {
-      return;
-    }
-
-    if (isDemoToken(token)) {
-      setUser(getStoredUser());
-      setLoading(false);
+    // Demo sessions are fully restored by the initial useState values.
+    if (!token || isDemoToken(token)) {
       return;
     }
 
@@ -84,7 +80,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const me = await fetchMe();
         if (!cancelled) {
           setUser(me);
-          localStorage.setItem("cg_auth_user", JSON.stringify(me));
+          storeUser(me);
         }
       } catch {
         if (!cancelled) {
