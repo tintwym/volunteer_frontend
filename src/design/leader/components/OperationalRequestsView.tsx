@@ -20,6 +20,7 @@ import {
   Building
 } from 'lucide-react';
 import { OperationalRequest, OperationalRequestType, OperationalRequestUrgency } from '../types';
+import { SelectMenu } from '@/components/ui/SelectMenu';
 
 interface OperationalRequestsViewProps {
   requests: OperationalRequest[];
@@ -219,7 +220,7 @@ export const OperationalRequestsView: React.FC<OperationalRequestsViewProps> = (
             <form onSubmit={handleSubmit} className="space-y-3 text-xs">
               <div>
                 <label className="font-bold text-slate-700 block mb-1">Request Type *</label>
-                <select
+                <SelectMenu
                   value={type}
                   onChange={(e) => setType(e.target.value as OperationalRequestType)}
                   className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 font-medium"
@@ -231,7 +232,7 @@ export const OperationalRequestsView: React.FC<OperationalRequestsViewProps> = (
                   <option value="Venue support">Venue support (Janitorial/Electrician)</option>
                   <option value="Transportation">Transportation / Shuttle</option>
                   <option value="Emergency assistance">Emergency assistance</option>
-                </select>
+                </SelectMenu>
               </div>
 
               <div>

@@ -17,6 +17,7 @@ import {
   ShieldCheck,
 } from 'lucide-react';
 import { OperationalTeam } from '../types';
+import { SelectMenu } from '@/components/ui/SelectMenu';
 
 interface TeamManagementViewProps {
   teams?: OperationalTeam[];
@@ -403,7 +404,7 @@ export const TeamManagementView: React.FC<TeamManagementViewProps> = ({
 
               <div>
                 <label className="block font-bold text-slate-700 mb-1">Appointed Squad Leader</label>
-                <select
+                <SelectMenu
                   value={teamLeader}
                   onChange={(e) => setTeamLeader(e.target.value)}
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900"
@@ -412,7 +413,7 @@ export const TeamManagementView: React.FC<TeamManagementViewProps> = ({
                   <option value="Marcus Vance">Marcus Vance</option>
                   <option value="Mateo Gomez">Mateo Gomez</option>
                   <option value="Dr. Sarah Jenkins">Dr. Sarah Jenkins</option>
-                </select>
+                </SelectMenu>
               </div>
 
               <div>

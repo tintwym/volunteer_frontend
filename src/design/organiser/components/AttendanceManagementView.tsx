@@ -17,6 +17,7 @@ import {
   FileCheck2,
 } from 'lucide-react';
 import { AttendanceRecordItem, AttendanceStatus } from '../types';
+import { SelectMenu } from '@/components/ui/SelectMenu';
 
 interface AttendanceManagementViewProps {
   attendance?: AttendanceRecordItem[];
@@ -154,7 +155,7 @@ export const AttendanceManagementView: React.FC<AttendanceManagementViewProps> =
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          <select
+          <SelectMenu
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
             className="text-xs font-semibold bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-700"
@@ -165,9 +166,9 @@ export const AttendanceManagementView: React.FC<AttendanceManagementViewProps> =
             <option value="Absent">Absent</option>
             <option value="Excused">Excused</option>
             <option value="Left Early">Left Early</option>
-          </select>
+          </SelectMenu>
 
-          <select
+          <SelectMenu
             value={teamFilter}
             onChange={(e) => setTeamFilter(e.target.value)}
             className="text-xs font-semibold bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-700"
@@ -177,7 +178,7 @@ export const AttendanceManagementView: React.FC<AttendanceManagementViewProps> =
             <option value="Logistics Team">Logistics Team</option>
             <option value="Crowd Management Team">Crowd Management Team</option>
             <option value="First Aid Support Team">First Aid Support Team</option>
-          </select>
+          </SelectMenu>
         </div>
       </div>
 
@@ -274,7 +275,7 @@ export const AttendanceManagementView: React.FC<AttendanceManagementViewProps> =
             <form onSubmit={handleCorrectionSubmit} className="space-y-3 text-xs">
               <div>
                 <label className="block font-bold text-slate-700 mb-1">Status</label>
-                <select
+                <SelectMenu
                   value={newStatus}
                   onChange={(e) => setNewStatus(e.target.value as AttendanceStatus)}
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900"
@@ -284,7 +285,7 @@ export const AttendanceManagementView: React.FC<AttendanceManagementViewProps> =
                   <option value="Absent">Absent</option>
                   <option value="Excused">Excused</option>
                   <option value="Left Early">Left Early</option>
-                </select>
+                </SelectMenu>
               </div>
 
               <div>

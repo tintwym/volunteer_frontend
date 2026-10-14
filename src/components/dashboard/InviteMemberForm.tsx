@@ -2,6 +2,7 @@
 
 import { apiFetch } from "@/lib/auth";
 import { FormEvent, useState } from "react";
+import { SelectMenu } from "@/components/ui/SelectMenu";
 
 type InviteResult = {
   email: string;
@@ -51,7 +52,7 @@ export function InviteMemberForm() {
           onChange={(e) => setEmail(e.target.value)}
           className="rounded-xl border border-stone-300 bg-white px-3 py-2.5 text-sm outline-none ring-emerald-600 focus:ring-2"
         />
-        <select
+        <SelectMenu
           value={role}
           onChange={(e) =>
             setRole(e.target.value as "VOLUNTEER_LEADER" | "VOLUNTEER")
@@ -60,7 +61,7 @@ export function InviteMemberForm() {
         >
           <option value="VOLUNTEER">Volunteer</option>
           <option value="VOLUNTEER_LEADER">Volunteer Leader</option>
-        </select>
+        </SelectMenu>
         <button
           type="submit"
           disabled={submitting}

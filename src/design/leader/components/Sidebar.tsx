@@ -168,7 +168,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
       }`}
     >
       {/* Brand Header */}
-      <div className="h-16 px-4 flex items-center justify-between border-b border-slate-800">
+      <div
+        className={`h-16 flex items-center border-b border-slate-800 ${
+          isCollapsed ? 'justify-center px-2' : 'justify-between px-4'
+        }`}
+      >
         {!isCollapsed ? (
           <div className="flex items-center gap-2.5 overflow-hidden">
             <div className="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center text-white shrink-0 font-bold shadow-xs">
@@ -184,33 +188,42 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </div>
           </div>
         ) : (
-          <div className="mx-auto">
-            <div className="w-9 h-9 rounded-lg bg-emerald-500 flex items-center justify-center text-white font-bold shadow-xs">
-              <HeartHandshake className="w-5 h-5" />
-            </div>
+          <div className="w-9 h-9 rounded-lg bg-emerald-500 flex items-center justify-center text-white font-bold shadow-xs">
+            <HeartHandshake className="w-5 h-5" />
           </div>
         )}
 
         {/* Collapse toggle button */}
         <button
           onClick={onToggleCollapse}
-          className={`p-1.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors cursor-pointer ${
-            isCollapsed ? 'mx-auto mt-2' : ''
-          }`}
+          className={
+            isCollapsed
+              ? 'absolute -right-3 top-5 z-10 w-6 h-6 rounded-full bg-slate-800 border border-slate-600 shadow-sm flex items-center justify-center text-slate-300 hover:text-white hover:bg-emerald-600 hover:border-emerald-500 transition-colors cursor-pointer'
+              : 'p-1.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors cursor-pointer'
+          }
           title={isCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
+          aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
         >
-          {isCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+          {isCollapsed ? <ChevronRight className="w-3.5 h-3.5" /> : <ChevronLeft className="w-4 h-4" />}
         </button>
       </div>
 
       {/* Main Navigation with Sections */}
-      <nav className="flex-1 px-3 py-3 space-y-4 overflow-y-auto">
+      <nav
+        className={`flex-1 py-3 overflow-y-auto ${
+          isCollapsed
+            ? 'px-2 space-y-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden'
+            : 'px-3 space-y-4'
+        }`}
+      >
         {navSections.map((section, sIdx) => (
           <div key={sIdx} className="space-y-1">
-            {!isCollapsed && (
+            {!isCollapsed ? (
               <div className="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-500 pb-1">
                 {section.heading}
               </div>
+            ) : (
+              sIdx > 0 && <div className="mx-2 mb-2 border-t border-slate-800" aria-hidden />
             )}
 
             {section.items.map((item) => {

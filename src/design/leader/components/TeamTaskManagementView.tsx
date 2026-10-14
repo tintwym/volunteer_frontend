@@ -21,6 +21,7 @@ import {
   Check
 } from 'lucide-react';
 import { TeamTask, TaskStatus, TaskPriority, Volunteer } from '../types';
+import { SelectMenu } from '@/components/ui/SelectMenu';
 
 interface TeamTaskManagementViewProps {
   tasks: TeamTask[];
@@ -209,7 +210,7 @@ export const TeamTaskManagementView: React.FC<TeamTaskManagementViewProps> = ({
                   </div>
 
                   {/* Status Dropdown */}
-                  <select
+                  <SelectMenu
                     value={task.status}
                     onChange={(e) => onUpdateTaskStatus(task.id, e.target.value as TaskStatus)}
                     className="p-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold text-slate-800 focus:outline-none cursor-pointer"
@@ -219,7 +220,7 @@ export const TeamTaskManagementView: React.FC<TeamTaskManagementViewProps> = ({
                     <option value="Review">Review</option>
                     <option value="Completed">Completed</option>
                     <option value="Escalated">Escalated</option>
-                  </select>
+                  </SelectMenu>
                 </div>
 
                 {/* Sub-Role Delegations Container */}
@@ -272,7 +273,7 @@ export const TeamTaskManagementView: React.FC<TeamTaskManagementViewProps> = ({
                   {assigningTaskId === task.id && (
                     <div className="pt-2 border-t border-slate-200 mt-2 space-y-2">
                       <div className="grid grid-cols-2 gap-2">
-                        <select
+                        <SelectMenu
                           value={selectedVolunteerId}
                           onChange={(e) => setSelectedVolunteerId(e.target.value)}
                           className="p-1.5 bg-white border border-slate-200 rounded-lg text-xs"
@@ -280,7 +281,7 @@ export const TeamTaskManagementView: React.FC<TeamTaskManagementViewProps> = ({
                           {volunteers.map(v => (
                             <option key={v.id} value={v.id}>{v.name} ({v.role})</option>
                           ))}
-                        </select>
+                        </SelectMenu>
                         <input
                           type="text"
                           placeholder="Sub-role: Check-in, Queue..."
@@ -417,7 +418,7 @@ export const TeamTaskManagementView: React.FC<TeamTaskManagementViewProps> = ({
                 </div>
                 <div>
                   <label className="font-bold text-slate-700 block mb-1">Priority</label>
-                  <select
+                  <SelectMenu
                     value={newPriority}
                     onChange={(e) => setNewPriority(e.target.value as TaskPriority)}
                     className="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg"
@@ -426,7 +427,7 @@ export const TeamTaskManagementView: React.FC<TeamTaskManagementViewProps> = ({
                     <option value="Medium">Medium</option>
                     <option value="High">High</option>
                     <option value="Urgent">Urgent</option>
-                  </select>
+                  </SelectMenu>
                 </div>
               </div>
 

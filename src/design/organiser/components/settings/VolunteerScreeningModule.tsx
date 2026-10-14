@@ -12,6 +12,7 @@ import {
   Lock,
 } from 'lucide-react';
 import { OrganiserSystemSettings } from '../../types';
+import { SelectMenu } from '@/components/ui/SelectMenu';
 
 interface VolunteerScreeningModuleProps {
   settings: OrganiserSystemSettings;
@@ -173,7 +174,7 @@ export const VolunteerScreeningModule: React.FC<VolunteerScreeningModuleProps> =
               </p>
             </div>
             <div className="w-32 shrink-0">
-              <select
+              <SelectMenu
                 id="settings-min-age"
                 value={settings.minVolunteerAge ?? 16}
                 onChange={(e) => onChange('minVolunteerAge', parseInt(e.target.value) || 16)}
@@ -183,7 +184,7 @@ export const VolunteerScreeningModule: React.FC<VolunteerScreeningModuleProps> =
                 <option value={16}>16+ Years</option>
                 <option value={18}>18+ Years</option>
                 <option value={21}>21+ Years</option>
-              </select>
+              </SelectMenu>
             </div>
           </div>
         </div>

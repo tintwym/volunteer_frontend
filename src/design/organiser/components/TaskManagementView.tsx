@@ -18,6 +18,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { OperationalTask, TaskPriority, TaskStatus } from '../types';
+import { SelectMenu } from '@/components/ui/SelectMenu';
 
 interface TaskManagementViewProps {
   tasks?: OperationalTask[];
@@ -155,7 +156,7 @@ export const TaskManagementView: React.FC<TaskManagementViewProps> = ({
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          <select
+          <SelectMenu
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
             className="text-xs font-semibold bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-700"
@@ -166,9 +167,9 @@ export const TaskManagementView: React.FC<TaskManagementViewProps> = ({
             <option value="In Progress">In Progress</option>
             <option value="Completed">Completed</option>
             <option value="Cancelled">Cancelled</option>
-          </select>
+          </SelectMenu>
 
-          <select
+          <SelectMenu
             value={priorityFilter}
             onChange={(e) => setPriorityFilter(e.target.value)}
             className="text-xs font-semibold bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-700"
@@ -178,7 +179,7 @@ export const TaskManagementView: React.FC<TaskManagementViewProps> = ({
             <option value="High">High</option>
             <option value="Medium">Medium</option>
             <option value="Low">Low</option>
-          </select>
+          </SelectMenu>
         </div>
       </div>
 
@@ -243,7 +244,7 @@ export const TaskManagementView: React.FC<TaskManagementViewProps> = ({
               </div>
 
               {/* Status Switcher Select */}
-              <select
+              <SelectMenu
                 value={task.status}
                 onChange={(e) => {
                   const newStatus = e.target.value as TaskStatus;
@@ -257,7 +258,7 @@ export const TaskManagementView: React.FC<TaskManagementViewProps> = ({
                 <option value="In Progress">In Progress</option>
                 <option value="Completed">Completed</option>
                 <option value="Cancelled">Cancelled</option>
-              </select>
+              </SelectMenu>
 
               <button
                 onClick={() => setSelectedTask(task)}
@@ -369,7 +370,7 @@ export const TaskManagementView: React.FC<TaskManagementViewProps> = ({
               <div className="grid grid-cols-2 gap-2">
                 <div>
                   <label className="block font-bold text-slate-700 mb-1">Team</label>
-                  <select
+                  <SelectMenu
                     value={formTeamName}
                     onChange={(e) => setFormTeamName(e.target.value)}
                     className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900"
@@ -378,11 +379,11 @@ export const TaskManagementView: React.FC<TaskManagementViewProps> = ({
                     <option value="Logistics Team">Logistics Team</option>
                     <option value="Crowd Management Team">Crowd Management Team</option>
                     <option value="First Aid Support Team">First Aid Support Team</option>
-                  </select>
+                  </SelectMenu>
                 </div>
                 <div>
                   <label className="block font-bold text-slate-700 mb-1">Priority</label>
-                  <select
+                  <SelectMenu
                     value={formPriority}
                     onChange={(e) => setFormPriority(e.target.value as TaskPriority)}
                     className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900"
@@ -391,7 +392,7 @@ export const TaskManagementView: React.FC<TaskManagementViewProps> = ({
                     <option value="High">High</option>
                     <option value="Medium">Medium</option>
                     <option value="Low">Low</option>
-                  </select>
+                  </SelectMenu>
                 </div>
               </div>
 

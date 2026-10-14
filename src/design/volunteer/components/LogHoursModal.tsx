@@ -5,6 +5,7 @@ import React, { useState } from 'react';
 import { X, Clock, PlusCircle, User, Mail, Calendar, Sparkles } from 'lucide-react';
 import { EventCategory, ServiceRecord } from '../types';
 import confetti from 'canvas-confetti';
+import { SelectMenu } from '@/components/ui/SelectMenu';
 
 interface LogHoursModalProps {
   isOpen: boolean;
@@ -110,7 +111,7 @@ export const LogHoursModal: React.FC<LogHoursModalProps> = ({
               <label className="block font-semibold text-slate-700 mb-1">
                 Impact Category
               </label>
-              <select
+              <SelectMenu
                 value={category}
                 onChange={(e) => setCategory(e.target.value as EventCategory)}
                 className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-emerald-500 text-slate-800"
@@ -121,7 +122,7 @@ export const LogHoursModal: React.FC<LogHoursModalProps> = ({
                 <option value="Healthcare & Wellness">Healthcare & Wellness</option>
                 <option value="Animal Welfare">Animal Welfare</option>
                 <option value="Community Aid">Community Aid</option>
-              </select>
+              </SelectMenu>
             </div>
           </div>
 

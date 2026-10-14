@@ -24,6 +24,7 @@ import {
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { Volunteer, Badge, CertificateRecord, AppreciationLetterRecord } from '../types';
+import { SelectMenu } from '@/components/ui/SelectMenu';
 
 interface RecognitionMilestonesViewProps {
   volunteers: Volunteer[];
@@ -228,7 +229,7 @@ export const RecognitionMilestonesView: React.FC<RecognitionMilestonesViewProps>
             <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider block">
               Active Recognition Candidate
             </span>
-            <select
+            <SelectMenu
               value={selectedVolunteerId}
               onChange={(e) => setSelectedVolunteerId(e.target.value)}
               className="mt-0.5 text-sm font-bold text-slate-900 bg-transparent border-0 focus:outline-none cursor-pointer"
@@ -238,7 +239,7 @@ export const RecognitionMilestonesView: React.FC<RecognitionMilestonesViewProps>
                   {v.name} ({v.verifiedHours} Verified Hours • {v.role})
                 </option>
               ))}
-            </select>
+            </SelectMenu>
           </div>
         </div>
 
@@ -520,7 +521,7 @@ export const RecognitionMilestonesView: React.FC<RecognitionMilestonesViewProps>
             </div>
 
             <div className="flex items-center gap-2">
-              <select
+              <SelectMenu
                 value={selectedBadgeToAward}
                 onChange={(e) => setSelectedBadgeToAward(e.target.value)}
                 className="p-2 bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold text-slate-800 focus:outline-none"
@@ -530,7 +531,7 @@ export const RecognitionMilestonesView: React.FC<RecognitionMilestonesViewProps>
                     {b.name} ({b.category})
                   </option>
                 ))}
-              </select>
+              </SelectMenu>
 
               <button
                 onClick={handleAwardBadge}

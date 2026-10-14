@@ -20,6 +20,7 @@ import {
   ArrowRight
 } from 'lucide-react';
 import { ShiftEvent, Volunteer, EventCategory } from '../types';
+import { SelectMenu } from '@/components/ui/SelectMenu';
 
 interface SchedulingCoordinationViewProps {
   shifts: ShiftEvent[];
@@ -360,7 +361,7 @@ export const SchedulingCoordinationView: React.FC<SchedulingCoordinationViewProp
 
                         {/* Leader Attendance Marker */}
                         <div className="flex items-center gap-2 self-end sm:self-auto">
-                          <select
+                          <SelectMenu
                             value={record.status}
                             onChange={(e) =>
                               onUpdateAttendanceStatus(
@@ -384,7 +385,7 @@ export const SchedulingCoordinationView: React.FC<SchedulingCoordinationViewProp
                             <option value="Late">Late Arrival</option>
                             <option value="Excused">Excused</option>
                             <option value="No-Show">No-Show</option>
-                          </select>
+                          </SelectMenu>
 
                           {/* Hours status */}
                           <div className="text-right pl-2">
@@ -525,7 +526,7 @@ export const SchedulingCoordinationView: React.FC<SchedulingCoordinationViewProp
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="font-semibold text-slate-700 block mb-1">Category</label>
-                  <select
+                  <SelectMenu
                     value={formCategory}
                     onChange={(e) => setFormCategory(e.target.value as any)}
                     className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-emerald-500"
@@ -536,7 +537,7 @@ export const SchedulingCoordinationView: React.FC<SchedulingCoordinationViewProp
                     <option value="Emergency Shelter Support">Emergency Shelter Support</option>
                     <option value="Senior Outreach">Senior Outreach</option>
                     <option value="Disaster Relief">Disaster Relief</option>
-                  </select>
+                  </SelectMenu>
                 </div>
                 <div>
                   <label className="font-semibold text-slate-700 block mb-1">Date *</label>

@@ -16,6 +16,7 @@ import {
   FileSpreadsheet
 } from 'lucide-react';
 import { IncidentReport, IncidentCategory, IncidentUrgency } from '../types';
+import { SelectMenu } from '@/components/ui/SelectMenu';
 
 interface IncidentReportingViewProps {
   incidents: IncidentReport[];
@@ -221,7 +222,7 @@ export const IncidentReportingView: React.FC<IncidentReportingViewProps> = ({
             <form onSubmit={handleSubmit} className="mt-4 space-y-4 text-xs">
               <div>
                 <label className="block font-semibold text-slate-700 mb-1">Incident Category:</label>
-                <select
+                <SelectMenu
                   value={category}
                   onChange={(e) => setCategory(e.target.value as IncidentCategory)}
                   className="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-red-500 font-medium"
@@ -229,7 +230,7 @@ export const IncidentReportingView: React.FC<IncidentReportingViewProps> = ({
                   {categories.map((c) => (
                     <option key={c} value={c}>{c}</option>
                   ))}
-                </select>
+                </SelectMenu>
               </div>
 
               <div>
@@ -271,7 +272,7 @@ export const IncidentReportingView: React.FC<IncidentReportingViewProps> = ({
               <div className="grid grid-cols-2 gap-4 pt-1">
                 <div>
                   <label className="block font-semibold text-slate-700 mb-1">Urgency Level:</label>
-                  <select
+                  <SelectMenu
                     value={urgency}
                     onChange={(e) => setUrgency(e.target.value as IncidentUrgency)}
                     className="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-red-500"
@@ -280,7 +281,7 @@ export const IncidentReportingView: React.FC<IncidentReportingViewProps> = ({
                     <option value="Medium">Medium (Attention Required)</option>
                     <option value="High">High (Immediate Action)</option>
                     <option value="Critical">Critical (Life Safety / Immediate Threat)</option>
-                  </select>
+                  </SelectMenu>
                 </div>
 
                 <div>

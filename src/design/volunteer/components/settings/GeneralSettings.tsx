@@ -6,6 +6,7 @@ import { Globe, Calendar, Car, Bus, Bike, Footprints, Check, CalendarSync, Monit
 import { AppSettings } from '../../types';
 import { useTheme } from '@/components/theme/ThemeProvider';
 import type { ThemePreference } from '@/lib/theme';
+import { SelectMenu } from '@/components/ui/SelectMenu';
 
 interface GeneralSettingsProps {
   settings: AppSettings;
@@ -72,7 +73,7 @@ export const GeneralSettings: React.FC<GeneralSettingsProps> = ({ settings, onCh
             <label className="text-xs font-semibold text-slate-700 block mb-1">
               System Timezone
             </label>
-            <select
+            <SelectMenu
               value={settings.timezone}
               onChange={(e) => onChange({ timezone: e.target.value })}
               className="w-full text-xs bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-800 focus:outline-hidden focus:ring-2 focus:ring-emerald-500/20"
@@ -83,7 +84,7 @@ export const GeneralSettings: React.FC<GeneralSettingsProps> = ({ settings, onCh
               <option value="America/New_York (Eastern Time, UTC-4)">America/New_York (Eastern Time, UTC-4)</option>
               <option value="Pacific/Honolulu (Hawaii Time, UTC-10)">Pacific/Honolulu (Hawaii Time, UTC-10)</option>
               <option value="UTC (Coordinated Universal Time)">UTC (Coordinated Universal Time)</option>
-            </select>
+            </SelectMenu>
             <p className="text-[11px] text-slate-400 mt-1">
               Shift commencement times, roster reminders, and calendar exports use this timezone.
             </p>
@@ -94,7 +95,7 @@ export const GeneralSettings: React.FC<GeneralSettingsProps> = ({ settings, onCh
               <label className="text-xs font-semibold text-slate-700 block mb-1">
                 Date Formatting
               </label>
-              <select
+              <SelectMenu
                 value={settings.dateFormat}
                 onChange={(e) => onChange({ dateFormat: e.target.value })}
                 className="w-full text-xs bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-800 focus:outline-hidden focus:ring-2 focus:ring-emerald-500/20"
@@ -102,21 +103,21 @@ export const GeneralSettings: React.FC<GeneralSettingsProps> = ({ settings, onCh
                 <option value="MMM DD, YYYY">Sep 12, 2026</option>
                 <option value="DD/MM/YYYY">12/09/2026</option>
                 <option value="YYYY-MM-DD">2026-09-12</option>
-              </select>
+              </SelectMenu>
             </div>
 
             <div>
               <label className="text-xs font-semibold text-slate-700 block mb-1">
                 Time Standard
               </label>
-              <select
+              <SelectMenu
                 value={settings.timeFormat}
                 onChange={(e) => onChange({ timeFormat: e.target.value as '12h' | '24h' })}
                 className="w-full text-xs bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-800 focus:outline-hidden focus:ring-2 focus:ring-emerald-500/20"
               >
                 <option value="12h">12-Hour (8:00 AM – 12:00 PM)</option>
                 <option value="24h">24-Hour (08:00 – 12:00)</option>
-              </select>
+              </SelectMenu>
             </div>
           </div>
 
@@ -124,7 +125,7 @@ export const GeneralSettings: React.FC<GeneralSettingsProps> = ({ settings, onCh
             <label className="text-xs font-semibold text-slate-700 block mb-1">
               Portal Language
             </label>
-            <select
+            <SelectMenu
               value={settings.preferredLanguage}
               onChange={(e) => onChange({ preferredLanguage: e.target.value })}
               className="w-full text-xs bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-800 focus:outline-hidden focus:ring-2 focus:ring-emerald-500/20"
@@ -135,7 +136,7 @@ export const GeneralSettings: React.FC<GeneralSettingsProps> = ({ settings, onCh
               <option value="Mandarin (Simplified)">中文 (Mandarin)</option>
               <option value="Tiếng Việt">Tiếng Việt (Vietnamese)</option>
               <option value="Tagalog">Tagalog (Filipino)</option>
-            </select>
+            </SelectMenu>
           </div>
 
           <div>

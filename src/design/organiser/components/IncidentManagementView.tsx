@@ -20,6 +20,7 @@ import {
   ChevronRight,
 } from 'lucide-react';
 import { IncidentReport, IncidentType, IncidentStatus, IncidentSeverity } from '../types';
+import { SelectMenu } from '@/components/ui/SelectMenu';
 
 interface IncidentManagementViewProps {
   incidents?: IncidentReport[];
@@ -202,7 +203,7 @@ export const IncidentManagementView: React.FC<IncidentManagementViewProps> = ({
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          <select
+          <SelectMenu
             value={severityFilter}
             onChange={(e) => setSeverityFilter(e.target.value)}
             className="text-xs font-semibold bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-700"
@@ -212,9 +213,9 @@ export const IncidentManagementView: React.FC<IncidentManagementViewProps> = ({
             <option value="High">High</option>
             <option value="Medium">Medium</option>
             <option value="Low">Low</option>
-          </select>
+          </SelectMenu>
 
-          <select
+          <SelectMenu
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
             className="text-xs font-semibold bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-700"
@@ -226,7 +227,7 @@ export const IncidentManagementView: React.FC<IncidentManagementViewProps> = ({
             <option value="Escalated">Escalated</option>
             <option value="Resolved">Resolved</option>
             <option value="Closed">Closed</option>
-          </select>
+          </SelectMenu>
         </div>
       </div>
 
@@ -268,7 +269,7 @@ export const IncidentManagementView: React.FC<IncidentManagementViewProps> = ({
 
             {/* Status Switcher & Detail Button */}
             <div className="flex items-center gap-3 shrink-0 justify-between lg:justify-end border-t lg:border-t-0 pt-3 lg:pt-0 border-slate-100">
-              <select
+              <SelectMenu
                 value={inc.status}
                 onChange={(e) => handleUpdateStatus(inc.id, e.target.value as IncidentStatus)}
                 className="text-xs font-bold bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-1.5 text-slate-800"
@@ -279,7 +280,7 @@ export const IncidentManagementView: React.FC<IncidentManagementViewProps> = ({
                 <option value="Escalated">Escalated</option>
                 <option value="Resolved">Resolved</option>
                 <option value="Closed">Closed</option>
-              </select>
+              </SelectMenu>
 
               <button
                 onClick={() => setSelectedIncident(inc)}
@@ -405,7 +406,7 @@ export const IncidentManagementView: React.FC<IncidentManagementViewProps> = ({
               <div className="grid grid-cols-2 gap-2">
                 <div>
                   <label className="block font-bold text-slate-700 mb-1">Category</label>
-                  <select
+                  <SelectMenu
                     value={type}
                     onChange={(e) => setType(e.target.value as IncidentType)}
                     className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900"
@@ -417,11 +418,11 @@ export const IncidentManagementView: React.FC<IncidentManagementViewProps> = ({
                     <option value="Medical emergency">Medical emergency</option>
                     <option value="Safety issue">Safety issue</option>
                     <option value="Volunteer misconduct">Volunteer misconduct</option>
-                  </select>
+                  </SelectMenu>
                 </div>
                 <div>
                   <label className="block font-bold text-slate-700 mb-1">Severity</label>
-                  <select
+                  <SelectMenu
                     value={severity}
                     onChange={(e) => setSeverity(e.target.value as IncidentSeverity)}
                     className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900"
@@ -430,7 +431,7 @@ export const IncidentManagementView: React.FC<IncidentManagementViewProps> = ({
                     <option value="Medium">Medium</option>
                     <option value="High">High</option>
                     <option value="Critical">Critical</option>
-                  </select>
+                  </SelectMenu>
                 </div>
               </div>
 

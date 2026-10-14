@@ -19,6 +19,7 @@ import {
   ShieldCheck,
 } from 'lucide-react';
 import { TrainingMaterial } from '../types';
+import { SelectMenu } from '@/components/ui/SelectMenu';
 
 interface TrainingDocumentsViewProps {
   materials?: TrainingMaterial[];
@@ -220,7 +221,7 @@ export const TrainingDocumentsView: React.FC<TrainingDocumentsViewProps> = ({
               <div className="grid grid-cols-2 gap-2">
                 <div>
                   <label className="block font-bold text-slate-700 mb-1">Category</label>
-                  <select
+                  <SelectMenu
                     value={category}
                     onChange={(e) => setCategory(e.target.value)}
                     className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900"
@@ -229,11 +230,11 @@ export const TrainingDocumentsView: React.FC<TrainingDocumentsViewProps> = ({
                     <option value="Event Orientation">Event Orientation</option>
                     <option value="Emergency Procedure">Emergency Procedure</option>
                     <option value="Specialized Track">Specialized Track</option>
-                  </select>
+                  </SelectMenu>
                 </div>
                 <div>
                   <label className="block font-bold text-slate-700 mb-1">Resource Type</label>
-                  <select
+                  <SelectMenu
                     value={type}
                     onChange={(e) => setType(e.target.value as any)}
                     className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900"
@@ -242,7 +243,7 @@ export const TrainingDocumentsView: React.FC<TrainingDocumentsViewProps> = ({
                     <option value="video">Video Lecture</option>
                     <option value="document">PDF Document</option>
                     <option value="guideline">Guideline SOP</option>
-                  </select>
+                  </SelectMenu>
                 </div>
               </div>
 

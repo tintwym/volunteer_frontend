@@ -25,6 +25,7 @@ import {
   X,
 } from 'lucide-react';
 import { OrganiserEvent, EventStatus, CauseCategory } from '../types';
+import { SelectMenu } from '@/components/ui/SelectMenu';
 
 interface EventManagementViewProps {
   events?: OrganiserEvent[];
@@ -274,7 +275,7 @@ export const EventManagementView: React.FC<EventManagementViewProps> = ({
 
         <div className="flex flex-wrap items-center gap-2">
           {/* Status filter dropdown */}
-          <select
+          <SelectMenu
             value={selectedStatus}
             onChange={(e) => setSelectedStatus(e.target.value)}
             className="text-xs font-semibold bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-700"
@@ -285,10 +286,10 @@ export const EventManagementView: React.FC<EventManagementViewProps> = ({
                 {st}
               </option>
             ))}
-          </select>
+          </SelectMenu>
 
           {/* Category filter */}
-          <select
+          <SelectMenu
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
             className="text-xs font-semibold bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-700"
@@ -299,7 +300,7 @@ export const EventManagementView: React.FC<EventManagementViewProps> = ({
             <option value="Education">Education</option>
             <option value="Community Aid">Community Aid</option>
             <option value="Disaster Relief">Disaster Relief</option>
-          </select>
+          </SelectMenu>
         </div>
       </div>
 
@@ -403,7 +404,7 @@ export const EventManagementView: React.FC<EventManagementViewProps> = ({
                 </div>
 
                 {/* Status Switcher Quick Select */}
-                <select
+                <SelectMenu
                   value={event.status}
                   onChange={(e) => handleChangeStatus(event.id, e.target.value as EventStatus)}
                   className="text-[11px] font-bold bg-white border border-slate-200 rounded-lg px-2 py-1 text-slate-800"
@@ -413,7 +414,7 @@ export const EventManagementView: React.FC<EventManagementViewProps> = ({
                       {st}
                     </option>
                   ))}
-                </select>
+                </SelectMenu>
               </div>
             </div>
           );
@@ -508,7 +509,7 @@ export const EventManagementView: React.FC<EventManagementViewProps> = ({
 
                 <div>
                   <label className="block font-bold text-slate-700 mb-1">Event Category</label>
-                  <select
+                  <SelectMenu
                     value={formCategory}
                     onChange={(e) => setFormCategory(e.target.value as CauseCategory)}
                     className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900"
@@ -518,12 +519,12 @@ export const EventManagementView: React.FC<EventManagementViewProps> = ({
                     <option value="Education">Education</option>
                     <option value="Community Aid">Community Aid</option>
                     <option value="Disaster Relief">Disaster Relief</option>
-                  </select>
+                  </SelectMenu>
                 </div>
 
                 <div>
                   <label className="block font-bold text-slate-700 mb-1">Event Status</label>
-                  <select
+                  <SelectMenu
                     value={formStatus}
                     onChange={(e) => setFormStatus(e.target.value as EventStatus)}
                     className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900"
@@ -533,7 +534,7 @@ export const EventManagementView: React.FC<EventManagementViewProps> = ({
                         {st}
                       </option>
                     ))}
-                  </select>
+                  </SelectMenu>
                 </div>
 
                 <div>

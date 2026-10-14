@@ -11,6 +11,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { VolunteerShift } from '../types';
+import { SelectMenu } from '@/components/ui/SelectMenu';
 
 interface LogHoursModalProps {
   shifts: VolunteerShift[];
@@ -101,7 +102,7 @@ export const LogHoursModal: React.FC<LogHoursModalProps> = ({
             <label className="block font-semibold text-slate-700 mb-1">
               Select Shift or Custom Activity
             </label>
-            <select
+            <SelectMenu
               value={selectedShiftId}
               onChange={(e) => {
                 const val = e.target.value;
@@ -124,7 +125,7 @@ export const LogHoursModal: React.FC<LogHoursModalProps> = ({
                   {s.title} ({s.date})
                 </option>
               ))}
-            </select>
+            </SelectMenu>
           </div>
 
           {selectedShiftId === 'adhoc' && (

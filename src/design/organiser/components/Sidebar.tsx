@@ -220,7 +220,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
       }`}
     >
       {/* Brand Header */}
-      <div className="h-20 flex items-center justify-between px-4 border-b border-slate-100">
+      <div
+        className={`h-20 flex items-center border-b border-slate-100 ${
+          collapsed ? 'justify-center px-2' : 'justify-between px-4'
+        }`}
+      >
         <div className="flex items-center gap-3 overflow-hidden">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center text-white shadow-sm shrink-0">
             <HeartHandshake className="w-5 h-5" />
@@ -239,10 +243,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <button
           id="toggle-sidebar-button"
           onClick={() => setCollapsed(!collapsed)}
-          className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+          className={
+            collapsed
+              ? 'absolute -right-3 top-7 z-10 w-6 h-6 rounded-full bg-white border border-slate-200 shadow-sm flex items-center justify-center text-slate-500 hover:text-emerald-700 hover:border-emerald-300 transition-colors'
+              : 'p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors'
+          }
           title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
         >
-          {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+          {collapsed ? <ChevronRight className="w-3.5 h-3.5" /> : <ChevronLeft className="w-4 h-4" />}
         </button>
       </div>
 
@@ -262,13 +271,21 @@ export const Sidebar: React.FC<SidebarProps> = ({
       )}
 
       {/* Navigation Items */}
-      <nav className="flex-1 px-3 py-3 space-y-4 overflow-y-auto">
+      <nav
+        className={`flex-1 py-3 overflow-y-auto ${
+          collapsed
+            ? 'px-2 space-y-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden'
+            : 'px-3 space-y-4'
+        }`}
+      >
         {navSections.map((section, sIdx) => (
           <div key={sIdx} className="space-y-1">
-            {!collapsed && (
+            {!collapsed ? (
               <p className="px-3.5 py-1 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
                 {section.group}
               </p>
+            ) : (
+              sIdx > 0 && <div className="mx-2 mb-2 border-t border-slate-100" aria-hidden />
             )}
             <div className="space-y-0.5">
               {section.items.map((item) => {
@@ -279,7 +296,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     key={item.id}
                     id={`nav-tab-${item.id}`}
                     onClick={() => setActiveTab(item.id)}
-                    className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition-all relative ${
+                    className={`w-full flex items-center rounded-xl text-xs font-semibold transition-all relative ${
+                      collapsed ? 'justify-center py-2.5' : 'gap-3 px-3 py-2'
+                    } ${
                       isActive
                         ? 'bg-emerald-600 text-white shadow-xs shadow-emerald-600/20'
                         : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/80'
@@ -300,7 +319,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
                       </span>
                     )}
                     {collapsed && item.badge && (
-                      <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-emerald-500 ring-2 ring-white" />
+                      <span
+                        className={`absolute top-1.5 left-1/2 ml-1.5 w-2 h-2 rounded-full ring-2 ${
+                          isActive ? 'bg-white ring-emerald-600' : 'bg-emerald-500 ring-white'
+                        }`}
+                      />
                     )}
                   </button>
                 );
@@ -338,10 +361,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
         )}
 
         {/* User Card */}
-        <div className="mt-3 flex items-center gap-3 p-2 rounded-xl hover:bg-slate-50 transition-colors">
+        <div
+          className={`mt-3 flex items-center rounded-xl transition-colors ${
+            collapsed ? 'justify-center p-1' : 'gap-3 p-2 hover:bg-slate-50'
+          }`}
+        >
           <img
             src={currentUser.avatar}
             alt={currentUser.name}
+            title={collapsed ? `${currentUser.name} — ${currentUser.title}` : undefined}
             className="w-9 h-9 rounded-full object-cover border border-slate-200 shrink-0"
           />
           {!collapsed ? (
@@ -368,23 +396,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 <Settings className="w-4 h-4" />
               </button>
             </>
-          ) : (
-            <button
-              type="button"
-              id="sidebar-user-settings-collapsed-btn"
-              onClick={() => setActiveTab('settings')}
-              className={`p-1.5 rounded-lg transition-colors shrink-0 ${
-                activeTab === 'settings'
-                  ? 'text-emerald-700 bg-emerald-100'
-                  : 'text-slate-400 hover:text-slate-700 hover:bg-slate-200'
-              }`}
-              title="Platform Settings"
-            >
-              <Settings className="w-4 h-4" />
-            </button>
-          )}
+          ) : null}
         </div>
-        <SignOutButton compact={collapsed} className="mt-1" />
+        <SignOutButton compact={collapsed} className={collapsed ? 'mt-1 w-full' : 'mt-1'} />
       </div>
     </aside>
   );

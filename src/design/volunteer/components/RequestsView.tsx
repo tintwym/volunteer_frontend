@@ -17,6 +17,7 @@ import {
   ShieldAlert
 } from 'lucide-react';
 import { VolunteerRequest, RequestType, RequestStatus } from '../types';
+import { SelectMenu } from '@/components/ui/SelectMenu';
 
 interface RequestsViewProps {
   requests: VolunteerRequest[];
@@ -209,7 +210,7 @@ export const RequestsView: React.FC<RequestsViewProps> = ({
             <form onSubmit={handleFormSubmit} className="mt-4 space-y-4 text-xs">
               <div>
                 <label className="block font-semibold text-slate-700 mb-1">Request Category:</label>
-                <select
+                <SelectMenu
                   value={type}
                   onChange={(e) => setType(e.target.value as RequestType)}
                   className="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium"
@@ -217,7 +218,7 @@ export const RequestsView: React.FC<RequestsViewProps> = ({
                   {requestTypes.map((rt) => (
                     <option key={rt} value={rt}>{rt}</option>
                   ))}
-                </select>
+                </SelectMenu>
               </div>
 
               <div>

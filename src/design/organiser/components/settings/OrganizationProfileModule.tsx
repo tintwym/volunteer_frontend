@@ -13,6 +13,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { OrganiserSystemSettings } from '../../types';
+import { SelectMenu } from '@/components/ui/SelectMenu';
 
 interface OrganizationProfileModuleProps {
   settings: OrganiserSystemSettings;
@@ -106,7 +107,7 @@ export const OrganizationProfileModule: React.FC<OrganizationProfileModuleProps>
             </label>
             <div className="relative">
               <Globe className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-              <select
+              <SelectMenu
                 id="settings-timezone"
                 value={settings.timezone || 'America/New_York (EST)'}
                 onChange={(e) => onChange('timezone', e.target.value)}
@@ -118,7 +119,7 @@ export const OrganizationProfileModule: React.FC<OrganizationProfileModuleProps>
                 <option value="America/Los_Angeles (PST)">Pacific Time (US & Canada) - PST/PDT</option>
                 <option value="Europe/London (GMT)">Greenwich Mean Time (London, GMT)</option>
                 <option value="Asia/Singapore (SGT)">Singapore Standard Time (SGT, UTC+8)</option>
-              </select>
+              </SelectMenu>
             </div>
           </div>
         </div>

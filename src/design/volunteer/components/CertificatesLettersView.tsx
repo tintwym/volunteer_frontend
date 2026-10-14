@@ -17,6 +17,7 @@ import {
   Sparkles
 } from 'lucide-react';
 import { VolunteerProfile } from '../types';
+import { SelectMenu } from '@/components/ui/SelectMenu';
 
 interface CertificatesLettersViewProps {
   profile: VolunteerProfile;
@@ -133,7 +134,7 @@ Global Volunteer Alliance`;
           <div className="no-print bg-slate-50 border border-slate-200 rounded-xl p-3.5 flex flex-wrap items-center justify-between gap-3 text-xs">
             <div className="flex items-center gap-2">
               <span className="font-semibold text-slate-700">Certificate Title:</span>
-              <select
+              <SelectMenu
                 value={certTitle}
                 onChange={(e) => setCertTitle(e.target.value)}
                 className="bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-emerald-500"
@@ -142,7 +143,7 @@ Global Volunteer Alliance`;
                 <option value="Presidential Community Service Commendation">Presidential Community Service Commendation</option>
                 <option value="Distinguished Civic Leadership Award">Distinguished Civic Leadership Award</option>
                 <option value="Milestone 50-Hour Service Achievement">Milestone 50-Hour Service Achievement</option>
-              </select>
+              </SelectMenu>
             </div>
 
             <div className="flex items-center gap-3">

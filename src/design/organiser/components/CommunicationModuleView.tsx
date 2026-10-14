@@ -18,6 +18,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { BroadcastAnnouncement, CommunicationLevel } from '../types';
+import { SelectMenu } from '@/components/ui/SelectMenu';
 
 interface CommunicationModuleViewProps {
   announcements?: BroadcastAnnouncement[];
@@ -225,7 +226,7 @@ export const CommunicationModuleView: React.FC<CommunicationModuleViewProps> = (
             <form onSubmit={handleSendSubmit} className="space-y-3 text-xs">
               <div>
                 <label className="block font-bold text-slate-700 mb-1">Target Communication Level</label>
-                <select
+                <SelectMenu
                   value={level}
                   onChange={(e) => setLevel(e.target.value as CommunicationLevel)}
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900"
@@ -234,7 +235,7 @@ export const CommunicationModuleView: React.FC<CommunicationModuleViewProps> = (
                   <option value="Volunteer Leaders">Volunteer Leaders Squad (15)</option>
                   <option value="Individual Team">Individual Operational Team</option>
                   <option value="Individual Volunteer">Individual Volunteer</option>
-                </select>
+                </SelectMenu>
               </div>
 
               <div>

@@ -16,6 +16,7 @@ import {
   Check
 } from 'lucide-react';
 import { IncidentReport, IncidentCategory, IncidentSeverity, IncidentStatus, Volunteer } from '../types';
+import { SelectMenu } from '@/components/ui/SelectMenu';
 
 interface IncidentReportingViewProps {
   incidents: IncidentReport[];
@@ -288,7 +289,7 @@ export const IncidentReportingView: React.FC<IncidentReportingViewProps> = ({
             <form onSubmit={handleSubmit} className="space-y-3 text-xs">
               <div>
                 <label className="font-bold text-slate-700 block mb-1">Incident Category *</label>
-                <select
+                <SelectMenu
                   value={category}
                   onChange={(e) => setCategory(e.target.value as IncidentCategory)}
                   className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 font-medium"
@@ -299,7 +300,7 @@ export const IncidentReportingView: React.FC<IncidentReportingViewProps> = ({
                   <option value="Medical / First Aid">Medical / First Aid</option>
                   <option value="Attendee / Conflict">Attendee / Conflict</option>
                   <option value="Safety / Hazard">Safety / Hazard</option>
-                </select>
+                </SelectMenu>
               </div>
 
               <div>
@@ -365,7 +366,7 @@ export const IncidentReportingView: React.FC<IncidentReportingViewProps> = ({
                 </div>
                 <div>
                   <label className="font-bold text-slate-700 block mb-1">Affected Team Member</label>
-                  <select
+                  <SelectMenu
                     value={affectedVolunteerId}
                     onChange={(e) => setAffectedVolunteerId(e.target.value)}
                     className="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg text-xs"
@@ -374,7 +375,7 @@ export const IncidentReportingView: React.FC<IncidentReportingViewProps> = ({
                     {volunteers.map(v => (
                       <option key={v.id} value={v.id}>{v.name}</option>
                     ))}
-                  </select>
+                  </SelectMenu>
                 </div>
               </div>
 

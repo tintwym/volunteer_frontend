@@ -17,6 +17,7 @@ import {
   Calendar
 } from 'lucide-react';
 import { TeamInfo } from '../types';
+import { SelectMenu } from '@/components/ui/SelectMenu';
 
 interface TeamViewProps {
   teams: TeamInfo[];
@@ -62,7 +63,7 @@ export const TeamView: React.FC<TeamViewProps> = ({
           {teams.length > 1 && (
             <div className="flex items-center gap-2">
               <span className="text-xs font-semibold text-slate-500">Team:</span>
-              <select
+              <SelectMenu
                 value={selectedTeamId}
                 onChange={(e) => setSelectedTeamId(e.target.value)}
                 className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
@@ -70,7 +71,7 @@ export const TeamView: React.FC<TeamViewProps> = ({
                 {teams.map((t) => (
                   <option key={t.id} value={t.id}>{t.teamName} ({t.eventTitle.split(' ')[0]})</option>
                 ))}
-              </select>
+              </SelectMenu>
             </div>
           )}
         </div>

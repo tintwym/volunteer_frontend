@@ -24,6 +24,7 @@ import {
   MessageSquare
 } from 'lucide-react';
 import { Volunteer, VolunteerStatus, BackgroundCheckStatus, Badge } from '../types';
+import { SelectMenu } from '@/components/ui/SelectMenu';
 
 interface RosterManagementViewProps {
   volunteers: Volunteer[];
@@ -237,7 +238,7 @@ export const RosterManagementView: React.FC<RosterManagementViewProps> = ({
           {/* Quick Filters */}
           <div className="flex flex-wrap items-center gap-2">
             {/* Status filter */}
-            <select
+            <SelectMenu
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value as any)}
               className="text-xs font-medium px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-700 focus:outline-none focus:border-emerald-500"
@@ -247,10 +248,10 @@ export const RosterManagementView: React.FC<RosterManagementViewProps> = ({
               <option value="On-boarding">On-boarding</option>
               <option value="Inactive">Inactive</option>
               <option value="On Leave">On Leave</option>
-            </select>
+            </SelectMenu>
 
             {/* Clearance filter */}
-            <select
+            <SelectMenu
               value={clearanceFilter}
               onChange={(e) => setClearanceFilter(e.target.value as any)}
               className="text-xs font-medium px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-700 focus:outline-none focus:border-emerald-500"
@@ -259,10 +260,10 @@ export const RosterManagementView: React.FC<RosterManagementViewProps> = ({
               <option value="Approved">Approved</option>
               <option value="Pending">Pending</option>
               <option value="Expired">Expired</option>
-            </select>
+            </SelectMenu>
 
             {/* Skill filter */}
-            <select
+            <SelectMenu
               value={skillFilter}
               onChange={(e) => setSkillFilter(e.target.value)}
               className="text-xs font-medium px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-700 focus:outline-none focus:border-emerald-500"
@@ -271,7 +272,7 @@ export const RosterManagementView: React.FC<RosterManagementViewProps> = ({
               {allSkills.map(skill => (
                 <option key={skill} value={skill}>{skill}</option>
               ))}
-            </select>
+            </SelectMenu>
           </div>
         </div>
 
@@ -374,7 +375,7 @@ export const RosterManagementView: React.FC<RosterManagementViewProps> = ({
                         <span className="font-semibold text-slate-800 block">
                           {vol.role}
                         </span>
-                        <select
+                        <SelectMenu
                           value={vol.status}
                           onChange={(e) => onUpdateVolunteerStatus(vol.id, e.target.value as VolunteerStatus)}
                           className={`text-[11px] font-semibold px-2 py-0.5 rounded-full border cursor-pointer ${
@@ -389,7 +390,7 @@ export const RosterManagementView: React.FC<RosterManagementViewProps> = ({
                           <option value="On-boarding">On-boarding</option>
                           <option value="Inactive">Inactive</option>
                           <option value="On Leave">On Leave</option>
-                        </select>
+                        </SelectMenu>
                       </div>
                     </td>
 
@@ -435,7 +436,7 @@ export const RosterManagementView: React.FC<RosterManagementViewProps> = ({
 
                     {/* Background Clearance Status */}
                     <td className="py-3.5 px-4">
-                      <select
+                      <SelectMenu
                         value={vol.backgroundCheckStatus}
                         onChange={(e) => onUpdateBackgroundStatus(vol.id, e.target.value as BackgroundCheckStatus)}
                         className={`text-[11px] font-medium px-2 py-0.5 rounded-full border cursor-pointer ${
@@ -449,7 +450,7 @@ export const RosterManagementView: React.FC<RosterManagementViewProps> = ({
                         <option value="Approved">Approved</option>
                         <option value="Pending">Pending Review</option>
                         <option value="Expired">Expired</option>
-                      </select>
+                      </SelectMenu>
                     </td>
 
                     {/* Skills & Badges */}
@@ -753,7 +754,7 @@ export const RosterManagementView: React.FC<RosterManagementViewProps> = ({
                 </div>
                 <div>
                   <label className="font-semibold text-slate-700 block mb-1">Assigned Role</label>
-                  <select
+                  <SelectMenu
                     value={formData.role}
                     onChange={(e) => setFormData({ ...formData, role: e.target.value as any })}
                     className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-emerald-500"
@@ -762,7 +763,7 @@ export const RosterManagementView: React.FC<RosterManagementViewProps> = ({
                     <option value="Team Lead">Team Lead</option>
                     <option value="Specialist">Specialist</option>
                     <option value="New Recruit">New Recruit</option>
-                  </select>
+                  </SelectMenu>
                 </div>
               </div>
 

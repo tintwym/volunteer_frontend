@@ -16,6 +16,7 @@ import {
   Check
 } from 'lucide-react';
 import { VolunteerTask, TaskStatus } from '../types';
+import { SelectMenu } from '@/components/ui/SelectMenu';
 
 interface MyTasksViewProps {
   tasks: VolunteerTask[];
@@ -123,7 +124,7 @@ export const MyTasksView: React.FC<MyTasksViewProps> = ({
           {events.length > 1 && (
             <div className="flex items-center gap-1.5 text-xs text-slate-600">
               <span className="font-medium text-slate-500">Event:</span>
-              <select
+              <SelectMenu
                 value={activeTabEvent}
                 onChange={(e) => setActiveTabEvent(e.target.value)}
                 className="bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1 text-xs text-slate-700 focus:outline-none focus:ring-1 focus:ring-emerald-500"
@@ -132,7 +133,7 @@ export const MyTasksView: React.FC<MyTasksViewProps> = ({
                 {events.map((ev) => (
                   <option key={ev} value={ev}>{ev}</option>
                 ))}
-              </select>
+              </SelectMenu>
             </div>
           )}
         </div>

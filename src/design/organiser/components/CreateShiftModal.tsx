@@ -12,6 +12,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { VolunteerShift, CauseCategory } from '../types';
+import { SelectMenu } from '@/components/ui/SelectMenu';
 
 interface CreateShiftModalProps {
   onClose: () => void;
@@ -119,7 +120,7 @@ export const CreateShiftModal: React.FC<CreateShiftModalProps> = ({
               <label className="block font-semibold text-slate-700 mb-1">
                 Cause Category
               </label>
-              <select
+              <SelectMenu
                 value={cause}
                 onChange={(e) => setCause(e.target.value as CauseCategory)}
                 className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600"
@@ -129,7 +130,7 @@ export const CreateShiftModal: React.FC<CreateShiftModalProps> = ({
                     {c}
                   </option>
                 ))}
-              </select>
+              </SelectMenu>
             </div>
 
             <div>

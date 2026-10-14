@@ -12,6 +12,7 @@ import {
   AlertCircle,
 } from 'lucide-react';
 import { OrganiserSystemSettings } from '../../types';
+import { SelectMenu } from '@/components/ui/SelectMenu';
 
 interface SecurityAccessModuleProps {
   settings: OrganiserSystemSettings;
@@ -88,7 +89,7 @@ export const SecurityAccessModule: React.FC<SecurityAccessModuleProps> = ({
               </p>
             </div>
             <div className="w-32 shrink-0">
-              <select
+              <SelectMenu
                 id="settings-session-timeout"
                 value={settings.sessionTimeoutMinutes ?? 60}
                 onChange={(e) => onChange('sessionTimeoutMinutes', parseInt(e.target.value) || 60)}
@@ -99,7 +100,7 @@ export const SecurityAccessModule: React.FC<SecurityAccessModuleProps> = ({
                 <option value={60}>1 Hour</option>
                 <option value={240}>4 Hours</option>
                 <option value={480}>8 Hours</option>
-              </select>
+              </SelectMenu>
             </div>
           </div>
         </div>

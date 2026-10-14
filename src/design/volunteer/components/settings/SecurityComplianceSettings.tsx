@@ -4,6 +4,7 @@
 import React from 'react';
 import { ShieldCheck, Key, Lock, Clock, CheckCircle2, FileCheck, ShieldAlert } from 'lucide-react';
 import { AppSettings } from '../../types';
+import { SelectMenu } from '@/components/ui/SelectMenu';
 
 interface SecurityComplianceSettingsProps {
   settings: AppSettings;
@@ -52,7 +53,7 @@ export const SecurityComplianceSettings: React.FC<SecurityComplianceSettingsProp
             <label className="text-xs font-semibold text-slate-700 block mb-1">
               Inactivity Session Timeout
             </label>
-            <select
+            <SelectMenu
               value={settings.sessionTimeoutMinutes}
               onChange={(e) => onChange({ sessionTimeoutMinutes: parseInt(e.target.value, 10) })}
               className="w-full text-xs bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-800 focus:outline-hidden focus:ring-2 focus:ring-emerald-500/20"
@@ -62,7 +63,7 @@ export const SecurityComplianceSettings: React.FC<SecurityComplianceSettingsProp
               <option value="60">1 Hour (Standard Kiosk)</option>
               <option value="120">2 Hours</option>
               <option value="480">8 Hours (Personal Device)</option>
-            </select>
+            </SelectMenu>
           </div>
 
           <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between">

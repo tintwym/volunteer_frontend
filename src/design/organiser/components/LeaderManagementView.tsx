@@ -22,6 +22,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { VolunteerLeaderProfile } from '../types';
+import { SelectMenu } from '@/components/ui/SelectMenu';
 
 interface LeaderManagementViewProps {
   leaders?: VolunteerLeaderProfile[];
@@ -379,7 +380,7 @@ export const LeaderManagementView: React.FC<LeaderManagementViewProps> = ({
 
               <div>
                 <label className="block font-bold text-slate-700 mb-1">Assigned Operational Team</label>
-                <select
+                <SelectMenu
                   value={newTeamName}
                   onChange={(e) => setNewTeamName(e.target.value)}
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900"
@@ -388,7 +389,7 @@ export const LeaderManagementView: React.FC<LeaderManagementViewProps> = ({
                   <option value="Logistics Team">Logistics Team</option>
                   <option value="Crowd Management Team">Crowd Management Team</option>
                   <option value="First Aid Support Team">First Aid Support Team</option>
-                </select>
+                </SelectMenu>
               </div>
 
               <div>

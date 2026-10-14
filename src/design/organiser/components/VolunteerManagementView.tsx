@@ -27,6 +27,7 @@ import {
   RefreshCw,
 } from 'lucide-react';
 import { DetailedVolunteerProfile, VolunteerDatabaseStatus } from '../types';
+import { SelectMenu } from '@/components/ui/SelectMenu';
 
 interface VolunteerManagementViewProps {
   volunteers?: DetailedVolunteerProfile[];
@@ -171,7 +172,7 @@ export const VolunteerManagementView: React.FC<VolunteerManagementViewProps> = (
 
           <div className="flex flex-wrap items-center gap-2">
             {/* Status Filter */}
-            <select
+            <SelectMenu
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
               className="text-xs font-semibold bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-700"
@@ -182,10 +183,10 @@ export const VolunteerManagementView: React.FC<VolunteerManagementViewProps> = (
               <option value="Approved">Approved</option>
               <option value="Suspended">Suspended</option>
               <option value="Rejected">Rejected</option>
-            </select>
+            </SelectMenu>
 
             {/* Team Filter */}
-            <select
+            <SelectMenu
               value={teamFilter}
               onChange={(e) => setTeamFilter(e.target.value)}
               className="text-xs font-semibold bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-700"
@@ -196,10 +197,10 @@ export const VolunteerManagementView: React.FC<VolunteerManagementViewProps> = (
                   {tm}
                 </option>
               ))}
-            </select>
+            </SelectMenu>
 
             {/* Skill Filter */}
-            <select
+            <SelectMenu
               value={skillFilter}
               onChange={(e) => setSkillFilter(e.target.value)}
               className="text-xs font-semibold bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-700 max-w-[150px]"
@@ -210,10 +211,10 @@ export const VolunteerManagementView: React.FC<VolunteerManagementViewProps> = (
                   {sk}
                 </option>
               ))}
-            </select>
+            </SelectMenu>
 
             {/* Training Status Filter */}
-            <select
+            <SelectMenu
               value={trainingFilter}
               onChange={(e) => setTrainingFilter(e.target.value)}
               className="text-xs font-semibold bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-700"
@@ -222,7 +223,7 @@ export const VolunteerManagementView: React.FC<VolunteerManagementViewProps> = (
               <option value="Safety Training">Safety Training Certified</option>
               <option value="Emergency Procedure">Emergency Procedure</option>
               <option value="Completed All">Completed All Mandatory</option>
-            </select>
+            </SelectMenu>
           </div>
         </div>
       </div>
@@ -578,7 +579,7 @@ export const VolunteerManagementView: React.FC<VolunteerManagementViewProps> = (
             <form onSubmit={handleReassignSubmit} className="space-y-3 text-xs">
               <div>
                 <label className="block font-bold text-slate-700 mb-1">Operational Team</label>
-                <select
+                <SelectMenu
                   value={newTeam}
                   onChange={(e) => setNewTeam(e.target.value)}
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900"
@@ -588,7 +589,7 @@ export const VolunteerManagementView: React.FC<VolunteerManagementViewProps> = (
                       {t}
                     </option>
                   ))}
-                </select>
+                </SelectMenu>
               </div>
 
               <div>

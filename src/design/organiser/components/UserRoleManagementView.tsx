@@ -18,6 +18,7 @@ import {
   KeyRound,
   ShieldAlert,
 } from 'lucide-react';
+import { SelectMenu } from '@/components/ui/SelectMenu';
 
 interface UserAccount {
   id: string;
@@ -218,7 +219,7 @@ export const UserRoleManagementView: React.FC<UserRoleManagementViewProps> = () 
           />
         </div>
 
-        <select
+        <SelectMenu
           value={roleFilter}
           onChange={(e) => setRoleFilter(e.target.value)}
           className="text-xs font-semibold bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-700"
@@ -228,7 +229,7 @@ export const UserRoleManagementView: React.FC<UserRoleManagementViewProps> = () 
           <option value="Volunteer Leader">Volunteer Leader</option>
           <option value="Volunteer">Volunteer</option>
           <option value="Participant">Participant</option>
-        </select>
+        </SelectMenu>
       </div>
 
       {/* Users Table */}
@@ -327,7 +328,7 @@ export const UserRoleManagementView: React.FC<UserRoleManagementViewProps> = () 
             <form onSubmit={handleRoleChangeSubmit} className="space-y-3 text-xs">
               <div>
                 <label className="block font-bold text-slate-700 mb-1">Select Role</label>
-                <select
+                <SelectMenu
                   value={newRole}
                   onChange={(e) => setNewRole(e.target.value as any)}
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 font-semibold"
@@ -336,7 +337,7 @@ export const UserRoleManagementView: React.FC<UserRoleManagementViewProps> = () 
                   <option value="Volunteer Leader">Volunteer Leader (Squad Management)</option>
                   <option value="Volunteer">Volunteer (Operational Contributor)</option>
                   <option value="Participant">Participant (Guest / Attendee)</option>
-                </select>
+                </SelectMenu>
               </div>
 
               <div className="flex items-center justify-end gap-2 pt-2">

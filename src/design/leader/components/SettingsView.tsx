@@ -22,6 +22,7 @@ import {
   RotateCcw
 } from 'lucide-react';
 import { Volunteer, TodayAttendanceRecord, ShiftEvent } from '../types';
+import { SelectMenu } from '@/components/ui/SelectMenu';
 
 interface SettingsViewProps {
   volunteers: Volunteer[];
@@ -427,7 +428,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
               <p className="text-slate-500 text-[11px]">
                 Allowed delay after shift start time before attendance status changes from "Assigned" to "Late".
               </p>
-              <select
+              <SelectMenu
                 value={protocols.gracePeriod}
                 onChange={e => setProtocols({ ...protocols, gracePeriod: e.target.value })}
                 className="w-full p-2 bg-white border border-slate-300 rounded-lg text-slate-900 font-semibold"
@@ -436,7 +437,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                 <option value="10">10 Minutes (Standard)</option>
                 <option value="15">15 Minutes (Flexible)</option>
                 <option value="30">30 Minutes (Event Rush)</option>
-              </select>
+              </SelectMenu>
             </div>
 
             <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
@@ -444,7 +445,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
               <p className="text-slate-500 text-[11px]">
                 Standard meal and rest break allocated for continuous shifts exceeding 4 operational hours.
               </p>
-              <select
+              <SelectMenu
                 value={protocols.defaultBreakDuration}
                 onChange={e => setProtocols({ ...protocols, defaultBreakDuration: e.target.value })}
                 className="w-full p-2 bg-white border border-slate-300 rounded-lg text-slate-900 font-semibold"
@@ -452,7 +453,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                 <option value="15">15 Minutes (Staggered)</option>
                 <option value="30">30 Minutes (Standard)</option>
                 <option value="45">45 Minutes (Extended Lunch)</option>
-              </select>
+              </SelectMenu>
             </div>
           </div>
 

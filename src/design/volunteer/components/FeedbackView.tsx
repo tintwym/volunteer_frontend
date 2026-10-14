@@ -14,6 +14,7 @@ import {
   Layers 
 } from 'lucide-react';
 import { EventFeedback } from '../types';
+import { SelectMenu } from '@/components/ui/SelectMenu';
 
 interface FeedbackViewProps {
   feedbackList: EventFeedback[];
@@ -120,7 +121,7 @@ export const FeedbackView: React.FC<FeedbackViewProps> = ({
           <form onSubmit={handleSubmit} className="space-y-5 text-xs">
             <div>
               <label className="block font-semibold text-slate-700 mb-1">Select Attended Event:</label>
-              <select
+              <SelectMenu
                 value={eventTitle}
                 onChange={(e) => {
                   setEventTitle(e.target.value);
@@ -131,7 +132,7 @@ export const FeedbackView: React.FC<FeedbackViewProps> = ({
                 <option value="Community Festival 2026">Community Festival 2026 (Seattle Civic Events)</option>
                 <option value="Weekend Fresh Food Pantry & Meal Packaging">Weekend Fresh Food Pantry & Meal Packaging (Cascadia Food)</option>
                 <option value="Urban Canopy Reforestation & Tree Planting">Urban Canopy Reforestation & Tree Planting</option>
-              </select>
+              </SelectMenu>
             </div>
 
             {/* 8 Criteria Grid */}

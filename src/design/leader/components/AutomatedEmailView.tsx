@@ -19,6 +19,7 @@ import {
   ShieldCheck
 } from 'lucide-react';
 import { AutomatedEmailTemplate, EmailLogEntry, Volunteer, ShiftEvent } from '../types';
+import { SelectMenu } from '@/components/ui/SelectMenu';
 
 interface AutomatedEmailViewProps {
   templates: AutomatedEmailTemplate[];
@@ -197,7 +198,7 @@ export const AutomatedEmailView: React.FC<AutomatedEmailViewProps> = ({
               <ShieldCheck className="w-4 h-4 text-emerald-600" />
               <span className="text-slate-700 font-semibold">Test Dispatch Target Volunteer:</span>
             </div>
-            <select
+            <SelectMenu
               value={selectedVolunteerForTest}
               onChange={(e) => setSelectedVolunteerForTest(e.target.value)}
               className="p-2 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium text-slate-800 focus:outline-none focus:border-emerald-500"
@@ -207,7 +208,7 @@ export const AutomatedEmailView: React.FC<AutomatedEmailViewProps> = ({
                   {v.name} ({v.email}) • {v.verifiedHours} hrs
                 </option>
               ))}
-            </select>
+            </SelectMenu>
           </div>
         </div>
       )}
@@ -365,7 +366,7 @@ export const AutomatedEmailView: React.FC<AutomatedEmailViewProps> = ({
             {broadcastAudience === 'shift' && (
               <div>
                 <label className="font-bold text-slate-700 block mb-1">Select Shift</label>
-                <select
+                <SelectMenu
                   value={broadcastShiftId}
                   onChange={(e) => setBroadcastShiftId(e.target.value)}
                   className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg text-xs"
@@ -375,7 +376,7 @@ export const AutomatedEmailView: React.FC<AutomatedEmailViewProps> = ({
                       {s.title} ({s.date} • {s.assignedVolunteerIds?.length || 0} volunteers assigned)
                     </option>
                   ))}
-                </select>
+                </SelectMenu>
               </div>
             )}
 

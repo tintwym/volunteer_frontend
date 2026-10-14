@@ -18,6 +18,7 @@ import {
   Check,
 } from 'lucide-react';
 import { ApprovalRequestItem, ApprovalType } from '../types';
+import { SelectMenu } from '@/components/ui/SelectMenu';
 
 interface ApprovalManagementViewProps {
   approvals?: ApprovalRequestItem[];
@@ -142,7 +143,7 @@ export const ApprovalManagementView: React.FC<ApprovalManagementViewProps> = ({
           />
         </div>
 
-        <select
+        <SelectMenu
           value={typeFilter}
           onChange={(e) => setTypeFilter(e.target.value)}
           className="text-xs font-semibold bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-700"
@@ -154,7 +155,7 @@ export const ApprovalManagementView: React.FC<ApprovalManagementViewProps> = ({
           <option value="Leave Request">Leave Request</option>
           <option value="Expense Reimbursement">Expense Reimbursement</option>
           <option value="Role Change">Role Change</option>
-        </select>
+        </SelectMenu>
       </div>
 
       {/* Approvals Table / Card Stack */}

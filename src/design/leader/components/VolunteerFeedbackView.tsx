@@ -17,6 +17,7 @@ import {
   Search
 } from 'lucide-react';
 import { VolunteerFeedbackRecord, Volunteer, FeedbackRecommendation } from '../types';
+import { SelectMenu } from '@/components/ui/SelectMenu';
 
 interface VolunteerFeedbackViewProps {
   feedbacks: VolunteerFeedbackRecord[];
@@ -203,7 +204,7 @@ export const VolunteerFeedbackView: React.FC<VolunteerFeedbackViewProps> = ({
             <form onSubmit={handleSubmit} className="space-y-4 text-xs">
               <div>
                 <label className="font-bold text-slate-700 block mb-1">Select Volunteer Member *</label>
-                <select
+                <SelectMenu
                   value={selectedVolunteerId}
                   onChange={(e) => setSelectedVolunteerId(e.target.value)}
                   className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 font-medium"
@@ -211,12 +212,12 @@ export const VolunteerFeedbackView: React.FC<VolunteerFeedbackViewProps> = ({
                   {volunteers.map(v => (
                     <option key={v.id} value={v.id}>{v.name} ({v.role})</option>
                   ))}
-                </select>
+                </SelectMenu>
               </div>
 
               <div>
                 <label className="font-bold text-slate-700 block mb-1">Operational Recommendation *</label>
-                <select
+                <SelectMenu
                   value={recommendation}
                   onChange={(e) => setRecommendation(e.target.value as FeedbackRecommendation)}
                   className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 font-medium"
@@ -226,7 +227,7 @@ export const VolunteerFeedbackView: React.FC<VolunteerFeedbackViewProps> = ({
                   <option value="Consistent Contributor">Consistent Contributor</option>
                   <option value="Needs Coaching">Needs Coaching</option>
                   <option value="Not Recommended">Not Recommended</option>
-                </select>
+                </SelectMenu>
               </div>
 
               {/* 7 Star Sliders */}

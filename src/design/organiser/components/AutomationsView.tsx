@@ -10,8 +10,6 @@ import {
   Eye,
   CheckCircle2,
   AlertCircle,
-  ToggleLeft,
-  ToggleRight,
   Sparkles,
   Inbox,
   Filter,
@@ -126,7 +124,7 @@ export const AutomationsView: React.FC<AutomationsViewProps> = ({
           <span className="text-xs text-slate-400">Click preview to inspect responsive email HTML</span>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {automations.map((auto) => (
             <div
               key={auto.id}
@@ -134,25 +132,38 @@ export const AutomationsView: React.FC<AutomationsViewProps> = ({
               className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition-all flex flex-col justify-between"
             >
               <div>
-                <div className="flex items-center justify-between gap-2 mb-3">
+                <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
                   <span className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full border ${getCategoryBadge(auto.category)}`}>
                     {auto.category.toUpperCase()}
                   </span>
 
                   <button
+                    type="button"
+                    role="switch"
+                    aria-checked={auto.active}
+                    aria-label={`${auto.name}: ${auto.active ? 'active' : 'paused'}`}
                     onClick={() => onToggleAutomation(auto.id)}
-                    className="flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900"
-                    title={auto.active ? 'Disable trigger' : 'Enable trigger'}
+                    className="group ml-auto flex shrink-0 items-center gap-2 rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2"
+                    title={auto.active ? 'Pause trigger' : 'Activate trigger'}
                   >
-                    {auto.active ? (
-                      <span className="text-emerald-600 flex items-center gap-1 font-bold">
-                        <ToggleRight className="w-6 h-6 text-emerald-600" /> Active
-                      </span>
-                    ) : (
-                      <span className="text-slate-400 flex items-center gap-1">
-                        <ToggleLeft className="w-6 h-6 text-slate-400" /> Paused
-                      </span>
-                    )}
+                    <span
+                      className={`text-xs font-semibold ${
+                        auto.active ? 'text-emerald-700' : 'text-slate-500'
+                      }`}
+                    >
+                      {auto.active ? 'Active' : 'Paused'}
+                    </span>
+                    <span
+                      className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors ${
+                        auto.active ? 'bg-emerald-600' : 'bg-slate-300 group-hover:bg-slate-400'
+                      }`}
+                    >
+                      <span
+                        className={`inline-block h-5 w-5 rounded-full bg-white shadow-sm transition-transform ${
+                          auto.active ? 'translate-x-[22px]' : 'translate-x-0.5'
+                        }`}
+                      />
+                    </span>
                   </button>
                 </div>
 
@@ -180,12 +191,12 @@ export const AutomationsView: React.FC<AutomationsViewProps> = ({
               </div>
 
               {/* Card actions */}
-              <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
+              <div className="mt-4 pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2 text-xs">
                 <div className="text-[11px] text-slate-400">
                   Sent <strong>{auto.totalSent}</strong> times • {auto.lastTriggered}
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="ml-auto flex items-center gap-2">
                   <button
                     onClick={() => setSelectedTemplateForPreview(auto)}
                     className="px-3 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-semibold flex items-center gap-1 transition-colors"
