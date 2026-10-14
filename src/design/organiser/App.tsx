@@ -132,9 +132,16 @@ export default function App() {
     safeParse('vmp_logs', EMAIL_DELIVERY_LOGS)
   );
 
-  const [badges, setBadges] = useState<Badge[]>(() =>
-    safeParse('vmp_badges', BADGES)
-  );
+  const [badges, setBadges] = useState<Badge[]>(() => {
+    const saved = safeParse<Badge[]>('vmp_badges', BADGES);
+    const savedById = new Map(saved.map((b) => [b.id, b]));
+    const defaultIds = new Set(BADGES.map((b) => b.id));
+    // Badges saved in the browser predate newly added ones; fill in any that are missing.
+    return [
+      ...BADGES.map((b) => savedById.get(b.id) ?? b),
+      ...saved.filter((b) => !defaultIds.has(b.id)),
+    ];
+  });
 
   const [certificate, setCertificate] = useState<CertificateData>(CERTIFICATE_TEMPLATE);
   const [appreciationLetter, setAppreciationLetter] = useState<AppreciationLetterData>(APPRECIATION_LETTER);

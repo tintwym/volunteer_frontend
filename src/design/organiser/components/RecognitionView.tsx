@@ -32,6 +32,16 @@ import {
   User,
 } from '../types';
 
+const TIER_EMOJI: Record<string, string> = {
+  bronze: '🥉',
+  silver: '🥈',
+  gold: '🥇',
+  platinum: '👑',
+  diamond: '💎',
+  mythic: '🔮',
+  immortal: '♾️',
+};
+
 interface RecognitionViewProps {
   badges?: Badge[];
   certificate: CertificateData;
@@ -273,7 +283,7 @@ export const RecognitionView: React.FC<RecognitionViewProps> = ({
                           : 'bg-slate-200 text-slate-400'
                       }`}
                     >
-                      {badge.tier === 'gold' ? '🥇' : badge.tier === 'platinum' ? '👑' : badge.tier === 'silver' ? '🥈' : '🥉'}
+                      {TIER_EMOJI[badge.tier] ?? TIER_EMOJI.bronze}
                     </div>
 
                     <h3 className="font-bold text-sm text-slate-900 mb-1">{badge.title}</h3>

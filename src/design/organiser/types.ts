@@ -132,7 +132,7 @@ export interface Badge {
   description: string;
   category: 'hours' | 'milestone' | 'leadership' | 'impact';
   icon: string;
-  tier: 'bronze' | 'silver' | 'gold' | 'platinum';
+  tier: 'bronze' | 'silver' | 'gold' | 'platinum' | 'diamond' | 'mythic' | 'immortal';
   unlockedAt?: string;
   progress: number;
   maxProgress: number;

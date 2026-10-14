@@ -27,6 +27,7 @@ import {
 } from 'lucide-react';
 import { SignOutButton } from '@/components/auth/SignOutButton';
 import { VolunteerProfile } from '../types';
+import { nextHourMilestone } from '../data/milestones';
 
 interface SidebarProps {
   activeTab: string;
@@ -213,7 +214,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
     setIsMobileMenuOpen(false);
   };
 
-  const nextMilestone = 100;
+  const goal = nextHourMilestone(profile.totalHours);
+  const nextMilestone = goal.hours;
   const progressToNext = Math.min(100, Math.round((profile.totalHours / nextMilestone) * 100));
 
   return (
@@ -287,7 +289,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <div className="flex items-center justify-between text-xs font-semibold text-emerald-950 mb-1">
             <span className="flex items-center gap-1.5 text-xs font-bold">
               <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-              100h Century Club
+              {nextMilestone}h {goal.title}
             </span>
             <span className="text-emerald-700 font-bold text-xs">{progressToNext}%</span>
           </div>

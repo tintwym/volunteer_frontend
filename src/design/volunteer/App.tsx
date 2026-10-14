@@ -19,6 +19,7 @@ import {
   initialFeedback,
   initialSettings
 } from './data/initialData';
+import { mergeWithDefaultBadges, syncHourBadges } from './data/milestones';
 import { 
   VolunteerProfile, 
   VolunteerEvent, 
@@ -84,7 +85,10 @@ export default function App() {
 
   const [badges, setBadges] = useState<DigitalBadge[]>(() => {
     const saved = localStorage.getItem('vms_badges');
-    return saved ? JSON.parse(saved) : initialBadges;
+    const list = saved ? mergeWithDefaultBadges(JSON.parse(saved), initialBadges) : initialBadges;
+    const savedProfile = localStorage.getItem('vms_profile');
+    const hours = savedProfile ? JSON.parse(savedProfile).totalHours : initialProfile.totalHours;
+    return syncHourBadges(list, hours);
   });
 
   const [conversations, setConversations] = useState<Conversation[]>(() => {
@@ -175,6 +179,10 @@ export default function App() {
   useEffect(() => {
     localStorage.setItem('vms_badges', JSON.stringify(badges));
   }, [badges]);
+
+  useEffect(() => {
+    setBadges(prev => syncHourBadges(prev, profile.totalHours));
+  }, [profile.totalHours]);
 
   useEffect(() => {
     localStorage.setItem('vms_conversations', JSON.stringify(conversations));

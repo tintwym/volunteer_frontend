@@ -15,9 +15,26 @@ import {
   CheckCircle2, 
   Lock, 
   Clock,
-  Filter
+  Filter,
+  Compass,
+  Trees,
+  Apple,
+  Star,
+  Gem,
+  Infinity as InfinityIcon
 } from 'lucide-react';
 import { DigitalBadge, VolunteerProfile } from '../types';
+import { currentHourMilestone } from '../data/milestones';
+
+const RARITY_STYLES: Record<string, string> = {
+  Immortal: 'bg-gradient-to-r from-rose-600 to-amber-500 text-white',
+  Mythic: 'bg-fuchsia-100 text-fuchsia-800',
+  Diamond: 'bg-sky-100 text-sky-800',
+  Platinum: 'bg-indigo-100 text-indigo-800',
+  Gold: 'bg-yellow-100 text-yellow-800',
+  Silver: 'bg-slate-200 text-slate-800',
+  Bronze: 'bg-amber-100 text-amber-800',
+};
 
 interface BadgesMilestonesViewProps {
   badges: DigitalBadge[];
@@ -33,6 +50,7 @@ export const BadgesMilestonesView: React.FC<BadgesMilestonesViewProps> = ({
   const [filter, setFilter] = useState<'all' | 'earned' | 'locked'>('all');
 
   const earnedCount = badges.filter(b => b.earned).length;
+  const activeTier = currentHourMilestone(profile.totalHours);
 
   const filteredBadges = badges.filter(b => {
     if (filter === 'earned') return b.earned;
@@ -50,6 +68,12 @@ export const BadgesMilestonesView: React.FC<BadgesMilestonesViewProps> = ({
       case 'TreePine': return <TreePine className="w-6 h-6" />;
       case 'Utensils': return <Utensils className="w-6 h-6" />;
       case 'Flame': return <Flame className="w-6 h-6" />;
+      case 'Compass': return <Compass className="w-6 h-6" />;
+      case 'Trees': return <Trees className="w-6 h-6" />;
+      case 'Apple': return <Apple className="w-6 h-6" />;
+      case 'Star': return <Star className="w-6 h-6" />;
+      case 'Gem': return <Gem className="w-6 h-6" />;
+      case 'Infinity': return <InfinityIcon className="w-6 h-6" />;
       default: return <Award className="w-6 h-6" />;
     }
   };
@@ -74,10 +98,10 @@ export const BadgesMilestonesView: React.FC<BadgesMilestonesViewProps> = ({
         <div className="flex items-center gap-3 self-start sm:self-auto bg-black/10 backdrop-blur-xs p-3 rounded-xl border border-white/20">
           <div className="text-right">
             <div className="text-xs text-amber-100">Active Tier</div>
-            <div className="text-lg font-bold text-white">Gold Volunteer</div>
+            <div className="text-lg font-bold text-white">{activeTier?.title ?? 'New Volunteer'}</div>
           </div>
-          <div className="w-10 h-10 rounded-full bg-white text-amber-600 flex items-center justify-center shadow-md font-bold text-sm">
-            50h+
+          <div className="w-12 h-12 rounded-full bg-white text-amber-600 flex items-center justify-center shadow-md font-bold text-xs">
+            {activeTier ? `${activeTier.hours}h+` : '0h'}
           </div>
         </div>
       </div>
@@ -134,10 +158,7 @@ export const BadgesMilestonesView: React.FC<BadgesMilestonesViewProps> = ({
               {/* Top Bar with Rarity and Status */}
               <div className="flex items-center justify-between mb-4">
                 <span className={`px-2.5 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider ${
-                  badge.rarity === 'Platinum' ? 'bg-indigo-100 text-indigo-800' :
-                  badge.rarity === 'Gold' ? 'bg-yellow-100 text-yellow-800' :
-                  badge.rarity === 'Silver' ? 'bg-slate-200 text-slate-800' :
-                  'bg-amber-100 text-amber-800'
+                  RARITY_STYLES[badge.rarity] ?? RARITY_STYLES.Bronze
                 }`}>
                   {badge.rarity}
                 </span>
@@ -199,7 +220,7 @@ export const BadgesMilestonesView: React.FC<BadgesMilestonesViewProps> = ({
                   </div>
                 ) : (
                   <div className="text-[11px] text-amber-700 text-center font-medium pt-1">
-                    Needs {badge.targetProgress - badge.currentProgress} more {badge.progressUnit}
+                    Needs {+(badge.targetProgress - badge.currentProgress).toFixed(1)} more {badge.progressUnit}
                   </div>
                 )}
               </div>

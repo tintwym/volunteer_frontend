@@ -128,7 +128,14 @@ export interface ServiceRecord {
   notes: string;
 }
 
-export type BadgeRarity = 'Bronze' | 'Silver' | 'Gold' | 'Platinum';
+export type BadgeRarity =
+  | 'Bronze'
+  | 'Silver'
+  | 'Gold'
+  | 'Platinum'
+  | 'Diamond'
+  | 'Mythic'
+  | 'Immortal';
 
 export interface DigitalBadge {
   id: string;

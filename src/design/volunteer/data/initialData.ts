@@ -1174,6 +1174,82 @@ export const initialBadges: DigitalBadge[] = [
     }
   },
   {
+    id: 'badge-9',
+    title: 'Platinum Master',
+    category: 'Milestone',
+    description: 'A rare distinction for 500+ lifetime verified hours of dedicated service.',
+    requirement: '500+ Verified Hours',
+    rarity: 'Platinum',
+    iconName: 'Star',
+    earned: false,
+    currentProgress: 52.5,
+    targetProgress: 500,
+    progressUnit: 'hours',
+    colorTheme: {
+      bg: 'bg-slate-50',
+      border: 'border-slate-400',
+      text: 'text-slate-900',
+      accent: 'bg-slate-500'
+    }
+  },
+  {
+    id: 'badge-10',
+    title: 'Diamond Grandmaster',
+    category: 'Milestone',
+    description: 'Reserved for volunteers who have given 1,000+ verified hours to their community.',
+    requirement: '1000+ Verified Hours',
+    rarity: 'Diamond',
+    iconName: 'Gem',
+    earned: false,
+    currentProgress: 52.5,
+    targetProgress: 1000,
+    progressUnit: 'hours',
+    colorTheme: {
+      bg: 'bg-sky-50',
+      border: 'border-sky-300',
+      text: 'text-sky-900',
+      accent: 'bg-sky-500'
+    }
+  },
+  {
+    id: 'badge-11',
+    title: 'Mythic Overlord',
+    category: 'Milestone',
+    description: 'A legendary honor for 2,000+ verified hours of transformative impact.',
+    requirement: '2000+ Verified Hours',
+    rarity: 'Mythic',
+    iconName: 'Crown',
+    earned: false,
+    currentProgress: 52.5,
+    targetProgress: 2000,
+    progressUnit: 'hours',
+    colorTheme: {
+      bg: 'bg-fuchsia-50',
+      border: 'border-fuchsia-300',
+      text: 'text-fuchsia-900',
+      accent: 'bg-fuchsia-600'
+    }
+  },
+  {
+    id: 'badge-12',
+    title: 'Immortal Sovereign',
+    category: 'Milestone',
+    description: 'The highest honor on CommonGround: 5,000+ verified hours of lifelong service.',
+    requirement: '5000+ Verified Hours',
+    rarity: 'Immortal',
+    iconName: 'Infinity',
+    earned: false,
+    currentProgress: 52.5,
+    targetProgress: 5000,
+    progressUnit: 'hours',
+    colorTheme: {
+      bg: 'bg-rose-50',
+      border: 'border-rose-300',
+      text: 'text-rose-900',
+      accent: 'bg-rose-700'
+    }
+  },
+  {
     id: 'badge-6',
     title: 'Earth Guardian',
     category: 'Cause Impact',
