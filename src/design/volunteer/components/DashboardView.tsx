@@ -87,14 +87,25 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         <div className="relative z-10 max-w-2xl">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-600/60 border border-emerald-400/30 text-emerald-100 text-xs font-semibold mb-3">
             <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-            <span>Welcome, Volunteer • Gold Service Tier</span>
+            <span>
+              Welcome, Volunteer
+              {(() => {
+                const top = badges
+                  .filter(b => b.earned && b.category === 'Milestone' && b.progressUnit === 'hours')
+                  .sort((a, b) => b.targetProgress - a.targetProgress)[0];
+                return top ? ` • ${top.rarity} Service Tier` : '';
+              })()}
+            </span>
           </div>
 
           <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white mb-2">
             Welcome back, {profile.name}!
           </h1>
           <p className="text-emerald-100 text-sm sm:text-base leading-relaxed mb-5">
-            You have contributed <strong className="text-white font-bold">{profile.totalHours} verified service hours</strong> across Seattle community programs. Your next assignment is ready for check-in.
+            You have contributed <strong className="text-white font-bold">{profile.totalHours} verified service hours</strong> to your community.
+            {signedUpEvents.length > 0
+              ? ` Your next shift is ${signedUpEvents[0].title} on ${signedUpEvents[0].formattedDate}.`
+              : ' Browse open events to sign up for your next shift.'}
           </p>
 
           <div className="flex flex-wrap gap-2.5">
@@ -203,8 +214,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">
               Assigned Team
             </span>
-            <h3 className="text-sm font-bold text-slate-900">{currentTeam?.teamName || 'Registration Team'}</h3>
-            <span className="text-slate-500 mt-1 block">{currentTeam?.meetingPoint.split(',')[0]}</span>
+            <h3 className="text-sm font-bold text-slate-900">{currentTeam?.teamName || 'Not assigned yet'}</h3>
+            <span className="text-slate-500 mt-1 block">{currentTeam?.meetingPoint?.split(',')[0]}</span>
           </div>
 
           {/* Leader */}
@@ -212,7 +223,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">
               Team Leader
             </span>
-            <h3 className="text-sm font-bold text-slate-900">{currentTeam?.leader.name || 'Marcus Reed'}</h3>
+            <h3 className="text-sm font-bold text-slate-900">{currentTeam?.leader.name || 'Ask your organizer'}</h3>
             <div className="flex items-center gap-1.5 mt-1">
               <span className="text-slate-500">Team Leader</span>
               <button
@@ -497,10 +508,12 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                   className="p-3 bg-slate-50 border border-slate-200/80 rounded-xl flex items-center justify-between gap-3"
                 >
                   <div className="flex items-center gap-3">
-                    <span className="text-2xl">{badge.icon}</span>
+                    <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full border ${badge.colorTheme.bg} ${badge.colorTheme.border}`}>
+                      <Award className={`h-4 w-4 ${badge.colorTheme.text}`} />
+                    </span>
                     <div>
                       <h4 className="text-xs font-bold text-slate-900">{badge.title}</h4>
-                      <p className="text-[11px] text-slate-500">{badge.criterion}</p>
+                      <p className="text-[11px] text-slate-500">{badge.requirement}</p>
                     </div>
                   </div>
                   <button

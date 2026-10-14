@@ -37,6 +37,10 @@ interface SidebarProps {
   unreadMessagesCount: number;
   unreadNotificationsCount: number;
   tasksCount?: number;
+  earnedBadgesCount?: number;
+  isOnDuty?: boolean;
+  teamsCount?: number;
+  documentsCount?: number;
   isMobileMenuOpen: boolean;
   setIsMobileMenuOpen: (open: boolean) => void;
 }
@@ -48,7 +52,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
   upcomingEventsCount,
   unreadMessagesCount,
   unreadNotificationsCount,
-  tasksCount = 3,
+  tasksCount = 0,
+  earnedBadgesCount = 0,
+  isOnDuty = false,
+  teamsCount = 0,
+  documentsCount = 0,
   isMobileMenuOpen,
   setIsMobileMenuOpen
 }) => {
@@ -90,7 +98,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           id: 'tasks',
           label: 'My Tasks',
           icon: CheckSquare,
-          badge: `${tasksCount} Active`,
+          badge: tasksCount > 0 ? `${tasksCount} Active` : null,
           badgeColor: 'bg-amber-100 text-amber-900',
           description: 'Assigned duties & status'
         },
@@ -98,7 +106,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           id: 'attendance',
           label: 'Attendance & Check-in',
           icon: QrCode,
-          badge: 'On Duty',
+          badge: isOnDuty ? 'On Duty' : null,
           badgeColor: 'bg-emerald-600 text-white',
           description: 'QR, GPS & PIN Check-in'
         }
@@ -111,7 +119,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           id: 'team',
           label: 'My Team',
           icon: Users,
-          badge: 'Squad 1',
+          badge: teamsCount > 0 ? `${teamsCount} ${teamsCount === 1 ? 'Squad' : 'Squads'}` : null,
           badgeColor: 'bg-purple-100 text-purple-800',
           description: 'Leader & squad members'
         },
@@ -135,7 +143,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           id: 'documents',
           label: 'Event Documents',
           icon: FolderOpen,
-          badge: '5 Files',
+          badge: documentsCount > 0 ? `${documentsCount} Files` : null,
           badgeColor: 'bg-slate-100 text-slate-700',
           description: 'Handbooks, maps & safety'
         },
@@ -180,7 +188,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           id: 'badges',
           label: 'Badges & Milestones',
           icon: Award,
-          badge: '6 Earned',
+          badge: earnedBadgesCount > 0 ? `${earnedBadgesCount} Earned` : null,
           badgeColor: 'bg-amber-100 text-amber-800',
           description: 'Milestones & social sharing'
         },

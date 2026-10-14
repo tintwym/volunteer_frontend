@@ -306,7 +306,7 @@ END:VCALENDAR`;
                         {event.isSignedUp ? (
                           <>
                             <Check className="w-3.5 h-3.5" />
-                            <span>Registered</span>
+                            <span>{event.participationStatus === 'Waitlisted' ? 'Waitlisted' : 'Registered'}</span>
                           </>
                         ) : (
                           <>

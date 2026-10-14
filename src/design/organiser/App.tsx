@@ -663,9 +663,9 @@ export default function App() {
 
   // Filter shifts based on global search if applicable
   const unreadMessagesCount = (channels || []).reduce((acc, c) => acc + (c?.unreadCount || 0), 0);
-  const upcomingShiftsCount = (operationalShifts || []).filter((s) => s.status === 'published').length || (shifts || []).filter((s) => s.status === 'upcoming').length;
-  const pendingApprovalsCount = (approvalRequests || []).filter((r) => r.status === 'pending').length;
-  const openIncidentsCount = (incidentReports || []).filter((i) => i.status === 'open' || i.status === 'investigating').length;
+  const upcomingShiftsCount = (operationalShifts || []).filter((s) => s.status === 'Scheduled').length || (shifts || []).filter((s) => s.status === 'upcoming').length;
+  const pendingApprovalsCount = (approvalRequests || []).filter((r) => r.status === 'Pending').length;
+  const openIncidentsCount = (incidentReports || []).filter((i) => i.status !== 'Resolved' && i.status !== 'Closed').length;
 
   return (
     <motion.div
@@ -824,7 +824,7 @@ export default function App() {
               events={organiserEvents}
               onCreateTask={(newTask) => {
                 setOperationalTasks((prev) => [newTask, ...prev]);
-                showToast(`Task "${newTask.title}" added to board.`);
+                showToast(`Task "${newTask.name}" added to board.`);
               }}
               onUpdateTaskStatus={(id, status) => {
                 setOperationalTasks((prev) =>
@@ -847,7 +847,7 @@ export default function App() {
               events={organiserEvents}
               onCreateShift={(newShift) => {
                 setOperationalShifts((prev) => [newShift, ...prev]);
-                showToast(`Shift "${newShift.title}" scheduled!`);
+                showToast(`Shift "${newShift.name}" scheduled!`);
               }}
               onUpdateShift={(id, patch) => {
                 setOperationalShifts((prev) =>
@@ -880,7 +880,7 @@ export default function App() {
               onSendAnnouncement={(newAnnouncement) => {
                 setBroadcastAnnouncements((prev) => [newAnnouncement, ...prev]);
                 showToast(
-                  `Broadcast "${newAnnouncement.title}" dispatched via ${newAnnouncement.channels.join(', ')}!`
+                  `Broadcast "${newAnnouncement.title}" sent to ${newAnnouncement.targetName}!`
                 );
               }}
             />
@@ -972,7 +972,7 @@ export default function App() {
                     ids.includes(r.id)
                       ? {
                           ...r,
-                          status: 'approved',
+                          status: 'Approved',
                           decidedAt: new Date().toISOString().split('T')[0],
                         }
                       : r

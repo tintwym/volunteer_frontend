@@ -402,27 +402,9 @@ export default function App() {
   };
 
   // Recognition & Certificates Handlers
-  const handleIssueCertificate = (
-    volunteerId: string,
-    volunteerName: string,
-    hours: number,
-    programFocus: string
-  ) => {
-    const newCert: CertificateRecord = {
-      id: `cert-${Date.now()}`,
-      volunteerId,
-      volunteerName,
-      hours,
-      organization: 'Community Action Network Alliance',
-      issuedDate: new Date().toISOString().split('T')[0],
-      signatoryLeader: 'Sarah Jenkins',
-      signatoryTitle: 'Volunteer Team Leader',
-      programFocus,
-      certificateNumber: `CAN-LEAD-${Math.floor(1000 + Math.random() * 9000)}`
-    };
-
+  const handleIssueCertificate = (newCert: CertificateRecord) => {
     setCertificates(prev => [newCert, ...prev]);
-    showToast(`Official Certificate of Service created for ${volunteerName}!`, 'success');
+    showToast(`Official Certificate of Service created for ${newCert.volunteerName}!`, 'success');
   };
 
   const handleAwardBadge = (volunteerId: string, badgeId: string) => {
@@ -508,7 +490,7 @@ export default function App() {
                 announcements={announcements}
                 onNavigateTab={setCurrentTab}
                 onQuickUpdateTaskStatus={(taskId, status) => handleUpdateTaskStatus(taskId, status)}
-                onRelayAnnouncement={(ann) => handleRelayOrganiserAnnouncement(ann.id, ann.suggestedTeamAction)}
+                onRelayAnnouncement={(ann) => handleRelayOrganiserAnnouncement(ann.id, ann.suggestedTeamAction ?? "")}
                 onOpenReportIncidentModal={() => setCurrentTab('incidents')}
                 onOpenSubmitRequestModal={() => setCurrentTab('requests')}
                 onSubmitAttendanceToOrganiser={handleSubmitSummaryToOrganiser}

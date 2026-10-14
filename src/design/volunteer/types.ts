@@ -92,6 +92,8 @@ export interface VolunteerEvent {
   spotsTotal: number;
   spotsFilled: number;
   isSignedUp: boolean;
+  /** Past or no longer accepting sign-ups. */
+  closed?: boolean;
   signupDate?: string;
   participationStatus?: ParticipationStatus;
   selectedRole?: string;
@@ -276,6 +278,8 @@ export interface AttendanceRecord {
   scheduledEnd: string;
   checkInTime: string | null;
   checkOutTime: string | null;
+  /** ISO timestamp of check-in, used for the live shift timer. */
+  checkInAt?: string;
   totalHours: number;
   method: CheckInMethod;
   status: AttendanceStatus;

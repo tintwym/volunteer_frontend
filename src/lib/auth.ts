@@ -7,6 +7,7 @@ export interface AuthUser {
   role: Role;
   organizationId: string | null;
   organizationName: string | null;
+  phone?: string | null;
 }
 
 export interface AuthResponse {
@@ -15,7 +16,7 @@ export interface AuthResponse {
   user: AuthUser;
 }
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080";
+const API_URL = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080").replace(/\/+$/, "");
 const TOKEN_KEY = "cg_access_token";
 /** Auth session user — keep separate from landing prototype `cg_user`. */
 const USER_KEY = "cg_auth_user";
@@ -86,6 +87,7 @@ export function normalizeUser(raw: unknown): AuthUser | null {
       typeof data.organizationId === "string" ? data.organizationId : null,
     organizationName:
       typeof data.organizationName === "string" ? data.organizationName : null,
+    phone: typeof data.phone === "string" ? data.phone : null,
   };
 }
 
@@ -173,13 +175,24 @@ function formatApiError(data: unknown, status: number): string {
     }
   }
 
-  if (status === 401 || status === 403) {
-    return "Invalid email or password.";
+  if (status === 401) {
+    return "Your session has expired. Please sign in again.";
+  }
+  if (status === 403) {
+    return "You do not have permission to do this.";
   }
   if (status >= 500) {
     return "Server error. Please try again in a moment.";
   }
   return "Unable to complete the request. Please try again.";
+}
+
+/** `status` is 0 when the API could not be reached at all. */
+export class ApiError extends Error {
+  constructor(message: string, readonly status: number) {
+    super(message);
+    this.name = "ApiError";
+  }
 }
 
 export async function apiFetch<T>(
@@ -189,7 +202,7 @@ export async function apiFetch<T>(
   const token = getStoredToken();
   const headers = new Headers(options.headers);
   headers.set("Content-Type", "application/json");
-  if (token) headers.set("Authorization", `Bearer ${token}`);
+  if (token && !isDemoToken(token)) headers.set("Authorization", `Bearer ${token}`);
 
   let res: Response;
   try {
@@ -198,14 +211,15 @@ export async function apiFetch<T>(
       headers,
     });
   } catch {
-    throw new Error(
-      "Cannot reach the API. Make sure the backend is running on " + API_URL
+    throw new ApiError(
+      "Cannot reach the API. Make sure the backend is running on " + API_URL,
+      0
     );
   }
 
   const data = await res.json().catch(() => ({}));
   if (!res.ok) {
-    throw new Error(formatApiError(data, res.status));
+    throw new ApiError(formatApiError(data, res.status), res.status);
   }
   return data as T;
 }
@@ -244,6 +258,28 @@ export async function login(
   const normalized = { ...data, user };
   storeAuth(normalized, remember);
   return normalized;
+}
+
+/** Password of the seeded demo accounts (backend `local` profile). */
+export const DEMO_ACCOUNT_PASSWORD = "Password123!";
+
+/**
+ * Signs in to the seeded demo account for a role. Falls back to the offline
+ * prototype only when the API cannot be reached (e.g. a static preview deploy).
+ */
+export async function enterDemoAccount(role: Role): Promise<AuthResponse> {
+  try {
+    return await login(
+      { email: DEMO_PROFILES[role].email, password: DEMO_ACCOUNT_PASSWORD },
+      false
+    );
+  } catch (err) {
+    // 404/405 means the configured host is not the CommonGround API (e.g. a static deploy).
+    if (err instanceof ApiError && [0, 404, 405].includes(err.status)) {
+      return enterDemo(role);
+    }
+    throw err;
+  }
 }
 
 /** Instant prototype-style access — no API required. */

@@ -191,7 +191,7 @@ export const EventDetailModal: React.FC<EventDetailModalProps> = ({
             {event.isSignedUp ? (
               <>
                 <Check className="w-4 h-4 text-emerald-600" />
-                <span>Registered (Click to Withdraw)</span>
+                <span>{event.participationStatus === 'Waitlisted' ? 'Waitlisted (Click to Leave)' : 'Registered (Click to Withdraw)'}</span>
               </>
             ) : (
               <>

@@ -22,22 +22,40 @@ import {
 } from 'lucide-react';
 import { AttendanceRecord, CheckInMethod } from '../types';
 
+export interface CheckInOption {
+  eventId: string;
+  label: string;
+}
+
 interface AttendanceViewProps {
   records: AttendanceRecord[];
   activeShift: AttendanceRecord | null;
-  onCheckIn: (method: CheckInMethod, eventId: string, codeInput?: string) => void;
-  onCheckOut: (recordId: string) => void;
-  onReportAttendanceProblem: (recordId: string, problem: string) => void;
+  checkInOptions: CheckInOption[];
+  /** Real accounts can only check in with the event code shown by staff. */
+  live?: boolean;
+  onCheckIn: (method: CheckInMethod, eventId: string, codeInput?: string) => void | Promise<void>;
+  onCheckOut: (recordId: string) => void | Promise<void>;
+  onReportAttendanceProblem: (recordId: string, problem: string) => void | Promise<void>;
 }
+
+const METHODS = [
+  { id: 'QR Code', label: 'Scan QR Code', icon: QrCode, desc: 'Booth tablet scan' },
+  { id: 'Event Code', label: 'Enter Event Code', icon: KeyRound, desc: 'Code from your leader' },
+  { id: 'Location GPS', label: 'GPS Geofence', icon: MapPin, desc: 'Venue radius check' },
+  { id: 'Leader Confirmation', label: 'Leader PIN', icon: ShieldCheck, desc: 'Supervisor override' }
+];
 
 export const AttendanceView: React.FC<AttendanceViewProps> = ({
   records,
   activeShift,
+  checkInOptions,
+  live = false,
   onCheckIn,
   onCheckOut,
   onReportAttendanceProblem
 }) => {
-  const [selectedMethod, setSelectedMethod] = useState<CheckInMethod>('QR Code');
+  const [selectedMethod, setSelectedMethod] = useState<CheckInMethod>(live ? 'Event Code' : 'QR Code');
+  const [selectedEventId, setSelectedEventId] = useState(checkInOptions[0]?.eventId ?? '');
   const [eventCodeInput, setEventCodeInput] = useState('');
   const [leaderPinInput, setLeaderPinInput] = useState('');
   const [isSimulatingGps, setIsSimulatingGps] = useState(false);
@@ -45,19 +63,48 @@ export const AttendanceView: React.FC<AttendanceViewProps> = ({
   const [showProblemModal, setShowProblemModal] = useState<string | null>(null);
   const [problemDescription, setProblemDescription] = useState('');
   const [checkInSuccessToast, setCheckInSuccessToast] = useState<string | null>(null);
-
-  // Active elapsed timer
-  const [elapsedSeconds, setElapsedSeconds] = useState(12600); // approx 3.5 hours for active shift demo
+  const [errorToast, setErrorToast] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const methods = live ? METHODS.filter((m) => m.id === 'Event Code') : METHODS;
+  const isActive = !!activeShift && activeShift.status === 'Checked In';
 
   useEffect(() => {
-    let interval: any;
-    if (activeShift && activeShift.status === 'Checked In') {
-      interval = setInterval(() => {
-        setElapsedSeconds((prev) => prev + 1);
-      }, 1000);
+    if (!checkInOptions.some((o) => o.eventId === selectedEventId)) {
+      setSelectedEventId(checkInOptions[0]?.eventId ?? '');
     }
+  }, [checkInOptions, selectedEventId]);
+
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    if (!isActive) return;
+    const interval = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(interval);
-  }, [activeShift]);
+  }, [isActive]);
+  const elapsedSeconds =
+    isActive && activeShift.checkInAt
+      ? Math.max(0, Math.floor((now - new Date(activeShift.checkInAt).getTime()) / 1000))
+      : 0;
+
+  const flash = (message: string) => {
+    setErrorToast(null);
+    setCheckInSuccessToast(message);
+    setTimeout(() => setCheckInSuccessToast(null), 4000);
+  };
+
+  const run = async (action: () => void | Promise<void>, success: string) => {
+    setBusy(true);
+    try {
+      await action();
+      flash(success);
+      return true;
+    } catch (err) {
+      setCheckInSuccessToast(null);
+      setErrorToast(err instanceof Error && err.message ? err.message : 'Something went wrong. Please try again.');
+      return false;
+    } finally {
+      setBusy(false);
+    }
+  };
 
   const formatElapsedTime = (totalSec: number) => {
     const hrs = Math.floor(totalSec / 3600);
@@ -74,44 +121,62 @@ export const AttendanceView: React.FC<AttendanceViewProps> = ({
     }, 1200);
   };
 
-  const handleExecuteCheckIn = () => {
+  const handleExecuteCheckIn = async () => {
+    if (isActive) {
+      setErrorToast('You are already checked in. Check out of your current shift first.');
+      return;
+    }
+    if (!selectedEventId) {
+      setErrorToast('You have no confirmed shift to check in to today.');
+      return;
+    }
     let code = '';
     if (selectedMethod === 'Event Code') {
       if (!eventCodeInput.trim()) {
-        alert('Please enter the 4-digit Event Code displayed at your volunteer check-in booth.');
+        setErrorToast('Enter the event code from your leader or the check-in desk.');
         return;
       }
       code = eventCodeInput.trim();
     } else if (selectedMethod === 'Leader Confirmation') {
       if (!leaderPinInput.trim()) {
-        alert('Please ask your Team Leader to enter their 4-digit supervisor authorization PIN.');
+        setErrorToast('Ask your team leader to enter their supervisor PIN.');
         return;
       }
       code = leaderPinInput.trim();
     }
 
-    onCheckIn(selectedMethod, 'evt-101', code);
-    setCheckInSuccessToast(`Successfully checked in via ${selectedMethod}! Shift timer is now active.`);
-    setTimeout(() => setCheckInSuccessToast(null), 4000);
-    setEventCodeInput('');
-    setLeaderPinInput('');
+    const ok = await run(
+      () => onCheckIn(selectedMethod, selectedEventId, code),
+      `Checked in via ${selectedMethod}. Your shift timer is running.`
+    );
+    if (ok) {
+      setEventCodeInput('');
+      setLeaderPinInput('');
+      setGpsVerified(false);
+    }
   };
 
-  const handleExecuteCheckOut = () => {
+  const handleExecuteCheckOut = async () => {
     if (!activeShift) return;
-    onCheckOut(activeShift.id);
-    setCheckInSuccessToast('Check-out completed! 3.5 hours logged for supervisor verification.');
-    setTimeout(() => setCheckInSuccessToast(null), 4000);
+    await run(
+      () => onCheckOut(activeShift.id),
+      live
+        ? 'Checked out. Your hours were sent to your leader for approval.'
+        : 'Check-out completed. Hours logged for supervisor verification.'
+    );
   };
 
-  const handleSubmitProblem = (e: React.FormEvent) => {
+  const handleSubmitProblem = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!showProblemModal || !problemDescription.trim()) return;
-    onReportAttendanceProblem(showProblemModal, problemDescription);
-    setShowProblemModal(null);
-    setProblemDescription('');
-    setCheckInSuccessToast('Attendance problem report submitted to Event Operations.');
-    setTimeout(() => setCheckInSuccessToast(null), 4000);
+    const ok = await run(
+      () => onReportAttendanceProblem(showProblemModal, problemDescription.trim()),
+      'Attendance problem reported to event staff.'
+    );
+    if (ok) {
+      setShowProblemModal(null);
+      setProblemDescription('');
+    }
   };
 
   const totalCompletedHours = records
@@ -128,6 +193,17 @@ export const AttendanceView: React.FC<AttendanceViewProps> = ({
             <span>{checkInSuccessToast}</span>
           </div>
           <button onClick={() => setCheckInSuccessToast(null)} className="text-white/80 hover:text-white text-xs underline">
+            Dismiss
+          </button>
+        </div>
+      )}
+      {errorToast && (
+        <div role="alert" className="bg-red-600 text-white px-4 py-3 rounded-xl shadow-lg flex items-center justify-between text-sm font-medium">
+          <div className="flex items-center gap-2">
+            <AlertTriangle className="w-5 h-5 text-red-200" />
+            <span>{errorToast}</span>
+          </div>
+          <button onClick={() => setErrorToast(null)} className="text-white/80 hover:text-white text-xs underline">
             Dismiss
           </button>
         </div>
@@ -150,7 +226,7 @@ export const AttendanceView: React.FC<AttendanceViewProps> = ({
           <div className="flex items-center gap-3">
             <div className="bg-slate-50 border border-slate-200 px-4 py-2 rounded-xl text-right">
               <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider block">Logged Log Time</span>
-              <span className="text-lg font-bold text-slate-900">{totalCompletedHours.toFixed(1)} hrs</span>
+              <span className="text-lg font-bold text-slate-900">{+totalCompletedHours.toFixed(2)} hrs</span>
             </div>
           </div>
         </div>
@@ -182,15 +258,15 @@ export const AttendanceView: React.FC<AttendanceViewProps> = ({
             </div>
 
             <h2 className="text-xl font-bold text-slate-900">
-              {activeShift && activeShift.status === 'Checked In'
-                ? 'Community Festival 2026 • Registration Shift'
-                : 'Ready for Your Next Shift?'}
+              {isActive ? activeShift.eventTitle : 'Ready for Your Next Shift?'}
             </h2>
 
             <p className="text-xs text-slate-600 max-w-xl">
-              {activeShift && activeShift.status === 'Checked In'
-                ? `Checked in at ${activeShift.checkInTime} via ${activeShift.method} (${activeShift.locationValidationStatus || 'Verified'}). Remember to check out when your shift ends at 12:00 PM.`
-                : 'Upcoming: Saturday Sep 12 at 08:00 AM. Select your check-in method below when you arrive on site.'}
+              {isActive
+                ? `Checked in at ${activeShift.checkInTime ?? '—'} via ${activeShift.method}. Remember to check out when your shift ends at ${activeShift.scheduledEnd}.`
+                : checkInOptions.length > 0
+                ? `Next: ${checkInOptions[0].label}. Choose a check-in method below when you arrive on site.`
+                : 'You have no confirmed shift today. Sign up for an event to check in here.'}
             </p>
           </div>
 
@@ -202,7 +278,7 @@ export const AttendanceView: React.FC<AttendanceViewProps> = ({
               </span>
               <div className="text-3xl font-mono font-bold text-slate-900 flex items-center gap-1.5">
                 <Timer className="w-6 h-6 text-emerald-600" />
-                {activeShift && activeShift.status === 'Checked In' ? formatElapsedTime(elapsedSeconds) : '00:00:00'}
+                {formatElapsedTime(elapsedSeconds)}
               </div>
             </div>
 
@@ -211,7 +287,8 @@ export const AttendanceView: React.FC<AttendanceViewProps> = ({
                 <button
                   id="checkout-active-btn"
                   onClick={handleExecuteCheckOut}
-                  className="w-full sm:w-auto px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-xl transition-all shadow-sm shadow-red-200 flex items-center justify-center gap-2"
+                  disabled={busy}
+                  className="w-full sm:w-auto px-5 py-2.5 disabled:opacity-60 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-xl transition-all shadow-sm shadow-red-200 flex items-center justify-center gap-2"
                 >
                   <Square className="w-4 h-4" />
                   <span>Check Out Now</span>
@@ -241,17 +318,29 @@ export const AttendanceView: React.FC<AttendanceViewProps> = ({
           <span>Select Digital Check-in Method</span>
         </h3>
         <p className="text-xs text-slate-600 mb-4">
-          Choose the verification method instructed by your Team Leader or festival signage.
+          {live
+            ? 'Enter the check-in code your leader or organizer shares on site. If you can’t check in, ask them to check you in from their dashboard.'
+            : 'Choose the verification method instructed by your Team Leader or festival signage.'}
         </p>
 
+        <label className="block mb-4 max-w-md">
+          <span className="block text-xs font-semibold text-slate-700 mb-1">Shift</span>
+          <select
+            value={selectedEventId}
+            onChange={(e) => setSelectedEventId(e.target.value)}
+            disabled={checkInOptions.length === 0 || isActive}
+            className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 disabled:opacity-60"
+          >
+            {checkInOptions.length === 0 && <option value="">No confirmed shift today</option>}
+            {checkInOptions.map((o) => (
+              <option key={o.eventId} value={o.eventId}>{o.label}</option>
+            ))}
+          </select>
+        </label>
+
         {/* Tab Selection */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-6">
-          {[
-            { id: 'QR Code', label: 'Scan QR Code', icon: QrCode, desc: 'Booth tablet scan' },
-            { id: 'Event Code', label: 'Enter Event Code', icon: KeyRound, desc: '4-digit daily PIN' },
-            { id: 'Location GPS', label: 'GPS Geofence', icon: MapPin, desc: 'Venue radius check' },
-            { id: 'Leader Confirmation', label: 'Leader PIN', icon: ShieldCheck, desc: 'Supervisor override' }
-          ].map((m) => {
+        <div className={`grid gap-2 mb-6 ${methods.length > 1 ? 'grid-cols-2 sm:grid-cols-4' : 'grid-cols-1 max-w-xs'}`}>
+          {methods.map((m) => {
             const Icon = m.icon;
             const isSelected = selectedMethod === m.id;
             return (
@@ -299,21 +388,25 @@ export const AttendanceView: React.FC<AttendanceViewProps> = ({
 
           {selectedMethod === 'Event Code' && (
             <div className="max-w-md space-y-3">
-              <h4 className="text-sm font-bold text-slate-900">Enter Today's 4-Digit Event Code</h4>
+              <h4 className="text-sm font-bold text-slate-900">Enter Today's Event Code</h4>
               <p className="text-xs text-slate-600">
-                Found on the morning briefing whiteboard in the Volunteer Hub Tent (Demo Code: <strong>FEST26</strong> or <strong>2026</strong>).
+                {live
+                  ? 'Your leader or organizer can see this code on the event page.'
+                  : <>Found on the morning briefing whiteboard in the Volunteer Hub Tent (Demo Code: <strong>FEST26</strong> or <strong>2026</strong>).</>}
               </p>
               <div className="flex items-center gap-2">
                 <input
                   type="text"
-                  placeholder="e.g. FEST26"
+                  placeholder={live ? 'e.g. K7Q2M9' : 'e.g. FEST26'}
                   value={eventCodeInput}
                   onChange={(e) => setEventCodeInput(e.target.value.toUpperCase())}
+                  onKeyDown={(e) => { if (e.key === 'Enter') void handleExecuteCheckIn(); }}
                   className="bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs font-mono font-bold tracking-wider text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 w-44 uppercase"
                 />
                 <button
                   onClick={handleExecuteCheckIn}
-                  className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-lg transition-colors"
+                  disabled={busy || isActive}
+                  className="px-4 py-2 disabled:opacity-60 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-lg transition-colors"
                 >
                   Verify & Check In
                 </button>
@@ -437,7 +530,7 @@ export const AttendanceView: React.FC<AttendanceViewProps> = ({
                     </span>
                   </td>
                   <td className="py-3 font-bold text-slate-900">
-                    {rec.totalHours > 0 ? `${rec.totalHours.toFixed(1)} hrs` : 'In progress'}
+                    {rec.totalHours > 0 ? `${+rec.totalHours.toFixed(2)} hrs` : rec.status === 'Checked In' ? 'In progress' : '—'}
                   </td>
                   <td className="py-3">
                     <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
@@ -503,7 +596,8 @@ export const AttendanceView: React.FC<AttendanceViewProps> = ({
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold transition-colors shadow-xs"
+                  disabled={busy}
+                  className="px-4 py-2 disabled:opacity-60 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold transition-colors shadow-xs"
                 >
                   Submit Attendance Correction
                 </button>

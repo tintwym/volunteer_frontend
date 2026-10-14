@@ -19,17 +19,23 @@ import { Conversation, ChatMessage, VolunteerProfile } from '../types';
 interface MessagingViewProps {
   conversations: Conversation[];
   profile: VolunteerProfile;
-  onSendMessage: (conversationId: string, text: string) => void;
+  onSendMessage: (conversationId: string, text: string) => void | Promise<void>;
+  /** Offline demo only: fake a coordinator reply after each message. */
+  simulateReplies?: boolean;
+  onOpenConversation?: (conversationId: string) => void;
 }
 
 export const MessagingView: React.FC<MessagingViewProps> = ({
   conversations,
   profile,
-  onSendMessage
+  onSendMessage,
+  simulateReplies = true,
+  onOpenConversation
 }) => {
   const [activeConvId, setActiveConvId] = useState<string>(conversations[0]?.id || '');
   const [inputText, setInputText] = useState('');
   const [isOrganizerTyping, setIsOrganizerTyping] = useState(false);
+  const [sendError, setSendError] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const activeConversation = conversations.find(c => c.id === activeConvId) || conversations[0];
@@ -42,12 +48,24 @@ export const MessagingView: React.FC<MessagingViewProps> = ({
     scrollToBottom();
   }, [activeConversation?.messages, isOrganizerTyping]);
 
-  const handleSend = (textToSend?: string) => {
+  useEffect(() => {
+    if (activeConversation && activeConversation.unreadCount > 0) onOpenConversation?.(activeConversation.id);
+  }, [activeConversation?.id, activeConversation?.unreadCount, onOpenConversation]);
+
+  const handleSend = async (textToSend?: string) => {
     const text = textToSend || inputText;
     if (!text.trim() || !activeConversation) return;
 
-    onSendMessage(activeConversation.id, text);
+    setSendError(null);
     if (!textToSend) setInputText('');
+    try {
+      await onSendMessage(activeConversation.id, text.trim());
+    } catch (err) {
+      if (!textToSend) setInputText(text);
+      setSendError(err instanceof Error && err.message ? err.message : 'Message could not be sent.');
+      return;
+    }
+    if (!simulateReplies) return;
 
     // Simulate organizer typing and replying
     setIsOrganizerTyping(true);
@@ -271,6 +289,12 @@ export const MessagingView: React.FC<MessagingViewProps> = ({
               </button>
             ))}
           </div>
+
+          {sendError && (
+            <div role="alert" className="px-4 py-2 bg-red-50 border-t border-red-200 text-xs text-red-700">
+              {sendError}
+            </div>
+          )}
 
           {/* Input Bar */}
           <div className="p-3 bg-white border-t border-slate-200 flex items-center gap-2">

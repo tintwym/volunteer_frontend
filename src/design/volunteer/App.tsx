@@ -1,7 +1,7 @@
 'use client';
 // @ts-nocheck
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { 
   initialProfile, 
   initialEvents, 
@@ -36,7 +36,8 @@ import {
   IncidentReport,
   EventFeedback,
   TaskStatus,
-  AppSettings
+  AppSettings,
+  CheckInMethod
 } from './types';
 import { Navbar } from './components/Navbar';
 import { Sidebar } from './components/Sidebar';
@@ -64,26 +65,70 @@ import { ShareMilestoneModal } from './components/ShareMilestoneModal';
 import { EventDetailModal } from './components/EventDetailModal';
 import { AnimatedPage, motion } from '@/components/motion/ui';
 import { useTheme } from '@/components/theme/ThemeProvider';
+import { useAuth } from '@/components/auth/AuthProvider';
+import { api, errorMessage, formatDate, formatTime, todayIso, type ApiMessage, type Channel } from '@/lib/api';
 import type { ThemePreference } from '@/lib/theme';
+import {
+  CHANNELS,
+  freshBadges,
+  loadVolunteerData,
+  syncLiveBadges,
+  toApiTaskStatus,
+  toConversation,
+  toProfile,
+  toSeverity,
+  type LiveSnapshot,
+  type LocalProfileExtras
+} from './live';
+
+/** Keys that hold API data for real accounts and must never be read from or written to the browser. */
+const API_BACKED = new Set([
+  'vms_events', 'vms_service_records', 'vms_badges', 'vms_conversations', 'vms_notifications',
+  'vms_tasks', 'vms_attendance', 'vms_incidents', 'vms_teams'
+]);
+
+const PROFILE_EXTRA_KEYS = [
+  'location', 'bio', 'emergencyContact', 'skills', 'languages', 'experienceYears', 'preferredActivities',
+  'certifications', 'shareContactWithTeam', 'availability', 'notificationPreferences', 'avatar'
+];
 
 export default function App() {
-  // State with LocalStorage Fallback
-  const [profile, setProfile] = useState<VolunteerProfile>(() => {
-    const saved = localStorage.getItem('vms_profile');
-    return saved ? JSON.parse(saved) : initialProfile;
-  });
+  const { user, isDemo, refresh: refreshSession } = useAuth();
+  const live = !!user && !isDemo;
+  const uid = user?.id ?? 'demo';
 
-  const [events, setEvents] = useState<VolunteerEvent[]>(() => {
-    const saved = localStorage.getItem('vms_events');
-    return saved ? JSON.parse(saved) : initialEvents;
-  });
+  const storageKey = (key: string) => (live ? `${key}:${uid}` : key);
+  const loadLocal = <T,>(key: string, fallback: T): T => {
+    if (live && API_BACKED.has(key)) return fallback;
+    const saved = localStorage.getItem(storageKey(key));
+    if (!saved) return fallback;
+    try {
+      return JSON.parse(saved);
+    } catch {
+      return fallback;
+    }
+  };
+  const saveLocal = (key: string, value: unknown) => {
+    if (live && API_BACKED.has(key)) return;
+    localStorage.setItem(storageKey(key), JSON.stringify(value));
+  };
 
-  const [serviceRecords, setServiceRecords] = useState<ServiceRecord[]>(() => {
-    const saved = localStorage.getItem('vms_service_records');
-    return saved ? JSON.parse(saved) : initialServiceRecords;
-  });
+  const [profileExtras, setProfileExtras] = useState<LocalProfileExtras>(() =>
+    live ? loadLocal('vms_profile_extras', {}) : {}
+  );
+  const [liveSummary, setLiveSummary] = useState<LiveSnapshot | null>(null);
+
+  const [profile, setProfile] = useState<VolunteerProfile>(() =>
+    live ? toProfile(user, initialProfile, profileExtras, null, 0) : loadLocal('vms_profile', initialProfile)
+  );
+
+  const [events, setEvents] = useState<VolunteerEvent[]>(() => loadLocal('vms_events', live ? [] : initialEvents));
+  const [serviceRecords, setServiceRecords] = useState<ServiceRecord[]>(() =>
+    loadLocal('vms_service_records', live ? [] : initialServiceRecords)
+  );
 
   const [badges, setBadges] = useState<DigitalBadge[]>(() => {
+    if (live) return freshBadges(initialBadges);
     const saved = localStorage.getItem('vms_badges');
     const list = saved ? mergeWithDefaultBadges(JSON.parse(saved), initialBadges) : initialBadges;
     const savedProfile = localStorage.getItem('vms_profile');
@@ -91,61 +136,28 @@ export default function App() {
     return syncHourBadges(list, hours);
   });
 
-  const [conversations, setConversations] = useState<Conversation[]>(() => {
-    const saved = localStorage.getItem('vms_conversations');
-    return saved ? JSON.parse(saved) : initialConversations;
-  });
+  const [conversations, setConversations] = useState<Conversation[]>(() =>
+    loadLocal('vms_conversations', live ? [] : initialConversations)
+  );
+  const [notifications, setNotifications] = useState<AutomatedEmailNotification[]>(() =>
+    loadLocal('vms_notifications', live ? [] : initialEmailNotifications)
+  );
+  const [tasks, setTasks] = useState<VolunteerTask[]>(() => loadLocal('vms_tasks', live ? [] : initialTasks));
+  const [attendanceHistory, setAttendanceHistory] = useState<AttendanceRecord[]>(() =>
+    loadLocal('vms_attendance', live ? [] : initialAttendance)
+  );
+  const [teams] = useState<TeamInfo[]>(() => loadLocal('vms_teams', live ? [] : initialTeams));
+  const [trainingCourses, setTrainingCourses] = useState<TrainingCourse[]>(() => loadLocal('vms_training', initialTraining));
+  const [documents] = useState<EventDocument[]>(() => loadLocal('vms_documents', initialDocuments));
+  const [requests, setRequests] = useState<VolunteerRequest[]>(() => loadLocal('vms_requests', live ? [] : initialRequests));
+  const [incidents, setIncidents] = useState<IncidentReport[]>(() => loadLocal('vms_incidents', live ? [] : initialIncidents));
+  const [feedbackList, setFeedbackList] = useState<EventFeedback[]>(() => loadLocal('vms_feedback', live ? [] : initialFeedback));
+  const [settings, setSettings] = useState<AppSettings>(() => loadLocal('vms_settings', initialSettings));
+  const [chatSeen, setChatSeen] = useState<Record<string, string>>(() => (live ? loadLocal('vms_chat_seen', {}) : {}));
 
-  const [notifications, setNotifications] = useState<AutomatedEmailNotification[]>(() => {
-    const saved = localStorage.getItem('vms_notifications');
-    return saved ? JSON.parse(saved) : initialEmailNotifications;
-  });
-
-  // Volunteer Role Module States
-  const [tasks, setTasks] = useState<VolunteerTask[]>(() => {
-    const saved = localStorage.getItem('vms_tasks');
-    return saved ? JSON.parse(saved) : initialTasks;
-  });
-
-  const [attendanceHistory, setAttendanceHistory] = useState<AttendanceRecord[]>(() => {
-    const saved = localStorage.getItem('vms_attendance');
-    return saved ? JSON.parse(saved) : initialAttendance;
-  });
-
-  const [teams, setTeams] = useState<TeamInfo[]>(() => {
-    const saved = localStorage.getItem('vms_teams');
-    return saved ? JSON.parse(saved) : initialTeams;
-  });
-
-  const [trainingCourses, setTrainingCourses] = useState<TrainingCourse[]>(() => {
-    const saved = localStorage.getItem('vms_training');
-    return saved ? JSON.parse(saved) : initialTraining;
-  });
-
-  const [documents, setDocuments] = useState<EventDocument[]>(() => {
-    const saved = localStorage.getItem('vms_documents');
-    return saved ? JSON.parse(saved) : initialDocuments;
-  });
-
-  const [requests, setRequests] = useState<VolunteerRequest[]>(() => {
-    const saved = localStorage.getItem('vms_requests');
-    return saved ? JSON.parse(saved) : initialRequests;
-  });
-
-  const [incidents, setIncidents] = useState<IncidentReport[]>(() => {
-    const saved = localStorage.getItem('vms_incidents');
-    return saved ? JSON.parse(saved) : initialIncidents;
-  });
-
-  const [feedbackList, setFeedbackList] = useState<EventFeedback[]>(() => {
-    const saved = localStorage.getItem('vms_feedback');
-    return saved ? JSON.parse(saved) : initialFeedback;
-  });
-
-  const [settings, setSettings] = useState<AppSettings>(() => {
-    const saved = localStorage.getItem('vms_settings');
-    return saved ? JSON.parse(saved) : initialSettings;
-  });
+  const [liveLoading, setLiveLoading] = useState(live);
+  const [liveError, setLiveError] = useState<string | null>(null);
+  const [actionToast, setActionToast] = useState<{ tone: 'ok' | 'error'; text: string } | null>(null);
 
   const { theme, setTheme } = useTheme();
 
@@ -163,66 +175,96 @@ export default function App() {
   const [shareBadgeModal, setShareBadgeModal] = useState<DigitalBadge | null>(null);
   const [selectedEventForModal, setSelectedEventForModal] = useState<VolunteerEvent | null>(null);
 
-  // Sync state to LocalStorage
+  const toast = (tone: 'ok' | 'error', text: string) => {
+    setActionToast({ tone, text });
+    setTimeout(() => setActionToast((t) => (t?.text === text ? null : t)), 4500);
+  };
+
+  // ------------------------------------------------------------- live data
+
+  const applySnapshot = useCallback((snap: LiveSnapshot) => {
+    setLiveSummary(snap);
+    setEvents(snap.events);
+    setServiceRecords(snap.serviceRecords);
+    setTasks(snap.tasks);
+    setAttendanceHistory(snap.attendance);
+    setIncidents(snap.incidents);
+    setNotifications(snap.notifications);
+    setBadges((prev) => syncLiveBadges(prev, snap.badgeSummary));
+    setSelectedEventForModal((prev) => (prev ? snap.events.find((e) => e.id === prev.id) ?? null : prev));
+  }, []);
+
+  const reload = useCallback(async () => {
+    if (!live || !user) return;
+    try {
+      applySnapshot(await loadVolunteerData(user));
+      setLiveError(null);
+    } catch (err) {
+      setLiveError(errorMessage(err, 'Could not load your volunteer data.'));
+    } finally {
+      setLiveLoading(false);
+    }
+  }, [live, user, applySnapshot]);
+
   useEffect(() => {
-    localStorage.setItem('vms_profile', JSON.stringify(profile));
+    void reload();
+  }, [reload]);
+
+  // Profile and conversations are derived from several live sources.
+  useEffect(() => {
+    if (!live || !user) return;
+    setProfile(toProfile(user, initialProfile, profileExtras, liveSummary?.summary ?? null, liveSummary?.pendingHours ?? 0));
+  }, [live, user, profileExtras, liveSummary]);
+
+  useEffect(() => {
+    if (!live || !user || !liveSummary) return;
+    setConversations(
+      CHANNELS.map(({ channel }) => toConversation(channel, liveSummary.messages[channel], user.id, chatSeen[channel] ?? null))
+    );
+  }, [live, user, liveSummary, chatSeen]);
+
+  /** Runs an API mutation, refreshes everything, and surfaces errors as a toast. */
+  const mutate = async (action: () => Promise<unknown>, success?: string, rethrow = false) => {
+    try {
+      await action();
+      await reload();
+      if (success) toast('ok', success);
+    } catch (err) {
+      if (rethrow) throw err;
+      toast('error', errorMessage(err));
+    }
+  };
+
+  // ---------------------------------------------------------- persistence
+
+  useEffect(() => {
+    if (!live) saveLocal('vms_profile', profile);
   }, [profile]);
-
   useEffect(() => {
-    localStorage.setItem('vms_events', JSON.stringify(events));
-  }, [events]);
-
+    if (live) saveLocal('vms_profile_extras', profileExtras);
+  }, [profileExtras]);
+  useEffect(() => saveLocal('vms_events', events), [events]);
+  useEffect(() => saveLocal('vms_service_records', serviceRecords), [serviceRecords]);
+  useEffect(() => saveLocal('vms_badges', badges), [badges]);
   useEffect(() => {
-    localStorage.setItem('vms_service_records', JSON.stringify(serviceRecords));
-  }, [serviceRecords]);
-
-  useEffect(() => {
-    localStorage.setItem('vms_badges', JSON.stringify(badges));
-  }, [badges]);
-
-  useEffect(() => {
-    setBadges(prev => syncHourBadges(prev, profile.totalHours));
+    if (!live) setBadges(prev => syncHourBadges(prev, profile.totalHours));
   }, [profile.totalHours]);
-
+  useEffect(() => saveLocal('vms_conversations', conversations), [conversations]);
+  useEffect(() => saveLocal('vms_notifications', notifications), [notifications]);
+  useEffect(() => saveLocal('vms_tasks', tasks), [tasks]);
+  useEffect(() => saveLocal('vms_attendance', attendanceHistory), [attendanceHistory]);
+  useEffect(() => saveLocal('vms_training', trainingCourses), [trainingCourses]);
+  useEffect(() => saveLocal('vms_requests', requests), [requests]);
+  useEffect(() => saveLocal('vms_incidents', incidents), [incidents]);
+  useEffect(() => saveLocal('vms_feedback', feedbackList), [feedbackList]);
+  useEffect(() => saveLocal('vms_settings', settings), [settings]);
   useEffect(() => {
-    localStorage.setItem('vms_conversations', JSON.stringify(conversations));
-  }, [conversations]);
-
-  useEffect(() => {
-    localStorage.setItem('vms_notifications', JSON.stringify(notifications));
-  }, [notifications]);
-
-  useEffect(() => {
-    localStorage.setItem('vms_tasks', JSON.stringify(tasks));
-  }, [tasks]);
-
-  useEffect(() => {
-    localStorage.setItem('vms_attendance', JSON.stringify(attendanceHistory));
-  }, [attendanceHistory]);
-
-  useEffect(() => {
-    localStorage.setItem('vms_training', JSON.stringify(trainingCourses));
-  }, [trainingCourses]);
-
-  useEffect(() => {
-    localStorage.setItem('vms_requests', JSON.stringify(requests));
-  }, [requests]);
-
-  useEffect(() => {
-    localStorage.setItem('vms_incidents', JSON.stringify(incidents));
-  }, [incidents]);
-
-  useEffect(() => {
-    localStorage.setItem('vms_feedback', JSON.stringify(feedbackList));
-  }, [feedbackList]);
-
-  useEffect(() => {
-    localStorage.setItem('vms_settings', JSON.stringify(settings));
-  }, [settings]);
+    if (live) saveLocal('vms_chat_seen', chatSeen);
+  }, [chatSeen]);
 
   const handleResetSettings = () => {
     setSettings(initialSettings);
-    localStorage.removeItem('vms_settings');
+    localStorage.removeItem(storageKey('vms_settings'));
     setTheme(initialSettings.themeMode);
   };
 
@@ -232,8 +274,47 @@ export default function App() {
   const upcomingEventsCount = events.filter(e => e.isSignedUp).length;
   const activeTasksCount = tasks.filter(t => t.status !== 'Completed').length;
 
+  const activeShift = useMemo(
+    () => attendanceHistory.find((a) => a.status === 'Checked In') ?? null,
+    [attendanceHistory]
+  );
+
+  const checkInOptions = useMemo(() => {
+    if (live) {
+      const today = todayIso();
+      return (liveSummary?.registrations ?? [])
+        .filter((r) => r.status === 'CONFIRMED' && r.eventDate >= today)
+        .sort((a, b) => (a.eventDate + a.startTime).localeCompare(b.eventDate + b.startTime))
+        .map((r) => ({
+          eventId: r.eventId,
+          label: `${r.eventName} · ${formatDate(r.eventDate)} ${formatTime(r.startTime)}`
+        }));
+    }
+    return events
+      .filter((e) => e.isSignedUp)
+      .map((e) => ({ eventId: e.id, label: `${e.title} · ${e.formattedDate} ${e.startTime}` }));
+  }, [live, liveSummary, events]);
+
+  // ------------------------------------------------------------- handlers
+
   // Toggle Shift Registration
   const handleToggleSignup = (eventId: string) => {
+    if (live) {
+      const evt = events.find((e) => e.id === eventId);
+      if (!evt) return;
+      if (evt.isSignedUp) {
+        void mutate(() => api.events.cancel(eventId), `Cancelled your spot at ${evt.title}.`);
+      } else {
+        void mutate(async () => {
+          const reg = await api.events.register(eventId);
+          toast('ok', reg.status === 'WAITLIST'
+            ? `${evt.title} is full, so you're on the waitlist. We'll notify you if a spot opens.`
+            : `You're registered for ${evt.title}.`);
+        });
+      }
+      return;
+    }
+
     setEvents(prevEvents => 
       prevEvents.map(evt => {
         if (evt.id === eventId) {
@@ -297,11 +378,28 @@ export default function App() {
 
   // Cancel Participation
   const handleCancelParticipation = (eventId: string) => {
+    if (live) {
+      void mutate(() => api.events.cancel(eventId), 'Your registration was cancelled.');
+      return;
+    }
     setEvents(prev => prev.map(e => e.id === eventId ? { ...e, isSignedUp: false, participationStatus: 'Cancelled' } : e));
   };
 
   // Log External Hours
   const handleSubmitExternalHours = (recordData: Omit<ServiceRecord, 'id' | 'status' | 'verificationCode'>) => {
+    if (live) {
+      const description = [recordData.eventTitle, recordData.organization, recordData.notes]
+        .map((s) => s?.trim())
+        .filter(Boolean)
+        .join(' · ')
+        .slice(0, 2000);
+      void mutate(
+        () => api.hours.submit({ workDate: recordData.date, hours: Number(recordData.hours), description }),
+        `Submitted ${recordData.hours}h for approval.`
+      );
+      return;
+    }
+
     const newRecord: ServiceRecord = {
       ...recordData,
       id: `rec-ext-${Date.now()}`,
@@ -340,10 +438,11 @@ export default function App() {
   };
 
   // Task Status Lifecycle
-  const handleUpdateTaskStatus = (taskId: string, newStatus: TaskStatus) => {
+  const handleUpdateTaskStatus = (taskId: string, newStatus: TaskStatus, progressOverride?: number) => {
+    const current = tasks.find((t) => t.id === taskId);
     setTasks(prev => prev.map(t => {
       if (t.id === taskId) {
-        let progress = t.progress;
+        let progress = progressOverride ?? t.progress;
         if (newStatus === 'Completed') progress = 100;
         else if (newStatus === 'In Progress' && progress === 0) progress = 50;
         else if (newStatus === 'Accepted' && progress === 0) progress = 10;
@@ -351,87 +450,139 @@ export default function App() {
       }
       return t;
     }));
+
+    if (live && current && toApiTaskStatus(current.status) !== toApiTaskStatus(newStatus)) {
+      void mutate(
+        () => api.tasks.setStatus(taskId, toApiTaskStatus(newStatus)),
+        newStatus === 'Completed' ? `Marked “${current.title}” as done.` : undefined
+      );
+    }
   };
 
   // Toggle quick task status on dashboard
   const handleToggleTaskStatus = (taskId: string) => {
-    setTasks(prev => prev.map(t => {
-      if (t.id === taskId) {
-        const nextStatus: TaskStatus = 
-          t.status === 'Completed' ? 'In Progress' :
-          t.status === 'In Progress' ? 'Completed' : 'In Progress';
-        const progress = nextStatus === 'Completed' ? 100 : 50;
-        return { ...t, status: nextStatus, progress };
-      }
-      return t;
-    }));
+    const task = tasks.find((t) => t.id === taskId);
+    if (!task) return;
+    const nextStatus: TaskStatus =
+      task.status === 'Completed' ? 'In Progress' :
+      task.status === 'In Progress' ? 'Completed' : 'In Progress';
+    handleUpdateTaskStatus(taskId, nextStatus, nextStatus === 'Completed' ? 100 : 50);
   };
 
   // Report Task Issue
   const handleReportTaskIssue = (taskId: string, issueText: string) => {
-    setTasks(prev => prev.map(t => {
-      if (t.id === taskId) {
-        return {
-          ...t,
-          status: 'Blocked',
-          notes: `⚠️ Volunteer Issue Logged: ${issueText}`
-        };
-      }
-      return t;
-    }));
+    const task = tasks.find(t => t.id === taskId);
+    if (!task) return;
+
+    if (live) {
+      void mutate(
+        () => api.incidents.report({
+          title: `[Equipment problem] Task blocked: ${task.title}`.slice(0, 200),
+          description: issueText,
+          severity: 'MEDIUM',
+          eventId: task.eventId || null
+        }),
+        'Problem reported. Your organizer and leaders have been notified.'
+      );
+      return;
+    }
+
+    setTasks(prev => prev.map(t => (t.id === taskId ? { ...t, problemReported: issueText } : t)));
 
     // Auto-create a request to Team Leader
-    const task = tasks.find(t => t.id === taskId);
-    if (task) {
-      const newReq: VolunteerRequest = {
-        id: `req-auto-${Date.now()}`,
-        type: 'Assistance Request',
-        subject: `Task Assistance Needed: ${task.title}`,
-        details: `Volunteer encountered an impediment: "${issueText}" at ${task.location}. Requesting leader guidance.`,
-        status: 'Submitted',
-        submittedDate: 'Just now',
-        eventId: task.eventId,
-        eventTitle: task.eventTitle,
-        urgency: 'High'
-      };
-      setRequests(prev => [newReq, ...prev]);
-    }
+    const newReq: VolunteerRequest = {
+      id: `req-auto-${Date.now()}`,
+      type: 'Assistance Request',
+      subject: `Task Assistance Needed: ${task.title}`,
+      details: `Volunteer encountered an impediment: "${issueText}" at ${task.location}. Requesting leader guidance.`,
+      status: 'Submitted',
+      submittedDate: 'Just now',
+      eventId: task.eventId,
+      eventTitle: task.eventTitle,
+      urgency: 'High'
+    };
+    setRequests(prev => [newReq, ...prev]);
   };
 
-  // Attendance Check-in / Check-out Record
-  const handleRecordAttendance = (record: AttendanceRecord) => {
-    setAttendanceHistory(prev => {
-      const existingIdx = prev.findIndex(a => a.id === record.id);
-      if (existingIdx >= 0) {
-        const updated = [...prev];
-        updated[existingIdx] = record;
-        return updated;
-      }
-      return [record, ...prev];
-    });
-
-    // If check-out is complete with hours, add to service records!
-    if (record.status === 'Completed' && record.totalHours > 0) {
-      const newRec: ServiceRecord = {
-        id: `rec-att-${Date.now()}`,
-        eventId: record.eventId,
-        eventTitle: record.eventTitle,
-        organization: 'Seattle Civic Events',
-        category: 'Community Aid',
-        date: record.shiftDate,
-        hours: record.totalHours,
-        supervisorName: 'Marcus Reed',
-        supervisorEmail: 'm.reed@seattlecivic.org',
-        status: 'verified',
-        verificationCode: record.verificationCode,
-        notes: `Validated via on-site ${record.method} check-in/out terminal.`
-      };
-      setServiceRecords(prev => [newRec, ...prev]);
-      setProfile(prev => ({
-        ...prev,
-        totalHours: +(prev.totalHours + record.totalHours).toFixed(1)
-      }));
+  // Attendance
+  const handleCheckIn = async (method: CheckInMethod, eventId: string, code?: string) => {
+    if (live) {
+      await mutate(() => api.events.checkIn(eventId, code ?? ''), undefined, true);
+      return;
     }
+    const evt = events.find((e) => e.id === eventId);
+    const now = new Date();
+    const record: AttendanceRecord = {
+      id: `att-${Date.now()}`,
+      eventId,
+      eventTitle: evt?.title ?? 'Volunteer shift',
+      shiftDate: evt?.formattedDate ?? now.toLocaleDateString('en-US'),
+      scheduledStart: evt?.startTime ?? '',
+      scheduledEnd: evt?.endTime ?? '',
+      checkInTime: now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+      checkOutTime: null,
+      checkInAt: now.toISOString(),
+      totalHours: 0,
+      method,
+      status: 'Checked In',
+      verificationCode: `CHK-${Math.floor(1000 + Math.random() * 9000)}`,
+      locationValidationStatus: method === 'Location GPS' ? 'Verified GPS' : undefined
+    };
+    setAttendanceHistory((prev) => [record, ...prev]);
+  };
+
+  const handleCheckOut = async (recordId: string) => {
+    const record = attendanceHistory.find((a) => a.id === recordId);
+    if (!record) return;
+    if (live) {
+      await mutate(() => api.events.checkOut(record.eventId), undefined, true);
+      return;
+    }
+    const now = new Date();
+    const started = record.checkInAt ? new Date(record.checkInAt).getTime() : now.getTime();
+    const hours = Math.min(24, Math.max(0.25, Math.round(((now.getTime() - started) / 3600000) * 4) / 4));
+    const completed: AttendanceRecord = {
+      ...record,
+      checkOutTime: now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+      totalHours: hours,
+      status: 'Completed'
+    };
+    setAttendanceHistory((prev) => prev.map((a) => (a.id === recordId ? completed : a)));
+    setServiceRecords((prev) => [{
+      id: `rec-att-${Date.now()}`,
+      eventId: record.eventId,
+      eventTitle: record.eventTitle,
+      organization: 'CommonGround',
+      category: 'Community Aid',
+      date: now.toISOString().split('T')[0],
+      hours,
+      supervisorName: 'Awaiting review',
+      supervisorEmail: '',
+      status: 'pending',
+      verificationCode: record.verificationCode,
+      notes: `Recorded via ${record.method} check-in/out.`
+    }, ...prev]);
+    setProfile((prev) => ({ ...prev, pendingHours: +(prev.pendingHours + hours).toFixed(2) }));
+  };
+
+  const handleReportAttendanceProblem = async (recordId: string, problem: string) => {
+    const record = attendanceHistory.find((a) => a.id === recordId);
+    if (live) {
+      await mutate(
+        () => api.incidents.report({
+          title: `[Venue problem] Attendance issue: ${record?.eventTitle ?? 'shift'}`.slice(0, 200),
+          description: problem,
+          severity: 'LOW',
+          eventId: record?.eventId ?? null
+        }),
+        undefined,
+        true
+      );
+      return;
+    }
+    setAttendanceHistory((prev) =>
+      prev.map((a) => (a.id === recordId ? { ...a, status: 'Problem Reported', notes: problem } : a))
+    );
   };
 
   // Training Course Quiz Completion
@@ -464,6 +615,22 @@ export default function App() {
 
   // Submit Incident Report
   const handleSubmitIncident = (newInc: Omit<IncidentReport, 'id' | 'submittedDate' | 'status'>) => {
+    if (live) {
+      const details = [
+        newInc.description,
+        newInc.location && `Location: ${newInc.location}`,
+        newInc.incidentTime && `Time: ${newInc.incidentTime}`
+      ].filter(Boolean).join('\n');
+      void mutate(
+        () => api.incidents.report({
+          title: `[${newInc.category}] ${newInc.title}`.slice(0, 200),
+          description: details,
+          severity: toSeverity(newInc.urgency)
+        }),
+        'Incident reported. Event staff have been notified.'
+      );
+      return;
+    }
     const item: IncidentReport = {
       ...newInc,
       id: `inc-${Date.now()}`,
@@ -484,7 +651,15 @@ export default function App() {
   };
 
   // Send Message in Chat
-  const handleSendMessage = (conversationId: string, text: string) => {
+  const handleSendMessage = async (conversationId: string, text: string) => {
+    if (live) {
+      if (conversationId === 'ANNOUNCEMENTS') {
+        throw new Error('Only organizers and leaders can post announcements. Use the General channel instead.');
+      }
+      await mutate(() => api.messages.post(conversationId as Channel, text), undefined, true);
+      return;
+    }
+
     const newMessage = {
       id: `msg-${Date.now()}`,
       senderId: profile.id,
@@ -511,11 +686,48 @@ export default function App() {
     );
   };
 
+  const handleOpenConversation = useCallback((conversationId: string) => {
+    if (!live || !liveSummary) return;
+    const latest = (liveSummary.messages[conversationId as Channel] ?? []).reduce(
+      (max: string, m: ApiMessage) => (m.createdAt > max ? m.createdAt : max),
+      ''
+    );
+    if (latest) setChatSeen((prev) => (prev[conversationId] === latest ? prev : { ...prev, [conversationId]: latest }));
+  }, [live, liveSummary]);
+
   const handleMarkNotificationAsRead = (id: string) => {
     setNotifications(prev =>
       prev.map(n => n.id === id ? { ...n, isRead: true } : n)
     );
+    if (live) {
+      api.me.markRead(id).catch((err) => toast('error', errorMessage(err)));
+    }
   };
+
+  const handleUpdateProfile = (updated: VolunteerProfile) => {
+    if (!live) {
+      setProfile(updated);
+      return;
+    }
+    const extras = Object.fromEntries(PROFILE_EXTRA_KEYS.map((k) => [k, updated[k as keyof VolunteerProfile]]));
+    setProfileExtras(extras);
+    const fullName = updated.name?.trim();
+    const phone = updated.phone?.trim() ?? '';
+    if ((fullName && fullName !== user.fullName) || phone !== (user.phone ?? '')) {
+      void mutate(async () => {
+        await api.account.updateProfile({ fullName: fullName || user.fullName, phone });
+        await refreshSession();
+      });
+    }
+  };
+
+  if (live && liveLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-slate-50 text-slate-500">
+        Loading your volunteer workspace…
+      </div>
+    );
+  }
 
   return (
     <motion.div
@@ -536,6 +748,31 @@ export default function App() {
         setIsMobileMenuOpen={setIsMobileMenuOpen}
       />
 
+      {liveError && (
+        <div role="alert" className="max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 pt-4">
+          <div className="flex items-center justify-between gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+            <span>{liveError}</span>
+            <button onClick={() => void reload()} className="font-semibold underline">Try again</button>
+          </div>
+        </div>
+      )}
+
+      {actionToast && (
+        <div
+          role={actionToast.tone === 'error' ? 'alert' : 'status'}
+          className={`fixed bottom-6 left-1/2 z-[60] -translate-x-1/2 max-w-md w-[calc(100%-2rem)] rounded-xl px-4 py-3 text-sm font-medium text-white shadow-lg ${
+            actionToast.tone === 'error' ? 'bg-red-600' : 'bg-emerald-600'
+          }`}
+        >
+          <div className="flex items-start justify-between gap-3">
+            <span>{actionToast.text}</span>
+            <button onClick={() => setActionToast(null)} className="text-white/80 hover:text-white text-xs underline shrink-0">
+              Dismiss
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Main Layout Container with Sidebar & Content */}
       <div className="max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 flex-1 flex flex-col md:flex-row gap-6 pt-4 pb-12">
         {/* Responsive Sidebar */}
@@ -547,6 +784,10 @@ export default function App() {
           unreadMessagesCount={unreadMessagesCount}
           unreadNotificationsCount={unreadNotificationsCount}
           tasksCount={activeTasksCount}
+          earnedBadgesCount={badges.filter((b) => b.earned).length}
+          isOnDuty={!!activeShift}
+          teamsCount={teams.length}
+          documentsCount={documents.length}
           isMobileMenuOpen={isMobileMenuOpen}
           setIsMobileMenuOpen={setIsMobileMenuOpen}
         />
@@ -575,7 +816,7 @@ export default function App() {
           {/* Section 3.2 & 3.3: Event Discovery & Registration */}
           {activeTab === 'events' && (
             <EventsSchedulingView
-              events={events}
+              events={events.filter((e) => !e.closed || e.isSignedUp)}
               onToggleSignup={handleToggleSignup}
               onSelectEvent={(event) => setSelectedEventForModal(event)}
               setActiveTab={setActiveTab}
@@ -607,7 +848,8 @@ export default function App() {
             <MyTasksView
               tasks={tasks}
               onUpdateTaskStatus={handleUpdateTaskStatus}
-              onReportTaskIssue={handleReportTaskIssue}
+              onReportTaskProblem={handleReportTaskIssue}
+              onNavigateToLeaderChat={() => setActiveTab('messages')}
             />
           )}
 
@@ -623,8 +865,13 @@ export default function App() {
           {/* Section 3.8: Attendance */}
           {activeTab === 'attendance' && (
             <AttendanceView
-              attendanceHistory={attendanceHistory}
-              onRecordAttendance={handleRecordAttendance}
+              records={attendanceHistory}
+              activeShift={activeShift}
+              checkInOptions={checkInOptions}
+              live={live}
+              onCheckIn={handleCheckIn}
+              onCheckOut={handleCheckOut}
+              onReportAttendanceProblem={handleReportAttendanceProblem}
             />
           )}
 
@@ -634,6 +881,8 @@ export default function App() {
               conversations={conversations}
               profile={profile}
               onSendMessage={handleSendMessage}
+              simulateReplies={!live}
+              onOpenConversation={handleOpenConversation}
             />
           )}
 
@@ -699,7 +948,7 @@ export default function App() {
           {activeTab === 'profile' && (
             <ProfileView
               profile={profile}
-              onUpdateProfile={(updated) => setProfile(updated)}
+              onUpdateProfile={handleUpdateProfile}
               onNavigateToSettings={() => setActiveTab('settings')}
             />
           )}
@@ -713,7 +962,7 @@ export default function App() {
                 setSettings(updated);
                 if (updated.themeMode) setTheme(updated.themeMode);
               }}
-              onUpdateProfile={(updated) => setProfile(updated)}
+              onUpdateProfile={handleUpdateProfile}
               onResetSettings={handleResetSettings}
             />
           )}

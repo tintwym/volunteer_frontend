@@ -11,7 +11,7 @@ import {
 import {
   login,
   dashboardPathForRole,
-  enterDemo,
+  enterDemoAccount,
   isRole,
   type Role,
 } from "@/lib/auth";
@@ -36,6 +36,7 @@ export function LoginForm() {
   const [formError, setFormError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [demoLoading, setDemoLoading] = useState<Role | null>(null);
 
   useEffect(() => {
     if (loading || !user || !isRole(user.role)) return;
@@ -68,10 +69,19 @@ export function LoginForm() {
     }
   }
 
-  function onDemoEnter(role: Role) {
-    const res = enterDemo(role);
-    setSession(res);
-    router.push(dashboardPathForRole(role));
+  async function onDemoEnter(role: Role) {
+    setFormError(null);
+    setNotice(null);
+    setDemoLoading(role);
+    try {
+      const res = await enterDemoAccount(role);
+      setSession(res);
+      router.push(dashboardPathForRole(role));
+    } catch (err) {
+      setFormError(err instanceof Error ? err.message : "Unable to open the demo account.");
+    } finally {
+      setDemoLoading(null);
+    }
   }
 
   function showNotice(message: string) {
@@ -111,17 +121,12 @@ export function LoginForm() {
           value={password}
           error={fieldErrors.password}
           labelAction={
-            <button
-              type="button"
-              onClick={() =>
-                showNotice(
-                  "Password reset isn't available yet. Please contact your organization admin."
-                )
-              }
+            <Link
+              href={email.trim() ? `/forgot-password?email=${encodeURIComponent(email.trim())}` : "/forgot-password"}
               className="text-xs font-medium text-emerald-700 hover:text-emerald-800"
             >
               Forgot password?
-            </button>
+            </Link>
           }
           onChange={(e) => {
             setPassword(e.target.value);
@@ -160,10 +165,11 @@ export function LoginForm() {
             <button
               key={role}
               type="button"
-              onClick={() => onDemoEnter(role)}
-              className="rounded-md border border-stone-200 bg-white px-2 py-1.5 text-xs font-medium text-stone-700 transition-colors hover:border-emerald-500 hover:text-emerald-700"
+              disabled={demoLoading !== null}
+              onClick={() => void onDemoEnter(role)}
+              className="rounded-md border border-stone-200 bg-white px-2 py-1.5 text-xs font-medium text-stone-700 transition-colors hover:border-emerald-500 hover:text-emerald-700 disabled:opacity-60"
             >
-              {label}
+              {demoLoading === role ? "Opening…" : label}
             </button>
           ))}
         </div>
