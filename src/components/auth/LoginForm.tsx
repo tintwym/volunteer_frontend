@@ -6,8 +6,10 @@ import {
   GoogleButton,
   OrDivider,
   PasswordField,
+  SubmitButton,
   TextField,
 } from "@/components/auth/AuthFields";
+import { AnimatePresence } from "@/components/motion/ui";
 import {
   login,
   dashboardPathForRole,
@@ -122,16 +124,25 @@ export function LoginForm() {
           Remember me
         </label>
 
-        {formError && <FormNotice tone="error">{formError}</FormNotice>}
-        {notice && <FormNotice tone="info">{notice}</FormNotice>}
+        <AnimatePresence initial={false} mode="popLayout">
+          {formError ? (
+            <FormNotice key="error" tone="error">
+              {formError}
+            </FormNotice>
+          ) : null}
+          {notice ? (
+            <FormNotice key="notice" tone="info">
+              {notice}
+            </FormNotice>
+          ) : null}
+        </AnimatePresence>
 
-        <button
-          type="submit"
-          disabled={submitting || loading}
-          className="w-full rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-emerald-700 disabled:opacity-60"
-        >
-          {submitting ? "Signing in…" : "Sign in"}
-        </button>
+        <SubmitButton
+          submitting={submitting}
+          disabled={loading}
+          idleLabel="Sign in"
+          busyLabel="Signing in…"
+        />
       </form>
 
       <div className="rounded-lg border border-stone-200 bg-stone-50 p-3">

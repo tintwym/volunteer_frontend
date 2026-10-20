@@ -1,10 +1,11 @@
 "use client";
 
+import { AnimatePresence, motion } from "@/components/motion/ui";
 import { Eye, EyeOff } from "lucide-react";
 import { useState, type InputHTMLAttributes, type ReactNode } from "react";
 
 const inputClass = (hasError: boolean) =>
-  `w-full rounded-lg border bg-white px-3 py-2.5 text-sm text-stone-900 placeholder:text-stone-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/20 ${
+  `w-full rounded-lg border bg-white px-3 py-2.5 text-sm text-stone-900 placeholder:text-stone-400 transition-[border-color,box-shadow] duration-200 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/20 ${
     hasError ? "border-rose-400" : "border-stone-300"
   }`;
 
@@ -30,7 +31,20 @@ export function TextField({ label, error, labelAction, id, ...props }: FieldProp
         className={inputClass(Boolean(error))}
         {...props}
       />
-      {error && <p className="mt-1 text-xs text-rose-600">{error}</p>}
+      <AnimatePresence initial={false}>
+        {error ? (
+          <motion.p
+            key={error}
+            initial={{ opacity: 0, height: 0, marginTop: 0 }}
+            animate={{ opacity: 1, height: "auto", marginTop: 4 }}
+            exit={{ opacity: 0, height: 0, marginTop: 0 }}
+            transition={{ duration: 0.2 }}
+            className="overflow-hidden text-xs text-rose-600"
+          >
+            {error}
+          </motion.p>
+        ) : null}
+      </AnimatePresence>
     </div>
   );
 }
@@ -57,13 +71,26 @@ export function PasswordField({ label, error, labelAction, id, ...props }: Field
         <button
           type="button"
           onClick={() => setVisible((v) => !v)}
-          className="absolute inset-y-0 right-0 flex items-center px-3 text-stone-400 hover:text-stone-600"
+          className="absolute inset-y-0 right-0 flex items-center rounded-r-lg px-3 text-stone-400 transition-colors duration-200 hover:text-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/30"
           aria-label={visible ? "Hide password" : "Show password"}
         >
           {visible ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
         </button>
       </div>
-      {error && <p className="mt-1 text-xs text-rose-600">{error}</p>}
+      <AnimatePresence initial={false}>
+        {error ? (
+          <motion.p
+            key={error}
+            initial={{ opacity: 0, height: 0, marginTop: 0 }}
+            animate={{ opacity: 1, height: "auto", marginTop: 4 }}
+            exit={{ opacity: 0, height: 0, marginTop: 0 }}
+            transition={{ duration: 0.2 }}
+            className="overflow-hidden text-xs text-rose-600"
+          >
+            {error}
+          </motion.p>
+        ) : null}
+      </AnimatePresence>
     </div>
   );
 }
@@ -97,7 +124,7 @@ export function GoogleButton({ onClick }: { onClick: () => void }) {
     <button
       type="button"
       onClick={onClick}
-      className="flex w-full items-center justify-center gap-3 rounded-lg border border-stone-300 bg-white px-4 py-2.5 text-sm font-medium text-stone-700 transition-colors hover:bg-stone-50"
+      className="flex w-full items-center justify-center gap-3 rounded-lg border border-stone-300 bg-white px-4 py-2.5 text-sm font-medium text-stone-700 transition-colors duration-200 hover:border-stone-400 hover:bg-stone-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/30"
     >
       <GoogleIcon />
       Continue with Google
@@ -123,5 +150,45 @@ export function FormNotice({
 }) {
   const styles =
     tone === "error" ? "bg-rose-50 text-rose-700" : "bg-emerald-50 text-emerald-800";
-  return <p className={`rounded-lg px-3 py-2 text-sm ${styles}`}>{children}</p>;
+  return (
+    <motion.p
+      layout
+      initial={{ opacity: 0, height: 0 }}
+      animate={{ opacity: 1, height: "auto" }}
+      exit={{ opacity: 0, height: 0 }}
+      transition={{ duration: 0.22 }}
+      className={`overflow-hidden rounded-lg px-3 py-2 text-sm ${styles}`}
+    >
+      {children}
+    </motion.p>
+  );
+}
+
+export function SubmitButton({
+  submitting,
+  idleLabel,
+  busyLabel,
+  disabled,
+}: {
+  submitting: boolean;
+  idleLabel: string;
+  busyLabel: string;
+  disabled?: boolean;
+}) {
+  return (
+    <button
+      type="submit"
+      disabled={submitting || disabled}
+      className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-[background-color,box-shadow,transform] duration-200 hover:bg-emerald-700 hover:shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40 active:scale-[0.99] disabled:pointer-events-none disabled:opacity-60"
+    >
+      {submitting ? (
+        <>
+          <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+          {busyLabel}
+        </>
+      ) : (
+        idleLabel
+      )}
+    </button>
+  );
 }

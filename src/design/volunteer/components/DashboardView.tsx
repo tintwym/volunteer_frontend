@@ -45,6 +45,7 @@ interface DashboardViewProps {
   notifications: AutomatedEmailNotification[];
   tasks: VolunteerTask[];
   teams: TeamInfo[];
+  isOnDuty?: boolean;
   setActiveTab: (tab: string) => void;
   onOpenLogHours: () => void;
   onOpenShareModal: (badge: DigitalBadge) => void;
@@ -60,6 +61,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   notifications,
   tasks,
   teams,
+  isOnDuty = false,
   setActiveTab,
   onOpenLogHours,
   onOpenShareModal,
@@ -165,24 +167,34 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         </div>
       )}
 
-      {/* Section 3.1 SPECIFICATION HIGHLIGHT: Personal Upcoming Event & Assigned Tasks Card */}
-      <div className="bg-white border-2 border-emerald-500/20 rounded-2xl p-6 shadow-sm">
+      {/* Personal upcoming event & assigned tasks */}
+      <div className="bg-white border border-emerald-500/20 rounded-2xl p-6 shadow-sm">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-slate-100">
           <div>
             <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full">
-              Section 3.1 • Volunteer Operational Overview
+              Your next assignment
             </span>
             <h2 className="text-xl font-bold text-slate-900 mt-1">Upcoming Event Assignment</h2>
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">
-              <span className="w-2 h-2 rounded-full bg-emerald-600 animate-ping" />
-              <span>Checked In • Shift Active</span>
-            </span>
+            {isOnDuty ? (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">
+                <span className="relative flex h-2 w-2">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-500 opacity-60" />
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-600" />
+                </span>
+                <span>Checked In • Shift Active</span>
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-600">
+                <span className="h-2 w-2 rounded-full bg-slate-400" />
+                <span>No active shift</span>
+              </span>
+            )}
             <button
               onClick={() => setActiveTab('attendance')}
-              className="text-xs font-semibold text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 px-3 py-1 rounded-lg"
+              className="text-xs font-semibold text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 px-3 py-1 rounded-lg transition-colors"
             >
               Manage Attendance
             </button>
@@ -196,8 +208,10 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">
               Upcoming Event
             </span>
-            <h3 className="text-sm font-bold text-slate-900">{nextEvent.title}</h3>
-            <span className="text-emerald-700 font-semibold mt-1 block">12 Sept 2026</span>
+            <h3 className="text-sm font-bold text-slate-900">{nextEvent?.title ?? 'No upcoming event'}</h3>
+            <span className="text-emerald-700 font-semibold mt-1 block">
+              {nextEvent?.formattedDate ?? '—'}
+            </span>
           </div>
 
           {/* Shift */}
@@ -205,8 +219,12 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">
               Shift Time
             </span>
-            <h3 className="text-sm font-bold text-slate-900">8:00 AM – 12:00 PM</h3>
-            <span className="text-slate-500 mt-1 block">4.0 Verified Service Hours</span>
+            <h3 className="text-sm font-bold text-slate-900">
+              {nextEvent ? `${nextEvent.startTime} – ${nextEvent.endTime}` : '—'}
+            </h3>
+            <span className="text-slate-500 mt-1 block">
+              {nextEvent ? `${nextEvent.hours} Verified Service Hours` : 'No shift scheduled'}
+            </span>
           </div>
 
           {/* Team */}

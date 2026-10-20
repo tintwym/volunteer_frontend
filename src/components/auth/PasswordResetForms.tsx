@@ -1,6 +1,12 @@
 "use client";
 
-import { FormNotice, PasswordField, TextField } from "@/components/auth/AuthFields";
+import {
+  FormNotice,
+  PasswordField,
+  SubmitButton,
+  TextField,
+} from "@/components/auth/AuthFields";
+import { AnimatePresence } from "@/components/motion/ui";
 import { api, errorMessage } from "@/lib/api";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -66,13 +72,11 @@ function ForgotPasswordInner() {
           setError(null);
         }}
       />
-      <button
-        type="submit"
-        disabled={submitting}
-        className="w-full rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-emerald-700 disabled:opacity-60"
-      >
-        {submitting ? "Sending…" : "Send reset link"}
-      </button>
+      <SubmitButton
+        submitting={submitting}
+        idleLabel="Send reset link"
+        busyLabel="Sending…"
+      />
       <p className="text-center text-sm text-stone-600">
         Remembered it?{" "}
         <Link href="/login" className="font-semibold text-emerald-700 hover:text-emerald-800">
@@ -158,14 +162,18 @@ function ResetPasswordInner() {
         error={fieldErrors.confirm}
         onChange={(e) => setConfirm(e.target.value)}
       />
-      {formError && <FormNotice tone="error">{formError}</FormNotice>}
-      <button
-        type="submit"
-        disabled={submitting}
-        className="w-full rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-emerald-700 disabled:opacity-60"
-      >
-        {submitting ? "Saving…" : "Reset password"}
-      </button>
+      <AnimatePresence initial={false} mode="popLayout">
+        {formError ? (
+          <FormNotice key="error" tone="error">
+            {formError}
+          </FormNotice>
+        ) : null}
+      </AnimatePresence>
+      <SubmitButton
+        submitting={submitting}
+        idleLabel="Reset password"
+        busyLabel="Saving…"
+      />
     </form>
   );
 }

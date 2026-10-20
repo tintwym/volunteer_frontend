@@ -2,6 +2,7 @@
 // @ts-nocheck
 
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import { AnimatePresence, ModalMotion } from '@/components/motion/ui';
 import { useApp } from '../../context/AppContext';
 import { 
   X, 
@@ -117,21 +118,22 @@ export const GlobalSearchModal: React.FC = () => {
     };
   }, [query, opportunities, organizations, newsArticles, photos, events, stories]);
 
-  if (!isSearchModalOpen) return null;
-
   return (
-    <div 
-      id="global-search-backdrop"
-      className="fixed inset-0 z-[100] flex items-start justify-center p-4 pt-16 sm:pt-24 bg-stone-950/70 backdrop-blur-sm"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="global-search-input"
-      onClick={closeSearch}
+    <AnimatePresence>
+      {isSearchModalOpen ? (
+    <ModalMotion
+      key="global-search"
+      onBackdropClick={closeSearch}
+      maxWidthClass="max-w-2xl"
+      containerClassName="items-start justify-center p-4 pt-16 sm:pt-24"
+      zClassName="z-[100]"
     >
       <div 
         id="global-search-container"
-        className="relative w-full max-w-2xl bg-white dark:bg-stone-900 rounded-2xl shadow-2xl border border-stone-200 dark:border-stone-800 overflow-hidden flex flex-col max-h-[80vh]"
-        onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="global-search-input"
+        className="relative flex max-h-[80vh] w-full flex-col overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-2xl dark:border-stone-800 dark:bg-stone-900"
       >
         {/* Search Bar Input */}
         <div className="p-4 border-b border-stone-200 dark:border-stone-800 flex items-center gap-3 bg-stone-50/50 dark:bg-stone-850">
@@ -419,6 +421,8 @@ export const GlobalSearchModal: React.FC = () => {
           )}
         </div>
       </div>
-    </div>
+    </ModalMotion>
+      ) : null}
+    </AnimatePresence>
   );
 };

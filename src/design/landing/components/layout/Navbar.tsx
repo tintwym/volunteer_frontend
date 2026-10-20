@@ -24,6 +24,7 @@ import {
 import { clearAuth, dashboardPathForRole } from '@/lib/auth';
 import { useAuth } from '@/components/auth/AuthProvider';
 import { useTheme } from '@/components/theme/ThemeProvider';
+import { AnimatePresence, motion } from '@/components/motion/ui';
 import { SignOutConfirmModal } from '../modals/SignOutConfirmModal';
 
 export const Navbar: React.FC = () => {
@@ -411,92 +412,101 @@ export const Navbar: React.FC = () => {
         </div>
       </div>
 
-      {mobileMenuOpen && (
-        <div
-          id="mobile-navigation-drawer"
-          className="xl:hidden bg-white dark:bg-stone-900 border-b border-stone-200 dark:border-stone-800 px-4 pt-2 pb-6 space-y-2"
-        >
-          <div className="grid grid-cols-2 gap-1.5 pt-2">
-            {navLinks.map((item) => {
-              const isActive = page === item.id;
-              return (
-                <button
-                  key={item.id}
-                  type="button"
-                  onClick={() => handleNavClick(item.id)}
-                  className={`px-3 py-2.5 rounded-xl text-left text-xs font-medium transition-all ${
-                    isActive
-                      ? 'bg-emerald-600 text-white font-semibold shadow-xs'
-                      : 'bg-stone-50 dark:bg-stone-850 text-stone-700 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800'
-                  }`}
-                >
-                  {item.label}
-                </button>
-              );
-            })}
-          </div>
-
-          <div className="pt-3 border-t border-stone-100 dark:border-stone-800 flex flex-col gap-2">
-            <button
-              type="button"
-              onClick={() => handleNavClick('org-dashboard')}
-              className="w-full py-2.5 px-4 rounded-xl bg-teal-50 dark:bg-teal-950/40 border border-teal-200 dark:border-teal-800 text-teal-800 dark:text-teal-200 text-xs font-semibold flex items-center justify-center gap-2"
-            >
-              <LayoutDashboard className="w-4 h-4" />
-              <span>Organization CMS Dashboard</span>
-            </button>
-
-            {!isLoggedIn ? (
-              <div className="pt-1">
-                <button
-                  id="mobile-navbar-auth-btn"
-                  type="button"
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    openAuthModal('signin');
-                  }}
-                  className="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold text-center shadow-sm flex items-center justify-center gap-2 transition-colors"
-                >
-                  <LogIn className="w-4 h-4" />
-                  <span>{t.nav.signInSignUp}</span>
-                </button>
+      <AnimatePresence initial={false}>
+        {mobileMenuOpen ? (
+          <motion.div
+            key="mobile-nav"
+            id="mobile-navigation-drawer"
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+            className="xl:hidden overflow-hidden border-b border-stone-200 bg-white dark:border-stone-800 dark:bg-stone-900"
+          >
+            <div className="space-y-2 px-4 pb-6 pt-2">
+              <div className="grid grid-cols-2 gap-1.5 pt-2">
+                {navLinks.map((item) => {
+                  const isActive = page === item.id;
+                  return (
+                    <button
+                      key={item.id}
+                      type="button"
+                      onClick={() => handleNavClick(item.id)}
+                      className={`px-3 py-2.5 rounded-xl text-left text-xs font-medium transition-all ${
+                        isActive
+                          ? 'bg-emerald-600 text-white font-semibold shadow-xs'
+                          : 'bg-stone-50 dark:bg-stone-850 text-stone-700 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800'
+                      }`}
+                    >
+                      {item.label}
+                    </button>
+                  );
+                })}
               </div>
-            ) : (
-              <div className="pt-2 flex flex-col gap-2">
+
+              <div className="pt-3 border-t border-stone-100 dark:border-stone-800 flex flex-col gap-2">
                 <button
                   type="button"
-                  onClick={() => handleNavClick('profile')}
-                  className="w-full py-2.5 px-4 rounded-xl bg-stone-100 dark:bg-stone-800 text-stone-800 dark:text-stone-200 text-xs font-semibold flex items-center justify-between"
+                  onClick={() => handleNavClick('org-dashboard')}
+                  className="w-full py-2.5 px-4 rounded-xl bg-teal-50 dark:bg-teal-950/40 border border-teal-200 dark:border-teal-800 text-teal-800 dark:text-teal-200 text-xs font-semibold flex items-center justify-center gap-2"
                 >
-                  <span className="flex items-center gap-2">
-                    <User className="w-4 h-4 text-emerald-600" />
-                    {t.nav.myProfile} ({displayName})
-                  </span>
-                  <span className="text-[10px] uppercase font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded-full">
-                    {userRole}
-                  </span>
+                  <LayoutDashboard className="w-4 h-4" />
+                  <span>Organization CMS Dashboard</span>
                 </button>
-                <button
-                  type="button"
-                  onClick={openRoleWorkspace}
-                  className="w-full py-2.5 px-4 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800 text-indigo-800 dark:text-indigo-200 text-xs font-semibold flex items-center justify-center gap-2"
-                >
-                  <ExternalLink className="w-4 h-4" />
-                  <span>Open Role Workspace</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={requestSignOut}
-                  className="w-full py-2.5 px-4 rounded-xl text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 text-xs font-medium flex items-center justify-center gap-2"
-                >
-                  <LogOut className="w-4 h-4" />
-                  <span>{t.nav.signOut}</span>
-                </button>
+
+                {!isLoggedIn ? (
+                  <div className="pt-1">
+                    <button
+                      id="mobile-navbar-auth-btn"
+                      type="button"
+                      onClick={() => {
+                        setMobileMenuOpen(false);
+                        openAuthModal('signin');
+                      }}
+                      className="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold text-center shadow-sm flex items-center justify-center gap-2 transition-colors"
+                    >
+                      <LogIn className="w-4 h-4" />
+                      <span>{t.nav.signInSignUp}</span>
+                    </button>
+                  </div>
+                ) : (
+                  <div className="pt-2 flex flex-col gap-2">
+                    <button
+                      type="button"
+                      onClick={() => handleNavClick('profile')}
+                      className="w-full py-2.5 px-4 rounded-xl bg-stone-100 dark:bg-stone-800 text-stone-800 dark:text-stone-200 text-xs font-semibold flex items-center justify-between"
+                    >
+                      <span className="flex items-center gap-2">
+                        <User className="w-4 h-4 text-emerald-600" />
+                        {t.nav.myProfile} ({displayName})
+                      </span>
+                      <span className="text-[10px] uppercase font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded-full">
+                        {userRole}
+                      </span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={openRoleWorkspace}
+                      className="w-full py-2.5 px-4 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800 text-indigo-800 dark:text-indigo-200 text-xs font-semibold flex items-center justify-center gap-2"
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                      <span>Open Role Workspace</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={requestSignOut}
+                      className="w-full py-2.5 px-4 rounded-xl text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 text-xs font-medium flex items-center justify-center gap-2"
+                    >
+                      <LogOut className="w-4 h-4" />
+                      <span>{t.nav.signOut}</span>
+                    </button>
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-        </div>
-      )}
+            </div>
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
 
       <SignOutConfirmModal
         open={signOutConfirmOpen}

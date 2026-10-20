@@ -2,6 +2,7 @@
 // @ts-nocheck
 
 import React, { useState } from 'react';
+import { AnimatePresence, ModalMotion } from '@/components/motion/ui';
 import { useApp } from '../../context/AppContext';
 import { X, Bell, Shield, Smartphone, Send, Check } from 'lucide-react';
 
@@ -16,8 +17,6 @@ export const NotificationsModal: React.FC = () => {
 
   const [settings, setSettings] = useState(currentUser.notificationSettings);
   const [testingStatus, setTestingStatus] = useState<'idle' | 'sent'>('idle');
-
-  if (!isNotificationsModalOpen) return null;
 
   const handleToggle = (key: keyof typeof settings) => {
     const updated = { ...settings, [key]: !settings[key] };
@@ -59,14 +58,18 @@ export const NotificationsModal: React.FC = () => {
   };
 
   return (
-    <div 
-      id="notifications-modal-backdrop"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-950/70 backdrop-blur-sm animate-in fade-in duration-200"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="notifications-title"
+    <AnimatePresence>
+      {isNotificationsModalOpen ? (
+    <ModalMotion
+      key="notifications-modal"
+      onBackdropClick={() => setIsNotificationsModalOpen(false)}
     >
-      <div className="relative w-full max-w-md bg-white dark:bg-stone-900 rounded-2xl shadow-2xl border border-stone-200 dark:border-stone-800 overflow-hidden">
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="notifications-title"
+        className="relative overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-2xl dark:border-stone-800 dark:bg-stone-900"
+      >
         {/* Header */}
         <div className="p-5 border-b border-stone-200 dark:border-stone-800 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
@@ -213,6 +216,8 @@ export const NotificationsModal: React.FC = () => {
           </button>
         </div>
       </div>
-    </div>
+    </ModalMotion>
+      ) : null}
+    </AnimatePresence>
   );
 };

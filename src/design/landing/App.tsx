@@ -7,6 +7,7 @@
  */
 
 import React from 'react';
+import { AnimatedPage } from '@/components/motion/ui';
 import { AppProvider, useApp } from './context/AppContext';
 import { Navbar } from './components/layout/Navbar';
 import { Footer } from './components/layout/Footer';
@@ -70,7 +71,7 @@ const AppShell: React.FC = () => {
     <div className="min-h-screen flex flex-col bg-stone-50 dark:bg-stone-950 text-stone-900 dark:text-stone-100 font-sans transition-colors">
       <Navbar />
       <main className="flex-1">
-        {renderPage()}
+        <AnimatedPage id={page}>{renderPage()}</AnimatedPage>
       </main>
       <Footer />
 

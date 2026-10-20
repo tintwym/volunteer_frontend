@@ -1,3 +1,6 @@
+"use client";
+
+import { FadeIn } from "@/components/motion/ui";
 import { CalendarCheck, Clock, HeartHandshake, Users } from "lucide-react";
 import Link from "next/link";
 import type { ReactNode } from "react";
@@ -21,7 +24,7 @@ export function AuthSplitLayout({ title, subtitle, children }: AuthSplitLayoutPr
         <div className="pointer-events-none absolute -right-24 -top-24 h-96 w-96 rounded-full bg-white/5" />
         <div className="pointer-events-none absolute -bottom-32 -left-16 h-[28rem] w-[28rem] rounded-full bg-white/5" />
 
-        <Link href="/" className="relative flex items-center gap-3">
+        <Link href="/" className="relative flex items-center gap-3 transition-opacity hover:opacity-90">
           <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/15 backdrop-blur-md">
             <HeartHandshake className="h-5 w-5" />
           </span>
@@ -56,8 +59,8 @@ export function AuthSplitLayout({ title, subtitle, children }: AuthSplitLayoutPr
       </aside>
 
       <main className="flex w-full flex-col items-center justify-center px-6 py-12 lg:w-1/2">
-        <div className="w-full max-w-sm">
-          <Link href="/" className="mb-10 flex items-center gap-2 lg:hidden">
+        <FadeIn className="w-full max-w-sm" y={12}>
+          <Link href="/" className="mb-10 flex items-center gap-2 transition-opacity hover:opacity-90 lg:hidden">
             <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-600 text-white">
               <HeartHandshake className="h-5 w-5" />
             </span>
@@ -70,7 +73,7 @@ export function AuthSplitLayout({ title, subtitle, children }: AuthSplitLayoutPr
           <p className="mt-1.5 text-sm text-stone-500">{subtitle}</p>
 
           <div className="mt-8">{children}</div>
-        </div>
+        </FadeIn>
       </main>
     </div>
   );

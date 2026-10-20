@@ -63,7 +63,7 @@ import { BadgesMilestonesView } from './components/BadgesMilestonesView';
 import { LogHoursModal } from './components/LogHoursModal';
 import { ShareMilestoneModal } from './components/ShareMilestoneModal';
 import { EventDetailModal } from './components/EventDetailModal';
-import { AnimatedPage, motion } from '@/components/motion/ui';
+import { AnimatedPage, AnimatePresence, motion, Spinner } from '@/components/motion/ui';
 import { useTheme } from '@/components/theme/ThemeProvider';
 import { useAuth } from '@/components/auth/AuthProvider';
 import { api, errorMessage, formatDate, formatTime, todayIso, type ApiMessage, type Channel } from '@/lib/api';
@@ -723,8 +723,11 @@ export default function App() {
 
   if (live && liveLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-50 text-slate-500">
-        Loading your volunteer workspace…
+      <div className="flex min-h-screen flex-col items-center justify-center gap-3 bg-slate-50 text-slate-500">
+        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-600 text-white shadow-sm">
+          <Spinner className="h-5 w-5" />
+        </div>
+        <p className="text-sm font-medium">Loading your volunteer workspace…</p>
       </div>
     );
   }
@@ -757,21 +760,31 @@ export default function App() {
         </div>
       )}
 
-      {actionToast && (
-        <div
-          role={actionToast.tone === 'error' ? 'alert' : 'status'}
-          className={`fixed bottom-6 left-1/2 z-[60] -translate-x-1/2 max-w-md w-[calc(100%-2rem)] rounded-xl px-4 py-3 text-sm font-medium text-white shadow-lg ${
-            actionToast.tone === 'error' ? 'bg-red-600' : 'bg-emerald-600'
-          }`}
-        >
-          <div className="flex items-start justify-between gap-3">
-            <span>{actionToast.text}</span>
-            <button onClick={() => setActionToast(null)} className="text-white/80 hover:text-white text-xs underline shrink-0">
-              Dismiss
-            </button>
-          </div>
-        </div>
-      )}
+      <AnimatePresence>
+        {actionToast ? (
+          <motion.div
+            key="action-toast"
+            role={actionToast.tone === 'error' ? 'alert' : 'status'}
+            initial={{ opacity: 0, y: 16, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 10, scale: 0.98 }}
+            transition={{ duration: 0.25 }}
+            className={`fixed bottom-6 left-1/2 z-[60] w-[calc(100%-2rem)] max-w-md -translate-x-1/2 rounded-xl px-4 py-3 text-sm font-medium text-white shadow-lg ${
+              actionToast.tone === 'error' ? 'bg-red-600' : 'bg-emerald-600'
+            }`}
+          >
+            <div className="flex items-start justify-between gap-3">
+              <span>{actionToast.text}</span>
+              <button
+                onClick={() => setActionToast(null)}
+                className="shrink-0 text-xs text-white/80 underline transition-colors hover:text-white"
+              >
+                Dismiss
+              </button>
+            </div>
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
 
       {/* Main Layout Container with Sidebar & Content */}
       <div className="max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 flex-1 flex flex-col md:flex-row gap-6 pt-4 pb-12">
@@ -805,6 +818,7 @@ export default function App() {
               notifications={notifications}
               tasks={tasks}
               teams={teams}
+              isOnDuty={!!activeShift}
               setActiveTab={setActiveTab}
               onOpenLogHours={() => setIsLogHoursOpen(true)}
               onOpenShareModal={(badge) => setShareBadgeModal(badge)}

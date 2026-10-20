@@ -208,10 +208,26 @@ export class ApiError extends Error {
   }
 }
 
+function looksLikeFrontendUrl(url: string): boolean {
+  try {
+    const host = new URL(url).hostname.toLowerCase();
+    return host.includes("vercel.app") && !host.includes("api");
+  } catch {
+    return false;
+  }
+}
+
 export async function apiFetch<T>(
   path: string,
   options: RequestInit = {}
 ): Promise<T> {
+  if (looksLikeFrontendUrl(API_URL)) {
+    throw new ApiError(
+      "NEXT_PUBLIC_API_URL points at the frontend, not the backend. Set it to your Render API URL (e.g. https://volunteer-backend-7m4w.onrender.com) and redeploy.",
+      0
+    );
+  }
+
   const token = getStoredToken();
   const headers = new Headers(options.headers);
   headers.set("Content-Type", "application/json");
@@ -227,6 +243,14 @@ export async function apiFetch<T>(
     throw new ApiError(
       "Cannot reach the API. Make sure the backend is running on " + API_URL,
       0
+    );
+  }
+
+  const contentType = res.headers.get("content-type") ?? "";
+  if (!contentType.includes("application/json")) {
+    throw new ApiError(
+      `The API at ${API_URL} did not return JSON (got ${res.status}). Check NEXT_PUBLIC_API_URL — it must be the Render backend, not the Vercel site.`,
+      res.status
     );
   }
 

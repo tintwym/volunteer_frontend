@@ -88,8 +88,28 @@
   animation: fade-in 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
+/* Legacy camelCase alias used by volunteer/leader screens */
+.animate-fadeIn {
+  animation: fade-in 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
 .animate-slide-up {
   animation: slide-up 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes backdrop-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.modal-backdrop {
+  animation: backdrop-fade 0.2s ease-out both;
+  background: rgba(28, 25, 23, 0.45);
+  backdrop-filter: blur(2px);
 }
 
 ::-webkit-scrollbar {
