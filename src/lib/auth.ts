@@ -26,30 +26,43 @@ export const LANDING_LOGGED_IN_KEY = "cg_is_logged_in";
 
 const ROLES: Role[] = ["ORGANIZER", "VOLUNTEER_LEADER", "VOLUNTEER"];
 
-const DEMO_PROFILES: Record<
-  Role,
+/** Password shared by backend-seeded role accounts (`SEED_DEMO=true` / `local` profile). */
+export const SEED_ACCOUNT_PASSWORD = "Password123!";
+
+/** One seeded account per role — sign in with email + password (no one-click login). */
+export const SEED_ACCOUNTS: ReadonlyArray<{
+  role: Role;
+  label: string;
+  fullName: string;
+  email: string;
+  organizationName: string;
+  phone: string;
+}> = [
   {
-    fullName: string;
-    email: string;
-    organizationName: string;
-  }
-> = {
-  ORGANIZER: {
+    role: "ORGANIZER",
+    label: "Organizer",
     fullName: "Marcus Vance",
     email: "marcus@greenroots.org",
     organizationName: "Green Roots Collective",
+    phone: "+1 206 555 0101",
   },
-  VOLUNTEER_LEADER: {
+  {
+    role: "VOLUNTEER_LEADER",
+    label: "Leader",
     fullName: "Jordan Lee",
     email: "jordan.lee@commonground.org",
     organizationName: "Green Roots Collective",
+    phone: "+1 206 555 0102",
   },
-  VOLUNTEER: {
+  {
+    role: "VOLUNTEER",
+    label: "Volunteer",
     fullName: "Alex Rivera",
     email: "alex.rivera@commonground.org",
     organizationName: "Green Roots Collective",
+    phone: "+1 206 555 0103",
   },
-};
+];
 
 export function getApiUrl() {
   return API_URL;
@@ -258,47 +271,6 @@ export async function login(
   const normalized = { ...data, user };
   storeAuth(normalized, remember);
   return normalized;
-}
-
-/** Password of the seeded demo accounts (backend `local` profile). */
-export const DEMO_ACCOUNT_PASSWORD = "Password123!";
-
-/**
- * Signs in to the seeded demo account for a role. Falls back to the offline
- * prototype only when the API cannot be reached (e.g. a static preview deploy).
- */
-export async function enterDemoAccount(role: Role): Promise<AuthResponse> {
-  try {
-    return await login(
-      { email: DEMO_PROFILES[role].email, password: DEMO_ACCOUNT_PASSWORD },
-      false
-    );
-  } catch (err) {
-    // 404/405 means the configured host is not the CommonGround API (e.g. a static deploy).
-    if (err instanceof ApiError && [0, 404, 405].includes(err.status)) {
-      return enterDemo(role);
-    }
-    throw err;
-  }
-}
-
-/** Instant prototype-style access — no API required. */
-export function enterDemo(role: Role): AuthResponse {
-  const profile = DEMO_PROFILES[role];
-  const response: AuthResponse = {
-    accessToken: DEMO_TOKEN,
-    tokenType: "Bearer",
-    user: {
-      id: `demo-${role.toLowerCase()}`,
-      email: profile.email,
-      fullName: profile.fullName,
-      role,
-      organizationId: "demo-org-id",
-      organizationName: profile.organizationName,
-    },
-  };
-  storeAuth(response);
-  return response;
 }
 
 export async function acceptInvite(input: {

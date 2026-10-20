@@ -21,7 +21,7 @@ import {
   ExternalLink,
   Monitor,
 } from 'lucide-react';
-import { clearAuth, dashboardPathForRole, enterDemo } from '@/lib/auth';
+import { clearAuth, dashboardPathForRole } from '@/lib/auth';
 import { useAuth } from '@/components/auth/AuthProvider';
 import { useTheme } from '@/components/theme/ThemeProvider';
 import { SignOutConfirmModal } from '../modals/SignOutConfirmModal';
@@ -42,7 +42,7 @@ export const Navbar: React.FC = () => {
     openAuthModal,
     switchAccount,
   } = useApp();
-  const { logout: logoutAuth } = useAuth();
+  const { user: authUser, logout: logoutAuth } = useAuth();
   const { theme, cycleThemePreference, isDark } = useTheme();
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -95,16 +95,14 @@ export const Navbar: React.FC = () => {
   };
 
   const openRoleWorkspace = () => {
-    const role =
-      userRole === 'organization'
-        ? 'ORGANIZER'
-        : userRole === 'admin'
-          ? 'VOLUNTEER_LEADER'
-          : 'VOLUNTEER';
-    enterDemo(role);
     setUserDropdownOpen(false);
     setMobileMenuOpen(false);
-    window.open(dashboardPathForRole(role), '_blank', 'noopener,noreferrer');
+    // Prefer the real signed-in role; otherwise send the user to sign in.
+    if (authUser?.role) {
+      window.open(dashboardPathForRole(authUser.role), '_blank', 'noopener,noreferrer');
+      return;
+    }
+    window.location.href = '/login';
   };
 
   const requestSignOut = () => {

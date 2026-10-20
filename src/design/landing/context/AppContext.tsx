@@ -312,39 +312,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     role: UserRole = 'volunteer',
     userData?: { name?: string; email?: string }
   ) => {
-    // OAuth placeholders still go through real auth pages
-    if (provider === 'google' || provider === 'github') {
-      window.location.href = '/login';
-      return;
-    }
-
-    // Prototype 1-click: stay on landing so the profile dropdown works
-    const demoRole =
-      role === 'organization'
-        ? 'ORGANIZER'
-        : role === 'admin'
-          ? 'VOLUNTEER_LEADER'
-          : 'VOLUNTEER';
-
-    void import('@/lib/auth').then(({ enterDemo }) => {
-      enterDemo(demoRole);
-    });
-
-    setIsLoggedIn(true);
-    localStorage.setItem('cg_is_logged_in', 'true');
-    setUserRole(role);
-    setCurrentUser(prev => ({
-      ...prev,
-      role: role,
-      name: userData?.name || (role === 'organization' ? 'Marcus Vance (Green Roots)' : role === 'admin' ? 'Jordan Lee' : 'Alex Rivera'),
-      email: userData?.email || (role === 'organization' ? 'marcus@greenroots.org' : role === 'admin' ? 'jordan.lee@commonground.org' : 'alex.rivera@commonground.org')
-    }));
-    setIsAuthModalOpen(false);
-    addToast({
-      type: 'success',
-      title: 'Welcome to CommonGround!',
-      message: `Signed in successfully via ${provider.toUpperCase()} as ${role}.`
-    });
+    // Landing auth always uses the real sign-in page (no one-click demo login).
+    void role;
+    void userData;
+    void provider;
+    window.location.href = '/login';
   };
 
   const logout = () => {
@@ -369,7 +341,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     addToast({
       type: 'info',
       title: 'Switch Account',
-      message: 'Sign in with a different account or use 1-click demo access.',
+      message: 'Sign in with a different account using email and password.',
       durationMs: 4000,
     });
   };

@@ -11,20 +11,14 @@ import {
 import {
   login,
   dashboardPathForRole,
-  enterDemoAccount,
   isRole,
-  type Role,
+  SEED_ACCOUNTS,
+  SEED_ACCOUNT_PASSWORD,
 } from "@/lib/auth";
 import { validateLogin } from "@/lib/validation";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
-
-const DEMO_ROLES: { role: Role; label: string }[] = [
-  { role: "ORGANIZER", label: "Organizer" },
-  { role: "VOLUNTEER_LEADER", label: "Leader" },
-  { role: "VOLUNTEER", label: "Volunteer" },
-];
 
 export function LoginForm() {
   const router = useRouter();
@@ -36,7 +30,6 @@ export function LoginForm() {
   const [formError, setFormError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
-  const [demoLoading, setDemoLoading] = useState<Role | null>(null);
 
   useEffect(() => {
     if (loading || !user || !isRole(user.role)) return;
@@ -66,21 +59,6 @@ export function LoginForm() {
       setFormError(err instanceof Error ? err.message : "Unable to sign in.");
     } finally {
       setSubmitting(false);
-    }
-  }
-
-  async function onDemoEnter(role: Role) {
-    setFormError(null);
-    setNotice(null);
-    setDemoLoading(role);
-    try {
-      const res = await enterDemoAccount(role);
-      setSession(res);
-      router.push(dashboardPathForRole(role));
-    } catch (err) {
-      setFormError(err instanceof Error ? err.message : "Unable to open the demo account.");
-    } finally {
-      setDemoLoading(null);
     }
   }
 
@@ -157,22 +135,22 @@ export function LoginForm() {
       </form>
 
       <div className="rounded-lg border border-stone-200 bg-stone-50 p-3">
-        <p className="mb-2 text-xs font-medium text-stone-500">
-          Try a demo account
+        <p className="mb-1 text-xs font-medium text-stone-500">
+          Seeded role accounts (sign in with email + password)
         </p>
-        <div className="grid grid-cols-3 gap-2">
-          {DEMO_ROLES.map(({ role, label }) => (
-            <button
-              key={role}
-              type="button"
-              disabled={demoLoading !== null}
-              onClick={() => void onDemoEnter(role)}
-              className="rounded-md border border-stone-200 bg-white px-2 py-1.5 text-xs font-medium text-stone-700 transition-colors hover:border-emerald-500 hover:text-emerald-700 disabled:opacity-60"
-            >
-              {demoLoading === role ? "Opening…" : label}
-            </button>
+        <p className="mb-2 text-[11px] text-stone-400">
+          Password for all: <span className="font-mono text-stone-600">{SEED_ACCOUNT_PASSWORD}</span>
+        </p>
+        <ul className="space-y-1.5 text-xs text-stone-700">
+          {SEED_ACCOUNTS.map(({ role, label, email: seedEmail, fullName }) => (
+            <li key={role}>
+              <span className="font-semibold">{label}</span>
+              <span className="block truncate text-[11px] text-stone-500">
+                {fullName} · {seedEmail}
+              </span>
+            </li>
           ))}
-        </div>
+        </ul>
       </div>
 
       <p className="text-center text-sm text-stone-600">
