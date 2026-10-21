@@ -195,12 +195,12 @@ export const RecognitionView: React.FC<RecognitionViewProps> = ({
         </div>
 
         {/* Sub-tab navigation */}
-        <div className="bg-slate-100 p-1 rounded-xl flex items-center gap-1 border border-slate-200 text-xs font-semibold text-slate-600 flex-wrap">
+        <div className="flex flex-wrap items-center gap-1 rounded-xl border border-slate-200 bg-slate-100 p-1 text-xs font-semibold text-slate-600 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300">
           <button
             id="subtab-badges"
             onClick={() => setActiveSubTab('badges')}
             className={`px-3 py-1.5 rounded-lg transition-all ${
-              activeSubTab === 'badges' ? 'bg-white text-slate-900 shadow-xs font-bold' : 'hover:text-slate-900'
+              activeSubTab === 'badges' ? 'bg-white text-slate-900 shadow-xs font-bold dark:bg-slate-700 dark:text-slate-100' : 'hover:text-slate-900 dark:hover:text-slate-100'
             }`}
           >
             Badges ({(badges || []).filter((b) => b.isUnlocked).length})
@@ -209,7 +209,7 @@ export const RecognitionView: React.FC<RecognitionViewProps> = ({
             id="subtab-certificate"
             onClick={() => setActiveSubTab('certificate')}
             className={`px-3 py-1.5 rounded-lg transition-all ${
-              activeSubTab === 'certificate' ? 'bg-white text-slate-900 shadow-xs font-bold' : 'hover:text-slate-900'
+              activeSubTab === 'certificate' ? 'bg-white text-slate-900 shadow-xs font-bold dark:bg-slate-700 dark:text-slate-100' : 'hover:text-slate-900 dark:hover:text-slate-100'
             }`}
           >
             Official Certificate
@@ -218,7 +218,7 @@ export const RecognitionView: React.FC<RecognitionViewProps> = ({
             id="subtab-letter"
             onClick={() => setActiveSubTab('letter')}
             className={`px-3 py-1.5 rounded-lg transition-all ${
-              activeSubTab === 'letter' ? 'bg-white text-slate-900 shadow-xs font-bold' : 'hover:text-slate-900'
+              activeSubTab === 'letter' ? 'bg-white text-slate-900 shadow-xs font-bold dark:bg-slate-700 dark:text-slate-100' : 'hover:text-slate-900 dark:hover:text-slate-100'
             }`}
           >
             Appreciation Letter
@@ -227,7 +227,7 @@ export const RecognitionView: React.FC<RecognitionViewProps> = ({
             id="subtab-social"
             onClick={() => setActiveSubTab('social')}
             className={`px-3 py-1.5 rounded-lg transition-all ${
-              activeSubTab === 'social' ? 'bg-white text-slate-900 shadow-xs font-bold' : 'hover:text-slate-900'
+              activeSubTab === 'social' ? 'bg-white text-slate-900 shadow-xs font-bold dark:bg-slate-700 dark:text-slate-100' : 'hover:text-slate-900 dark:hover:text-slate-100'
             }`}
           >
             Social Sharing
@@ -266,7 +266,7 @@ export const RecognitionView: React.FC<RecognitionViewProps> = ({
                   className={`text-left p-5 rounded-2xl border transition-all relative overflow-hidden flex flex-col justify-between ${
                     badge.isUnlocked
                       ? 'bg-white border-slate-200 hover:border-amber-400 hover:shadow-md cursor-pointer'
-                      : 'bg-slate-50/80 border-dashed border-slate-300 opacity-75'
+                      : 'bg-slate-50/80 dark:bg-slate-900/80 border-dashed border-slate-300 opacity-75'
                   }`}
                 >
                   {badge.isUnlocked && (
@@ -360,7 +360,7 @@ export const RecognitionView: React.FC<RecognitionViewProps> = ({
                   onClick={() => handleSelectVolunteer(v)}
                   className={`p-2.5 rounded-xl border text-left transition-all ${
                     certData.recipientName === v.name
-                      ? 'bg-amber-50/80 border-amber-400 ring-2 ring-amber-400/20'
+                      ? 'border-amber-400 bg-amber-50/80 ring-2 ring-amber-400/20 dark:border-amber-600 dark:bg-amber-950/50'
                       : 'bg-slate-50 border-slate-200 hover:bg-slate-100/80'
                   }`}
                 >
@@ -409,7 +409,7 @@ export const RecognitionView: React.FC<RecognitionViewProps> = ({
           )}
 
           {/* Rendered Certificate Card (Prints as clean formal document) */}
-          <div className="bg-[#FAF9F5] p-6 sm:p-12 rounded-3xl border-8 border-double border-[#8C733E] shadow-xl relative overflow-hidden print-certificate-container text-slate-900 max-w-4xl mx-auto">
+          <div className="print-certificate-container relative mx-auto max-w-4xl overflow-hidden rounded-3xl border-8 border-double border-[#8C733E] bg-[#FAF9F5] p-6 text-slate-900 shadow-xl sm:p-12 dark:border-amber-700 dark:bg-slate-950 dark:text-slate-100">
             {/* Background watermark seal */}
             <div className="absolute inset-0 flex items-center justify-center opacity-4 pointer-events-none">
               <Award className="w-96 h-96 text-[#8C733E]" />
@@ -444,7 +444,7 @@ export const RecognitionView: React.FC<RecognitionViewProps> = ({
               </div>
 
               {/* Service Hours Highlight */}
-              <div className="inline-block bg-amber-50/80 border border-amber-300/60 px-8 py-3 rounded-2xl shadow-xs">
+              <div className="inline-block rounded-2xl border border-amber-300/60 bg-amber-50/80 px-8 py-3 shadow-xs dark:border-amber-700 dark:bg-amber-950/50">
                 <p className="font-seal text-2xl sm:text-3xl font-bold text-[#8C733E]">
                   {certData.hoursVerified} Verified Service Hours
                 </p>

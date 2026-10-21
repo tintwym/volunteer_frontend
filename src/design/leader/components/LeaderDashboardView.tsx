@@ -224,7 +224,7 @@ export const LeaderDashboardView: React.FC<LeaderDashboardViewProps> = ({
             <div className="space-y-3 mt-4">
               <div
                 onClick={() => onNavigateTab('incidents')}
-                className="p-3 rounded-xl bg-rose-50/70 border border-rose-200 flex items-center justify-between cursor-pointer hover:bg-rose-100/70 transition-colors"
+                className="p-3 rounded-xl bg-rose-50/70 dark:bg-rose-950/40 border border-rose-200 flex items-center justify-between cursor-pointer hover:bg-rose-100/70 transition-colors"
               >
                 <div className="flex items-center gap-2">
                   <AlertOctagon className="w-4 h-4 text-rose-600" />
@@ -237,7 +237,7 @@ export const LeaderDashboardView: React.FC<LeaderDashboardViewProps> = ({
 
               <div
                 onClick={() => onNavigateTab('requests')}
-                className="p-3 rounded-xl bg-amber-50/70 border border-amber-200 flex items-center justify-between cursor-pointer hover:bg-amber-100/70 transition-colors"
+                className="p-3 rounded-xl bg-amber-50/70 dark:bg-amber-950/40 border border-amber-200 flex items-center justify-between cursor-pointer hover:bg-amber-100/70 transition-colors"
               >
                 <div className="flex items-center gap-2">
                   <HelpCircle className="w-4 h-4 text-amber-600" />
@@ -325,7 +325,7 @@ export const LeaderDashboardView: React.FC<LeaderDashboardViewProps> = ({
                 key={task.id}
                 className={`p-4 rounded-xl border transition-all ${
                   task.status === 'Completed'
-                    ? 'bg-slate-50/70 border-slate-200 opacity-80'
+                    ? 'bg-slate-50/70 dark:bg-slate-900/70 border-slate-200 opacity-80'
                     : 'bg-white border-slate-200 shadow-2xs'
                 }`}
               >
@@ -446,7 +446,7 @@ export const LeaderDashboardView: React.FC<LeaderDashboardViewProps> = ({
           </div>
 
           {/* Open Operational Incident Quick View */}
-          <div className="bg-rose-50/70 rounded-2xl border border-rose-200 p-5 space-y-2">
+          <div className="bg-rose-50/70 dark:bg-rose-950/40 rounded-2xl border border-rose-200 p-5 space-y-2">
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-rose-900 flex items-center gap-1.5">
                 <AlertTriangle className="w-4 h-4 text-rose-600" />

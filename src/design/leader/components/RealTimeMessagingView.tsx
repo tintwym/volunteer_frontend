@@ -234,7 +234,7 @@ export const RealTimeMessagingView: React.FC<RealTimeMessagingViewProps> = ({
                   msg.priority === 'urgent'
                     ? 'p-3.5 bg-rose-50 border border-rose-200 rounded-xl'
                     : msg.isAnnouncement
-                    ? 'p-3.5 bg-amber-50/70 border border-amber-200 rounded-xl'
+                    ? 'p-3.5 bg-amber-50/70 dark:bg-amber-950/40 border border-amber-200 rounded-xl'
                     : ''
                 }`}
               >

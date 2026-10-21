@@ -198,7 +198,7 @@ export const AttendanceManagementView: React.FC<AttendanceManagementViewProps> =
             </thead>
             <tbody className="divide-y divide-slate-100 text-xs text-slate-700">
               {filteredAttendance.map((rec) => (
-                <tr key={rec.id} className="hover:bg-slate-50/80 transition-colors">
+                <tr key={rec.id} className="hover:bg-slate-50/80 dark:bg-slate-900/80 transition-colors">
                   <td className="py-3 px-4">
                     <div className="flex items-center gap-2.5">
                       <img

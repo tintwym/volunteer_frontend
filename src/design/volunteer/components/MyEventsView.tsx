@@ -174,7 +174,7 @@ export const MyEventsView: React.FC<MyEventsViewProps> = ({
 
               {/* Shift Instructions */}
               {evt.instructions && (
-                <div className="p-3 bg-amber-50/70 border border-amber-200 rounded-xl text-xs text-amber-900 space-y-0.5">
+                <div className="p-3 bg-amber-50/70 dark:bg-amber-950/40 border border-amber-200 rounded-xl text-xs text-amber-900 space-y-0.5">
                   <span className="font-bold block">On-Site Arrival Instructions:</span>
                   <p>{evt.instructions}</p>
                 </div>

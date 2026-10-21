@@ -179,11 +179,11 @@ export const RecognitionMilestonesView: React.FC<RecognitionMilestonesViewProps>
         </div>
 
         {/* Tab Switcher */}
-        <div className="bg-slate-100 p-1 rounded-xl flex flex-wrap items-center text-xs font-semibold">
+        <div className="flex flex-wrap items-center rounded-xl bg-slate-100 p-1 text-xs font-semibold dark:bg-slate-800">
           <button
             onClick={() => setActiveTab('certificates')}
             className={`px-3 py-1.5 rounded-lg transition-colors cursor-pointer ${
-              activeTab === 'certificates' ? 'bg-white text-slate-900 shadow-2xs' : 'text-slate-600 hover:text-slate-900'
+              activeTab === 'certificates' ? 'bg-white text-slate-900 shadow-2xs dark:bg-slate-700 dark:text-slate-100' : 'text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-slate-100'
             }`}
           >
             Certificates of Service
@@ -191,7 +191,7 @@ export const RecognitionMilestonesView: React.FC<RecognitionMilestonesViewProps>
           <button
             onClick={() => setActiveTab('letters')}
             className={`px-3 py-1.5 rounded-lg transition-colors cursor-pointer ${
-              activeTab === 'letters' ? 'bg-white text-slate-900 shadow-2xs' : 'text-slate-600 hover:text-slate-900'
+              activeTab === 'letters' ? 'bg-white text-slate-900 shadow-2xs dark:bg-slate-700 dark:text-slate-100' : 'text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-slate-100'
             }`}
           >
             Appreciation Letters
@@ -199,7 +199,7 @@ export const RecognitionMilestonesView: React.FC<RecognitionMilestonesViewProps>
           <button
             onClick={() => setActiveTab('badges')}
             className={`px-3 py-1.5 rounded-lg transition-colors cursor-pointer ${
-              activeTab === 'badges' ? 'bg-white text-slate-900 shadow-2xs' : 'text-slate-600 hover:text-slate-900'
+              activeTab === 'badges' ? 'bg-white text-slate-900 shadow-2xs dark:bg-slate-700 dark:text-slate-100' : 'text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-slate-100'
             }`}
           >
             Badges System
@@ -207,7 +207,7 @@ export const RecognitionMilestonesView: React.FC<RecognitionMilestonesViewProps>
           <button
             onClick={() => setActiveTab('social')}
             className={`px-3 py-1.5 rounded-lg transition-colors cursor-pointer ${
-              activeTab === 'social' ? 'bg-white text-slate-900 shadow-2xs' : 'text-slate-600 hover:text-slate-900'
+              activeTab === 'social' ? 'bg-white text-slate-900 shadow-2xs dark:bg-slate-700 dark:text-slate-100' : 'text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-slate-100'
             }`}
           >
             Social Sharing
@@ -560,7 +560,7 @@ export const RecognitionMilestonesView: React.FC<RecognitionMilestonesViewProps>
                   key={badge.id}
                   className={`p-5 rounded-2xl border transition-all bg-white shadow-xs ${
                     isAwardedToCurrent
-                      ? 'border-amber-300 ring-2 ring-amber-400/20 bg-gradient-to-br from-white to-amber-50/40'
+                      ? 'border-amber-300 bg-gradient-to-br from-white to-amber-50/40 ring-2 ring-amber-400/20 dark:border-amber-700 dark:from-slate-900 dark:to-amber-950/40'
                       : 'border-slate-200'
                   }`}
                 >

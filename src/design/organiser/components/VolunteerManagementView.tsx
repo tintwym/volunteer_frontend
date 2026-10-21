@@ -244,7 +244,7 @@ export const VolunteerManagementView: React.FC<VolunteerManagementViewProps> = (
             </thead>
             <tbody className="divide-y divide-slate-100 text-xs text-slate-700">
               {filteredVolunteers.map((vol) => (
-                <tr key={vol.id} className="hover:bg-slate-50/80 transition-colors">
+                <tr key={vol.id} className="hover:bg-slate-50/80 dark:bg-slate-900/80 transition-colors">
                   {/* Name & Contact */}
                   <td className="py-3 px-4">
                     <div className="flex items-center gap-3">

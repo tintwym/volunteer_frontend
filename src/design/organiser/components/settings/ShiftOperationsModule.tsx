@@ -140,7 +140,7 @@ export const ShiftOperationsModule: React.FC<ShiftOperationsModuleProps> = ({
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* QR Code Kiosk Mode */}
-          <div className="p-4 rounded-xl border border-slate-200 bg-slate-50/70 flex flex-col justify-between gap-4">
+          <div className="p-4 rounded-xl border border-slate-200 bg-slate-50/70 dark:bg-slate-900/70 flex flex-col justify-between gap-4">
             <div className="space-y-2">
               <div className="flex items-center gap-2">
                 <div className="p-2 rounded-lg bg-indigo-50 text-indigo-700">
@@ -165,7 +165,7 @@ export const ShiftOperationsModule: React.FC<ShiftOperationsModuleProps> = ({
           </div>
 
           {/* Geolocation */}
-          <div className="p-4 rounded-xl border border-slate-200 bg-slate-50/70 flex flex-col justify-between gap-4">
+          <div className="p-4 rounded-xl border border-slate-200 bg-slate-50/70 dark:bg-slate-900/70 flex flex-col justify-between gap-4">
             <div className="space-y-2">
               <div className="flex items-center gap-2">
                 <div className="p-2 rounded-lg bg-emerald-50 text-emerald-700">
@@ -190,7 +190,7 @@ export const ShiftOperationsModule: React.FC<ShiftOperationsModuleProps> = ({
           </div>
 
           {/* Photo Verification */}
-          <div className="p-4 rounded-xl border border-slate-200 bg-slate-50/70 flex flex-col justify-between gap-4">
+          <div className="p-4 rounded-xl border border-slate-200 bg-slate-50/70 dark:bg-slate-900/70 flex flex-col justify-between gap-4">
             <div className="space-y-2">
               <div className="flex items-center gap-2">
                 <div className="p-2 rounded-lg bg-amber-50 text-amber-700">

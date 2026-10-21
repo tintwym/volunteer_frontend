@@ -246,7 +246,7 @@ export const UserRoleManagementView: React.FC<UserRoleManagementViewProps> = () 
           </thead>
           <tbody className="divide-y divide-slate-100 text-slate-700">
             {filteredUsers.map((u) => (
-              <tr key={u.id} className="hover:bg-slate-50/80 transition-colors">
+              <tr key={u.id} className="hover:bg-slate-50/80 dark:bg-slate-900/80 transition-colors">
                 <td className="py-3 px-4">
                   <div className="flex items-center gap-2.5">
                     <img src={u.avatar} alt={u.name} className="w-8 h-8 rounded-full object-cover border border-slate-200" />

@@ -169,7 +169,7 @@ export const ProgressMonitoringView: React.FC<ProgressMonitoringViewProps> = ({
                 const todayRec = attendance.find(a => a.volunteerId === vol.id);
 
                 return (
-                  <tr key={vol.id} className="hover:bg-slate-50/70">
+                  <tr key={vol.id} className="hover:bg-slate-50/70 dark:bg-slate-900/70">
                     <td className="py-3 px-4">
                       <div className="flex items-center gap-3">
                         <img

@@ -143,7 +143,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
       {/* Automated Email Alert Banner */}
       {unreadNotification && (
-        <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start justify-between gap-3 text-amber-900 shadow-xs">
+        <div className="flex items-start justify-between gap-3 rounded-xl border border-amber-200 bg-amber-50 p-4 text-amber-900 shadow-xs dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-100">
           <div className="flex items-start gap-3">
             <AlertCircle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
             <div>
@@ -160,7 +160,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           </div>
           <button
             onClick={() => setActiveTab('notifications')}
-            className="shrink-0 text-xs font-semibold text-amber-800 hover:text-amber-950 bg-amber-100 hover:bg-amber-200 px-3 py-1.5 rounded-lg transition-colors"
+            className="shrink-0 rounded-lg bg-amber-100 px-3 py-1.5 text-xs font-semibold text-amber-800 transition-colors hover:bg-amber-200 hover:text-amber-950 dark:bg-amber-900/50 dark:text-amber-200 dark:hover:bg-amber-900 dark:hover:text-amber-100"
           >
             Open Notice
           </button>

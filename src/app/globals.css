@@ -127,16 +127,27 @@
   background-color: #020617; /* slate-950 */
 }
 
+/* Neutrals */
 .dark .cg-role-portal :where(.bg-white, .bg-white\/95, .bg-white\/90, .bg-white\/80) {
   background-color: #0f172a; /* slate-900 */
 }
 
-.dark .cg-role-portal :where(.bg-slate-50, .bg-slate-50\/80, .bg-slate-100, .bg-slate-100\/60) {
+.dark .cg-role-portal :where(
+  .bg-slate-50,
+  .bg-slate-50\/80,
+  .bg-slate-50\/70,
+  .bg-slate-50\/60,
+  .bg-slate-50\/50,
+  .bg-slate-50\/40,
+  .bg-slate-100,
+  .bg-slate-100\/60,
+  .bg-slate-100\/30
+) {
   background-color: #1e293b; /* slate-800 */
 }
 
-.dark .cg-role-portal :where(.bg-slate-50\/50) {
-  background-color: rgb(30 41 59 / 0.5);
+.dark .cg-role-portal :where(.bg-slate-200, .bg-slate-200\/70, .bg-slate-200\/60) {
+  background-color: #334155; /* slate-700 */
 }
 
 /* Pastel tint surfaces → deep tinted panels */
@@ -146,18 +157,34 @@
   .bg-emerald-50\/70,
   .bg-emerald-50\/60,
   .bg-emerald-50\/50,
-  .bg-emerald-100
+  .bg-emerald-100,
+  .bg-emerald-100\/80,
+  .bg-emerald-100\/60
 ) {
-  background-color: rgb(2 44 34 / 0.72); /* emerald-950 */
+  background-color: rgb(2 44 34 / 0.78);
 }
 
 .dark .cg-role-portal :where(
   .bg-amber-50,
+  .bg-amber-50\/80,
+  .bg-amber-50\/70,
   .bg-amber-50\/60,
   .bg-amber-50\/50,
-  .bg-amber-100
+  .bg-amber-100,
+  .bg-amber-100\/80,
+  .bg-amber-100\/60,
+  .bg-yellow-50,
+  .bg-yellow-100
 ) {
-  background-color: rgb(69 26 3 / 0.65); /* amber-950 */
+  background-color: rgb(69 26 3 / 0.72);
+}
+
+.dark .cg-role-portal :where(
+  .bg-orange-50,
+  .bg-orange-50\/70,
+  .bg-orange-100
+) {
+  background-color: rgb(67 20 7 / 0.72);
 }
 
 .dark .cg-role-portal :where(
@@ -172,24 +199,29 @@
   .bg-indigo-100,
   .bg-purple-50,
   .bg-purple-100,
-  .bg-violet-50
+  .bg-violet-50,
+  .bg-violet-100
 ) {
-  background-color: rgb(23 37 84 / 0.72); /* indigo-950 */
+  background-color: rgb(23 37 84 / 0.78);
 }
 
-.dark .cg-role-portal :where(.bg-slate-50\/40, .bg-slate-100\/30) {
-  background-color: rgb(15 23 42 / 0.55); /* slate-900 translucent */
+.dark .cg-role-portal :where(
+  .bg-fuchsia-50,
+  .bg-fuchsia-100,
+  .bg-pink-50,
+  .bg-pink-100
+) {
+  background-color: rgb(74 4 78 / 0.65);
 }
 
 .dark .cg-role-portal :where(
   .bg-rose-50,
+  .bg-rose-50\/70,
   .bg-rose-100,
   .bg-red-50,
-  .bg-red-100,
-  .bg-orange-50,
-  .bg-orange-100
+  .bg-red-100
 ) {
-  background-color: rgb(69 10 10 / 0.65); /* red-950 */
+  background-color: rgb(69 10 10 / 0.7);
 }
 
 .dark .cg-role-portal :where(
@@ -199,59 +231,100 @@
   .bg-cyan-50,
   .bg-cyan-100
 ) {
-  background-color: rgb(4 47 46 / 0.7); /* teal-950 */
+  background-color: rgb(4 47 46 / 0.72);
 }
 
+/* Cream certificate canvases (hex backgrounds) */
+.dark .cg-role-portal :where(.bg-\[\#faf8f5\], .bg-\[\#FAF9F5\], .bg-\[\#FAF8F5\]) {
+  background-color: #0f172a !important;
+  color: #f1f5f9;
+}
+
+/* Text */
 .dark .cg-role-portal :where(.text-slate-900, .text-slate-800) {
-  color: #f1f5f9; /* slate-100 */
+  color: #f1f5f9;
 }
 
 .dark .cg-role-portal :where(.text-slate-700, .text-slate-600) {
-  color: #cbd5e1; /* slate-300 */
+  color: #cbd5e1;
 }
 
 .dark .cg-role-portal :where(.text-slate-500, .text-slate-400) {
-  color: #94a3b8; /* slate-400 */
+  color: #94a3b8;
 }
 
 .dark .cg-role-portal :where(.text-emerald-950, .text-emerald-900, .text-emerald-800) {
-  color: #a7f3d0; /* emerald-200 */
+  color: #a7f3d0;
 }
 
 .dark .cg-role-portal :where(.text-emerald-700, .text-emerald-600) {
-  color: #6ee7b7; /* emerald-300 */
+  color: #6ee7b7;
 }
 
-.dark .cg-role-portal :where(.text-amber-950, .text-amber-900, .text-amber-800) {
-  color: #fde68a; /* amber-200 */
+.dark .cg-role-portal :where(.text-amber-950, .text-amber-900, .text-amber-800, .text-yellow-900, .text-yellow-800) {
+  color: #fde68a;
 }
 
-.dark .cg-role-portal :where(.text-amber-700, .text-amber-600) {
-  color: #fcd34d; /* amber-300 */
+.dark .cg-role-portal :where(.text-amber-700, .text-amber-600, .text-yellow-700) {
+  color: #fcd34d;
 }
 
-.dark .cg-role-portal :where(.text-blue-950, .text-blue-900, .text-blue-800, .text-indigo-900, .text-indigo-800, .text-purple-900, .text-purple-800) {
-  color: #c7d2fe; /* indigo-200 */
+.dark .cg-role-portal :where(.text-orange-950, .text-orange-900, .text-orange-800) {
+  color: #fed7aa;
 }
 
-.dark .cg-role-portal :where(.text-blue-700, .text-blue-600, .text-indigo-700, .text-indigo-600) {
-  color: #a5b4fc; /* indigo-300 */
+.dark .cg-role-portal :where(.text-orange-700, .text-orange-600) {
+  color: #fdba74;
+}
+
+.dark .cg-role-portal :where(
+  .text-blue-950,
+  .text-blue-900,
+  .text-blue-800,
+  .text-indigo-900,
+  .text-indigo-800,
+  .text-purple-900,
+  .text-purple-800,
+  .text-sky-900,
+  .text-sky-800
+) {
+  color: #c7d2fe;
+}
+
+.dark .cg-role-portal :where(
+  .text-blue-700,
+  .text-blue-600,
+  .text-indigo-700,
+  .text-indigo-600,
+  .text-sky-700,
+  .text-sky-600
+) {
+  color: #a5b4fc;
+}
+
+.dark .cg-role-portal :where(.text-fuchsia-900, .text-fuchsia-800, .text-pink-900, .text-pink-800) {
+  color: #f5d0fe;
+}
+
+.dark .cg-role-portal :where(.text-fuchsia-700, .text-fuchsia-600) {
+  color: #f0abfc;
 }
 
 .dark .cg-role-portal :where(.text-rose-900, .text-rose-800, .text-red-900, .text-red-800) {
-  color: #fecaca; /* red-200 */
+  color: #fecaca;
 }
 
 .dark .cg-role-portal :where(.text-rose-700, .text-rose-600, .text-red-700, .text-red-600) {
-  color: #fca5a5; /* red-300 */
+  color: #fca5a5;
 }
 
-.dark .cg-role-portal :where(.text-teal-900, .text-teal-800, .text-teal-700) {
-  color: #99f6e4; /* teal-200 */
+.dark .cg-role-portal :where(.text-teal-900, .text-teal-800, .text-teal-700, .text-cyan-800, .text-cyan-700) {
+  color: #99f6e4;
 }
 
-.dark .cg-role-portal :where(.border-slate-100, .border-slate-200) {
-  border-color: #334155; /* slate-700 */
+/* Borders */
+.dark .cg-role-portal :where(.border-slate-100, .border-slate-200, .border-slate-200\/60, .border-slate-300) {
+  border-color: #334155;
 }
 
 .dark .cg-role-portal :where(
@@ -261,45 +334,75 @@
   .border-emerald-200\/80,
   .border-emerald-300
 ) {
-  border-color: #065f46; /* emerald-800 */
+  border-color: #065f46;
 }
 
 .dark .cg-role-portal :where(
   .border-amber-100,
   .border-amber-200,
   .border-amber-300,
+  .border-amber-400,
+  .border-yellow-200,
+  .border-yellow-300,
+  .border-orange-200,
+  .border-orange-300,
   .border-blue-100,
   .border-blue-200,
+  .border-sky-200,
+  .border-sky-300,
   .border-indigo-100,
   .border-indigo-200,
+  .border-indigo-300,
   .border-rose-100,
   .border-rose-200,
+  .border-rose-300,
   .border-red-100,
   .border-red-200,
   .border-teal-100,
   .border-teal-200,
   .border-purple-100,
-  .border-purple-200
+  .border-purple-200,
+  .border-purple-300,
+  .border-fuchsia-200,
+  .border-fuchsia-300
 ) {
-  border-color: #334155; /* slate-700 fallback for tinted borders */
+  border-color: #475569;
 }
 
 .dark .cg-role-portal :where(.divide-slate-100, .divide-slate-200) > :not([hidden]) ~ :not([hidden]) {
   border-color: #334155;
 }
 
-.dark .cg-role-portal :where(.hover\:bg-slate-50:hover, .hover\:bg-slate-100:hover, .hover\:bg-slate-100\/80:hover) {
-  background-color: #334155; /* slate-700 */
+/* Hovers */
+.dark .cg-role-portal :where(
+  .hover\:bg-slate-50:hover,
+  .hover\:bg-slate-50\/70:hover,
+  .hover\:bg-slate-100:hover,
+  .hover\:bg-slate-100\/80:hover,
+  .hover\:bg-slate-200:hover
+) {
+  background-color: #334155;
 }
 
-.dark .cg-role-portal :where(.hover\:bg-emerald-50:hover, .hover\:bg-emerald-50\/50:hover, .hover\:bg-emerald-50\/60:hover) {
-  background-color: rgb(6 78 59 / 0.45); /* emerald-900 */
+.dark .cg-role-portal :where(
+  .hover\:bg-emerald-50:hover,
+  .hover\:bg-emerald-50\/50:hover,
+  .hover\:bg-emerald-50\/60:hover,
+  .hover\:bg-emerald-100:hover
+) {
+  background-color: rgb(6 78 59 / 0.45);
 }
 
-.dark .cg-role-portal :where(.hover\:bg-amber-50:hover, .hover\:bg-amber-50\/60:hover) {
-  background-color: rgb(120 53 15 / 0.4); /* amber-900 */
+.dark .cg-role-portal :where(
+  .hover\:bg-amber-50:hover,
+  .hover\:bg-amber-50\/60:hover,
+  .hover\:bg-amber-100:hover,
+  .hover\:bg-amber-100\/60:hover
+) {
+  background-color: rgb(120 53 15 / 0.4);
 }
 
+/* Form controls */
 .dark .cg-role-portal input:where(.bg-slate-50, .bg-white),
 .dark .cg-role-portal textarea:where(.bg-slate-50, .bg-white),
 .dark .cg-role-portal select:where(.bg-slate-50, .bg-white) {
@@ -311,6 +414,11 @@
 .dark .cg-role-portal input::placeholder,
 .dark .cg-role-portal textarea::placeholder {
   color: #64748b;
+}
+
+/* Filter / segmented control: selected white pill on slate track → clearer contrast */
+.dark .cg-role-portal :where(.bg-slate-100, .bg-slate-100\/60) :where(.bg-white) {
+  background-color: #334155; /* slate-700 — lifts selected chip above track */
 }
 
 ::-webkit-scrollbar {

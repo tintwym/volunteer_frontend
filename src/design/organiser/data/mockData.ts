@@ -616,7 +616,7 @@ export const BADGES: Badge[] = [
     progress: 1,
     maxProgress: 1,
     isUnlocked: true,
-    colorBg: 'bg-amber-500/10 text-amber-700 dark:text-amber-400',
+    colorBg: 'bg-amber-500/10 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300',
     colorBorder: 'border-amber-400/40',
   },
   {
@@ -630,7 +630,7 @@ export const BADGES: Badge[] = [
     progress: 10,
     maxProgress: 10,
     isUnlocked: true,
-    colorBg: 'bg-amber-600/10 text-amber-800',
+    colorBg: 'bg-amber-600/10 text-amber-800 dark:bg-amber-500/15 dark:text-amber-300',
     colorBorder: 'border-amber-500/40',
   },
   {
@@ -644,7 +644,7 @@ export const BADGES: Badge[] = [
     progress: 50,
     maxProgress: 50,
     isUnlocked: true,
-    colorBg: 'bg-slate-500/10 text-slate-700',
+    colorBg: 'bg-slate-500/10 text-slate-700 dark:bg-slate-500/20 dark:text-slate-300',
     colorBorder: 'border-slate-400/40',
   },
   {
@@ -658,7 +658,7 @@ export const BADGES: Badge[] = [
     progress: 142.5,
     maxProgress: 100,
     isUnlocked: true,
-    colorBg: 'bg-yellow-500/15 text-yellow-800',
+    colorBg: 'bg-yellow-500/15 text-yellow-800 dark:bg-yellow-500/15 dark:text-yellow-200',
     colorBorder: 'border-yellow-500/50',
   },
   {
@@ -671,7 +671,7 @@ export const BADGES: Badge[] = [
     progress: 142.5,
     maxProgress: 250,
     isUnlocked: false,
-    colorBg: 'bg-indigo-500/10 text-indigo-700',
+    colorBg: 'bg-indigo-500/10 text-indigo-700 dark:bg-indigo-500/15 dark:text-indigo-300',
     colorBorder: 'border-indigo-400/40',
   },
   {
@@ -684,7 +684,7 @@ export const BADGES: Badge[] = [
     progress: 142.5,
     maxProgress: 500,
     isUnlocked: false,
-    colorBg: 'bg-slate-500/10 text-slate-700',
+    colorBg: 'bg-slate-500/10 text-slate-700 dark:bg-slate-500/20 dark:text-slate-300',
     colorBorder: 'border-slate-400/40',
   },
   {
@@ -697,7 +697,7 @@ export const BADGES: Badge[] = [
     progress: 142.5,
     maxProgress: 1000,
     isUnlocked: false,
-    colorBg: 'bg-sky-500/10 text-sky-700',
+    colorBg: 'bg-sky-500/10 text-sky-700 dark:bg-sky-500/15 dark:text-sky-300',
     colorBorder: 'border-sky-400/40',
   },
   {
@@ -710,7 +710,7 @@ export const BADGES: Badge[] = [
     progress: 142.5,
     maxProgress: 2000,
     isUnlocked: false,
-    colorBg: 'bg-fuchsia-500/10 text-fuchsia-700',
+    colorBg: 'bg-fuchsia-500/10 text-fuchsia-700 dark:bg-fuchsia-500/15 dark:text-fuchsia-300',
     colorBorder: 'border-fuchsia-400/40',
   },
   {
@@ -723,7 +723,7 @@ export const BADGES: Badge[] = [
     progress: 142.5,
     maxProgress: 5000,
     isUnlocked: false,
-    colorBg: 'bg-rose-500/10 text-rose-700',
+    colorBg: 'bg-rose-500/10 text-rose-700 dark:bg-rose-500/15 dark:text-rose-300',
     colorBorder: 'border-rose-400/40',
   },
   {
@@ -737,7 +737,7 @@ export const BADGES: Badge[] = [
     progress: 7,
     maxProgress: 5,
     isUnlocked: true,
-    colorBg: 'bg-emerald-500/10 text-emerald-800',
+    colorBg: 'bg-emerald-500/10 text-emerald-800 dark:bg-emerald-500/15 dark:text-emerald-300',
     colorBorder: 'border-emerald-400/40',
   },
   {
@@ -751,7 +751,7 @@ export const BADGES: Badge[] = [
     progress: 3,
     maxProgress: 3,
     isUnlocked: true,
-    colorBg: 'bg-rose-500/10 text-rose-800',
+    colorBg: 'bg-rose-500/10 text-rose-800 dark:bg-rose-500/15 dark:text-rose-300',
     colorBorder: 'border-rose-400/40',
   },
   {
@@ -764,7 +764,7 @@ export const BADGES: Badge[] = [
     progress: 2,
     maxProgress: 3,
     isUnlocked: false,
-    colorBg: 'bg-purple-500/10 text-purple-800',
+    colorBg: 'bg-purple-500/10 text-purple-800 dark:bg-purple-500/15 dark:text-purple-300',
     colorBorder: 'border-purple-400/40',
   },
 ];

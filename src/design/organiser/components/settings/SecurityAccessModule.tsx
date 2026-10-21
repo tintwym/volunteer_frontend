@@ -51,7 +51,7 @@ export const SecurityAccessModule: React.FC<SecurityAccessModuleProps> = ({
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Enforce 2FA */}
-          <div className="p-4 rounded-xl border border-slate-200 bg-slate-50/70 flex items-start justify-between gap-4">
+          <div className="p-4 rounded-xl border border-slate-200 bg-slate-50/70 dark:bg-slate-900/70 flex items-start justify-between gap-4">
             <div className="space-y-1">
               <div className="flex items-center gap-2">
                 <ShieldCheck className="w-4 h-4 text-emerald-600" />
@@ -76,7 +76,7 @@ export const SecurityAccessModule: React.FC<SecurityAccessModuleProps> = ({
           </div>
 
           {/* Session Timeout */}
-          <div className="p-4 rounded-xl border border-slate-200 bg-slate-50/70 flex items-center justify-between gap-4">
+          <div className="p-4 rounded-xl border border-slate-200 bg-slate-50/70 dark:bg-slate-900/70 flex items-center justify-between gap-4">
             <div className="space-y-1">
               <div className="flex items-center gap-2">
                 <Clock className="w-4 h-4 text-indigo-600" />

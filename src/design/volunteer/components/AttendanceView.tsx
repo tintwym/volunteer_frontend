@@ -506,7 +506,7 @@ export const AttendanceView: React.FC<AttendanceViewProps> = ({
             </thead>
             <tbody className="divide-y divide-slate-100 text-slate-700">
               {records.map((rec) => (
-                <tr key={rec.id} className="hover:bg-slate-50/70 transition-colors">
+                <tr key={rec.id} className="hover:bg-slate-50/70 dark:bg-slate-900/70 transition-colors">
                   <td className="py-3 pl-2 font-medium text-slate-900">
                     <div>{rec.eventTitle}</div>
                     <div className="text-[11px] text-slate-500 font-normal">{rec.shiftDate}</div>

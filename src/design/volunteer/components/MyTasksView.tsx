@@ -224,7 +224,7 @@ export const MyTasksView: React.FC<MyTasksViewProps> = ({
                 </h3>
 
                 {/* Instructions */}
-                <p className="text-xs text-slate-600 mt-2 leading-relaxed bg-slate-50/80 p-2.5 rounded-lg border border-slate-100">
+                <p className="text-xs text-slate-600 mt-2 leading-relaxed bg-slate-50/80 dark:bg-slate-900/80 p-2.5 rounded-lg border border-slate-100">
                   <strong className="text-slate-700 block mb-0.5">Instructions:</strong>
                   {task.instructions}
                 </p>

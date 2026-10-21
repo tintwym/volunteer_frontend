@@ -1088,9 +1088,9 @@ export const initialBadges: DigitalBadge[] = [
     targetProgress: 1,
     progressUnit: 'hours',
     colorTheme: {
-      bg: 'bg-amber-50',
-      border: 'border-amber-300',
-      text: 'text-amber-800',
+      bg: 'bg-amber-50 dark:bg-amber-950/60',
+      border: 'border-amber-300 dark:border-amber-700',
+      text: 'text-amber-800 dark:text-amber-200',
       accent: 'bg-amber-600'
     }
   },
@@ -1108,9 +1108,9 @@ export const initialBadges: DigitalBadge[] = [
     targetProgress: 10,
     progressUnit: 'hours',
     colorTheme: {
-      bg: 'bg-amber-50',
-      border: 'border-amber-300',
-      text: 'text-amber-900',
+      bg: 'bg-amber-50 dark:bg-amber-950/60',
+      border: 'border-amber-300 dark:border-amber-700',
+      text: 'text-amber-900 dark:text-amber-100',
       accent: 'bg-amber-700'
     }
   },
@@ -1128,9 +1128,9 @@ export const initialBadges: DigitalBadge[] = [
     targetProgress: 25,
     progressUnit: 'hours',
     colorTheme: {
-      bg: 'bg-slate-100',
-      border: 'border-slate-300',
-      text: 'text-slate-800',
+      bg: 'bg-slate-100 dark:bg-slate-800',
+      border: 'border-slate-300 dark:border-slate-600',
+      text: 'text-slate-800 dark:text-slate-100',
       accent: 'bg-slate-600'
     }
   },
@@ -1148,9 +1148,9 @@ export const initialBadges: DigitalBadge[] = [
     targetProgress: 50,
     progressUnit: 'hours',
     colorTheme: {
-      bg: 'bg-amber-100/60',
-      border: 'border-amber-400',
-      text: 'text-amber-900',
+      bg: 'bg-amber-100/60 dark:bg-amber-950/50',
+      border: 'border-amber-400 dark:border-amber-600',
+      text: 'text-amber-900 dark:text-amber-100',
       accent: 'bg-yellow-500'
     }
   },
@@ -1167,9 +1167,9 @@ export const initialBadges: DigitalBadge[] = [
     targetProgress: 100,
     progressUnit: 'hours',
     colorTheme: {
-      bg: 'bg-indigo-50',
-      border: 'border-indigo-300',
-      text: 'text-indigo-900',
+      bg: 'bg-indigo-50 dark:bg-indigo-950/60',
+      border: 'border-indigo-300 dark:border-indigo-700',
+      text: 'text-indigo-900 dark:text-indigo-200',
       accent: 'bg-indigo-600'
     }
   },
@@ -1186,9 +1186,9 @@ export const initialBadges: DigitalBadge[] = [
     targetProgress: 500,
     progressUnit: 'hours',
     colorTheme: {
-      bg: 'bg-slate-50',
-      border: 'border-slate-400',
-      text: 'text-slate-900',
+      bg: 'bg-slate-50 dark:bg-slate-900',
+      border: 'border-slate-400 dark:border-slate-600',
+      text: 'text-slate-900 dark:text-slate-100',
       accent: 'bg-slate-500'
     }
   },
@@ -1205,9 +1205,9 @@ export const initialBadges: DigitalBadge[] = [
     targetProgress: 1000,
     progressUnit: 'hours',
     colorTheme: {
-      bg: 'bg-sky-50',
-      border: 'border-sky-300',
-      text: 'text-sky-900',
+      bg: 'bg-sky-50 dark:bg-sky-950/60',
+      border: 'border-sky-300 dark:border-sky-700',
+      text: 'text-sky-900 dark:text-sky-200',
       accent: 'bg-sky-500'
     }
   },
@@ -1224,9 +1224,9 @@ export const initialBadges: DigitalBadge[] = [
     targetProgress: 2000,
     progressUnit: 'hours',
     colorTheme: {
-      bg: 'bg-fuchsia-50',
-      border: 'border-fuchsia-300',
-      text: 'text-fuchsia-900',
+      bg: 'bg-fuchsia-50 dark:bg-fuchsia-950/50',
+      border: 'border-fuchsia-300 dark:border-fuchsia-700',
+      text: 'text-fuchsia-900 dark:text-fuchsia-200',
       accent: 'bg-fuchsia-600'
     }
   },
@@ -1243,9 +1243,9 @@ export const initialBadges: DigitalBadge[] = [
     targetProgress: 5000,
     progressUnit: 'hours',
     colorTheme: {
-      bg: 'bg-rose-50',
-      border: 'border-rose-300',
-      text: 'text-rose-900',
+      bg: 'bg-rose-50 dark:bg-rose-950/50',
+      border: 'border-rose-300 dark:border-rose-700',
+      text: 'text-rose-900 dark:text-rose-200',
       accent: 'bg-rose-700'
     }
   },
@@ -1263,9 +1263,9 @@ export const initialBadges: DigitalBadge[] = [
     targetProgress: 20,
     progressUnit: 'hours',
     colorTheme: {
-      bg: 'bg-emerald-50',
-      border: 'border-emerald-300',
-      text: 'text-emerald-900',
+      bg: 'bg-emerald-50 dark:bg-emerald-950/60',
+      border: 'border-emerald-300 dark:border-emerald-700',
+      text: 'text-emerald-900 dark:text-emerald-200',
       accent: 'bg-emerald-600'
     }
   },
@@ -1283,9 +1283,9 @@ export const initialBadges: DigitalBadge[] = [
     targetProgress: 15,
     progressUnit: 'hours',
     colorTheme: {
-      bg: 'bg-orange-50',
-      border: 'border-orange-300',
-      text: 'text-orange-900',
+      bg: 'bg-orange-50 dark:bg-orange-950/50',
+      border: 'border-orange-300 dark:border-orange-700',
+      text: 'text-orange-900 dark:text-orange-200',
       accent: 'bg-orange-600'
     }
   },
@@ -1303,9 +1303,9 @@ export const initialBadges: DigitalBadge[] = [
     targetProgress: 10,
     progressUnit: 'shifts',
     colorTheme: {
-      bg: 'bg-purple-50',
-      border: 'border-purple-300',
-      text: 'text-purple-900',
+      bg: 'bg-purple-50 dark:bg-purple-950/50',
+      border: 'border-purple-300 dark:border-purple-700',
+      text: 'text-purple-900 dark:text-purple-200',
       accent: 'bg-purple-600'
     }
   }

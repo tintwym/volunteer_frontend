@@ -262,7 +262,7 @@ export const AutomationsView: React.FC<AutomationsViewProps> = ({
             </thead>
             <tbody className="divide-y divide-slate-100">
               {filteredLogs.map((log) => (
-                <tr key={log.id} className="hover:bg-slate-50/80 transition-colors">
+                <tr key={log.id} className="hover:bg-slate-50/80 dark:bg-slate-900/80 transition-colors">
                   <td className="py-3 px-2">
                     <p className="font-bold text-slate-900">{log.recipientName}</p>
                     <p className="text-[11px] text-slate-500">{log.recipientEmail}</p>

@@ -219,7 +219,7 @@ export const FeedbackView: React.FC<FeedbackViewProps> = ({
 
           <div className="space-y-4">
             {feedbackList.map((fb) => (
-              <div key={fb.id} className="p-4 rounded-xl border border-slate-200 bg-slate-50/70 space-y-2 text-xs">
+              <div key={fb.id} className="p-4 rounded-xl border border-slate-200 bg-slate-50/70 dark:bg-slate-900/70 space-y-2 text-xs">
                 <div className="flex items-center justify-between">
                   <span className="font-bold text-slate-900 truncate max-w-[180px]">
                     {fb.eventTitle}

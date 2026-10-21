@@ -212,7 +212,7 @@ export const MyTeamView: React.FC<MyTeamViewProps> = ({
             </div>
 
             {/* Emergency Contact (ICE) Card */}
-            <div className="p-4 bg-rose-50/70 border border-rose-200 rounded-xl space-y-1 text-xs">
+            <div className="p-4 bg-rose-50/70 dark:bg-rose-950/40 border border-rose-200 rounded-xl space-y-1 text-xs">
               <span className="text-[10px] font-bold uppercase tracking-wider text-rose-800 flex items-center gap-1.5">
                 <HeartHandshake className="w-3.5 h-3.5" />
                 Emergency Contact (In Case of Incident)

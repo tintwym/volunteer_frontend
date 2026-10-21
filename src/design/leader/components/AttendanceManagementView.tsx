@@ -195,7 +195,7 @@ export const AttendanceManagementView: React.FC<AttendanceManagementViewProps> =
             </thead>
             <tbody className="divide-y divide-slate-100">
               {filteredRecords.map((rec) => (
-                <tr key={rec.volunteerId} className="hover:bg-slate-50/70">
+                <tr key={rec.volunteerId} className="hover:bg-slate-50/70 dark:bg-slate-900/70">
                   {/* Name & Avatar */}
                   <td className="py-3 px-4">
                     <div className="flex items-center gap-3">

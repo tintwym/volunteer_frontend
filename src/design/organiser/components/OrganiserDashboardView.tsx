@@ -395,8 +395,8 @@ export const OrganiserDashboardView: React.FC<OrganiserDashboardViewProps> = ({
                   key={inc.id}
                   className={`p-3 rounded-xl border text-xs space-y-1.5 ${
                     inc.severity === 'Critical' || inc.severity === 'High'
-                      ? 'bg-rose-50/70 border-rose-200 text-rose-950'
-                      : 'bg-amber-50/70 border-amber-200 text-amber-950'
+                      ? 'bg-rose-50/70 dark:bg-rose-950/40 border-rose-200 text-rose-950'
+                      : 'bg-amber-50/70 dark:bg-amber-950/40 border-amber-200 text-amber-950'
                   }`}
                 >
                   <div className="flex items-center justify-between font-bold">

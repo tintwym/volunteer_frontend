@@ -162,7 +162,7 @@ Global Volunteer Alliance`;
           </div>
 
           {/* PRINTABLE CERTIFICATE CANVAS */}
-          <div className="printable-document bg-[#faf8f5] text-slate-900 border-[12px] border-emerald-900/90 rounded-2xl p-8 sm:p-14 shadow-lg relative overflow-hidden max-w-4xl mx-auto">
+          <div className="printable-document relative mx-auto max-w-4xl overflow-hidden rounded-2xl border-[12px] border-emerald-900/90 bg-[#faf8f5] p-8 text-slate-900 shadow-lg sm:p-14 dark:border-emerald-700 dark:bg-slate-950 dark:text-slate-100">
             {/* Corner Ornamental Accents */}
             <div className="absolute top-3 left-3 w-12 h-12 border-t-2 border-l-2 border-amber-600/70" />
             <div className="absolute top-3 right-3 w-12 h-12 border-t-2 border-r-2 border-amber-600/70" />
@@ -173,7 +173,7 @@ Global Volunteer Alliance`;
             <div className="border border-amber-600/40 p-6 sm:p-10 rounded-xl relative">
               {/* Top Header */}
               <div className="text-center space-y-2 mb-8">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100/60 border border-emerald-300 text-emerald-900 text-[11px] font-bold tracking-wider uppercase">
+                <div className="inline-flex items-center gap-2 rounded-full border border-emerald-300 bg-emerald-100/60 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-emerald-900 dark:border-emerald-700 dark:bg-emerald-950/70 dark:text-emerald-200">
                   <ShieldCheck className="w-3.5 h-3.5 text-emerald-700" />
                   Official Certified Document
                 </div>

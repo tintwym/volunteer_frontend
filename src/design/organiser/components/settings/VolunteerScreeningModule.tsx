@@ -52,7 +52,7 @@ export const VolunteerScreeningModule: React.FC<VolunteerScreeningModuleProps> =
         {/* Toggles Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Auto Approve Signups */}
-          <div className="p-4 rounded-xl border border-slate-200 bg-slate-50/70 flex items-start justify-between gap-4">
+          <div className="p-4 rounded-xl border border-slate-200 bg-slate-50/70 dark:bg-slate-900/70 flex items-start justify-between gap-4">
             <div className="space-y-1">
               <div className="flex items-center gap-1.5">
                 <p className="text-xs sm:text-sm font-bold text-slate-900">
@@ -76,7 +76,7 @@ export const VolunteerScreeningModule: React.FC<VolunteerScreeningModuleProps> =
           </div>
 
           {/* Require Safety Training */}
-          <div className="p-4 rounded-xl border border-slate-200 bg-slate-50/70 flex items-start justify-between gap-4">
+          <div className="p-4 rounded-xl border border-slate-200 bg-slate-50/70 dark:bg-slate-900/70 flex items-start justify-between gap-4">
             <div className="space-y-1">
               <p className="text-xs sm:text-sm font-bold text-slate-900">
                 Mandatory Safety Orientation
@@ -98,7 +98,7 @@ export const VolunteerScreeningModule: React.FC<VolunteerScreeningModuleProps> =
           </div>
 
           {/* Require Liability Waiver */}
-          <div className="p-4 rounded-xl border border-slate-200 bg-slate-50/70 flex items-start justify-between gap-4">
+          <div className="p-4 rounded-xl border border-slate-200 bg-slate-50/70 dark:bg-slate-900/70 flex items-start justify-between gap-4">
             <div className="space-y-1">
               <p className="text-xs sm:text-sm font-bold text-slate-900">
                 Digital Liability Waiver & Release
@@ -120,7 +120,7 @@ export const VolunteerScreeningModule: React.FC<VolunteerScreeningModuleProps> =
           </div>
 
           {/* Require Background Check */}
-          <div className="p-4 rounded-xl border border-slate-200 bg-slate-50/70 flex items-start justify-between gap-4">
+          <div className="p-4 rounded-xl border border-slate-200 bg-slate-50/70 dark:bg-slate-900/70 flex items-start justify-between gap-4">
             <div className="space-y-1">
               <p className="text-xs sm:text-sm font-bold text-slate-900">
                 Mandatory Background Check
@@ -142,7 +142,7 @@ export const VolunteerScreeningModule: React.FC<VolunteerScreeningModuleProps> =
           </div>
 
           {/* Shift Swap Requires Approval */}
-          <div className="p-4 rounded-xl border border-slate-200 bg-slate-50/70 flex items-start justify-between gap-4">
+          <div className="p-4 rounded-xl border border-slate-200 bg-slate-50/70 dark:bg-slate-900/70 flex items-start justify-between gap-4">
             <div className="space-y-1">
               <p className="text-xs sm:text-sm font-bold text-slate-900">
                 Shift Swap Requires Leader Sign-off
@@ -164,7 +164,7 @@ export const VolunteerScreeningModule: React.FC<VolunteerScreeningModuleProps> =
           </div>
 
           {/* Minimum Volunteer Age */}
-          <div className="p-4 rounded-xl border border-slate-200 bg-slate-50/70 flex items-center justify-between gap-4">
+          <div className="p-4 rounded-xl border border-slate-200 bg-slate-50/70 dark:bg-slate-900/70 flex items-center justify-between gap-4">
             <div className="space-y-1">
               <p className="text-xs sm:text-sm font-bold text-slate-900">
                 Minimum Volunteer Age

@@ -60,7 +60,7 @@ export const CommunicationsEscalationModule: React.FC<CommunicationsEscalationMo
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* 24h Reminder */}
-          <div className="p-4 rounded-xl border border-slate-200 bg-slate-50/70 flex flex-col justify-between gap-3">
+          <div className="p-4 rounded-xl border border-slate-200 bg-slate-50/70 dark:bg-slate-900/70 flex flex-col justify-between gap-3">
             <div className="space-y-1.5">
               <div className="flex items-center gap-2">
                 <div className="p-1.5 rounded-lg bg-emerald-50 text-emerald-700">
@@ -85,7 +85,7 @@ export const CommunicationsEscalationModule: React.FC<CommunicationsEscalationMo
           </div>
 
           {/* Urgent SMS Alerts */}
-          <div className="p-4 rounded-xl border border-slate-200 bg-slate-50/70 flex flex-col justify-between gap-3">
+          <div className="p-4 rounded-xl border border-slate-200 bg-slate-50/70 dark:bg-slate-900/70 flex flex-col justify-between gap-3">
             <div className="space-y-1.5">
               <div className="flex items-center gap-2">
                 <div className="p-1.5 rounded-lg bg-indigo-50 text-indigo-700">
@@ -110,7 +110,7 @@ export const CommunicationsEscalationModule: React.FC<CommunicationsEscalationMo
           </div>
 
           {/* Weekly Digest */}
-          <div className="p-4 rounded-xl border border-slate-200 bg-slate-50/70 flex flex-col justify-between gap-3">
+          <div className="p-4 rounded-xl border border-slate-200 bg-slate-50/70 dark:bg-slate-900/70 flex flex-col justify-between gap-3">
             <div className="space-y-1.5">
               <div className="flex items-center gap-2">
                 <div className="p-1.5 rounded-lg bg-amber-50 text-amber-700">

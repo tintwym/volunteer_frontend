@@ -324,7 +324,7 @@ export const RosterManagementView: React.FC<RosterManagementViewProps> = ({
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-slate-50/80 border-b border-slate-200 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+              <tr className="bg-slate-50/80 dark:bg-slate-900/80 border-b border-slate-200 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
                 <th className="py-3 px-4">Volunteer / Contact</th>
                 <th className="py-3 px-4">Role & Status</th>
                 <th className="py-3 px-4">Service Hours</th>
@@ -514,7 +514,7 @@ export const RosterManagementView: React.FC<RosterManagementViewProps> = ({
         <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
           <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200">
             {/* Header */}
-            <div className="p-6 border-b border-slate-100 flex items-start justify-between bg-slate-50/70">
+            <div className="p-6 border-b border-slate-100 flex items-start justify-between bg-slate-50/70 dark:bg-slate-900/70">
               <div className="flex items-center gap-4">
                 <img
                   src={activeVolunteerModal.avatar}

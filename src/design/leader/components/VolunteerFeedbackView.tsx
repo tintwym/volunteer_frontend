@@ -178,7 +178,7 @@ export const VolunteerFeedbackView: React.FC<VolunteerFeedbackViewProps> = ({
                 ))}
               </div>
 
-              <div className="p-3 bg-slate-50/70 rounded-xl border border-slate-100 text-xs text-slate-700 leading-relaxed">
+              <div className="p-3 bg-slate-50/70 dark:bg-slate-900/70 rounded-xl border border-slate-100 text-xs text-slate-700 leading-relaxed">
                 <strong className="text-slate-900 block mb-1">Leader Evaluation Notes:</strong>
                 "{fb.comments}"
               </div>

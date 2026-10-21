@@ -331,7 +331,7 @@ export const ReportsHoursView: React.FC<ReportsHoursViewProps> = ({
             </thead>
             <tbody className="divide-y divide-slate-100 text-slate-700">
               {filteredRecords.map((record) => (
-                <tr key={record.id} className="hover:bg-slate-50/70 transition-colors">
+                <tr key={record.id} className="hover:bg-slate-50/70 dark:bg-slate-900/70 transition-colors">
                   <td className="py-3 px-4 font-medium whitespace-nowrap text-slate-900">
                     {record.date}
                   </td>
