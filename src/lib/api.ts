@@ -299,6 +299,12 @@ export const api = {
     google: (idToken: string, organizationName?: string) =>
       send<AuthResponse>("POST", "/api/auth/google", { idToken, organizationName }),
   },
+  chat: {
+    send: (input: {
+      message: string;
+      history?: Array<{ role: "user" | "assistant"; content: string }>;
+    }) => send<{ reply: string }>("POST", "/api/chat", input),
+  },
 };
 
 // ---------------------------------------------------------------- helpers
