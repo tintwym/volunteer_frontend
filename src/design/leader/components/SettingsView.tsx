@@ -21,6 +21,7 @@ import {
   AlertTriangle,
   RotateCcw
 } from 'lucide-react';
+import { AppearancePicker } from '@/components/theme/AppearancePicker';
 import { Volunteer, TodayAttendanceRecord, ShiftEvent } from '../types';
 import { SelectMenu } from '@/components/ui/SelectMenu';
 
@@ -160,14 +161,16 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
         </div>
       )}
 
+      <AppearancePicker />
+
       {/* Settings Navigation Tabs */}
       <div className="flex items-center gap-2 border-b border-slate-200 pb-2 overflow-x-auto text-xs font-semibold">
         <button
           onClick={() => setActiveSubTab('profile')}
           className={`flex items-center gap-1.5 px-3 py-2 rounded-xl transition-all cursor-pointer whitespace-nowrap ${
             activeSubTab === 'profile'
-              ? 'bg-emerald-50 text-emerald-800 font-bold border border-emerald-200 shadow-2xs'
-              : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+              ? 'border border-emerald-200 bg-emerald-50 font-bold text-emerald-800 shadow-2xs dark:border-emerald-700 dark:bg-emerald-950/70 dark:text-emerald-200'
+              : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white'
           }`}
         >
           <User className="w-3.5 h-3.5" />
@@ -178,8 +181,8 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
           onClick={() => setActiveSubTab('alerts')}
           className={`flex items-center gap-1.5 px-3 py-2 rounded-xl transition-all cursor-pointer whitespace-nowrap ${
             activeSubTab === 'alerts'
-              ? 'bg-emerald-50 text-emerald-800 font-bold border border-emerald-200 shadow-2xs'
-              : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+              ? 'border border-emerald-200 bg-emerald-50 font-bold text-emerald-800 shadow-2xs dark:border-emerald-700 dark:bg-emerald-950/70 dark:text-emerald-200'
+              : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white'
           }`}
         >
           <Bell className="w-3.5 h-3.5" />
@@ -190,8 +193,8 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
           onClick={() => setActiveSubTab('protocols')}
           className={`flex items-center gap-1.5 px-3 py-2 rounded-xl transition-all cursor-pointer whitespace-nowrap ${
             activeSubTab === 'protocols'
-              ? 'bg-emerald-50 text-emerald-800 font-bold border border-emerald-200 shadow-2xs'
-              : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+              ? 'border border-emerald-200 bg-emerald-50 font-bold text-emerald-800 shadow-2xs dark:border-emerald-700 dark:bg-emerald-950/70 dark:text-emerald-200'
+              : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white'
           }`}
         >
           <Shield className="w-3.5 h-3.5" />
@@ -202,8 +205,8 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
           onClick={() => setActiveSubTab('data')}
           className={`flex items-center gap-1.5 px-3 py-2 rounded-xl transition-all cursor-pointer whitespace-nowrap ${
             activeSubTab === 'data'
-              ? 'bg-emerald-50 text-emerald-800 font-bold border border-emerald-200 shadow-2xs'
-              : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+              ? 'border border-emerald-200 bg-emerald-50 font-bold text-emerald-800 shadow-2xs dark:border-emerald-700 dark:bg-emerald-950/70 dark:text-emerald-200'
+              : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white'
           }`}
         >
           <Database className="w-3.5 h-3.5" />

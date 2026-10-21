@@ -235,8 +235,8 @@ export const AttendanceView: React.FC<AttendanceViewProps> = ({
       {/* Active Shift Clock Card */}
       <div className={`rounded-2xl p-6 border transition-all ${
         activeShift && activeShift.status === 'Checked In'
-          ? 'bg-gradient-to-br from-emerald-500/10 via-white to-emerald-50/50 border-emerald-300 shadow-sm ring-1 ring-emerald-200'
-          : 'bg-white border-slate-200 shadow-xs'
+          ? 'bg-gradient-to-br from-emerald-500/10 via-white to-emerald-50/50 border-emerald-300 shadow-sm ring-1 ring-emerald-200 dark:from-emerald-950/80 dark:via-slate-900 dark:to-emerald-950/40 dark:border-emerald-700 dark:ring-emerald-800'
+          : 'border-slate-200 bg-white shadow-xs dark:border-slate-700 dark:bg-slate-900'
       }`}>
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           <div className="space-y-2">
@@ -244,14 +244,14 @@ export const AttendanceView: React.FC<AttendanceViewProps> = ({
               <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 ${
                 activeShift && activeShift.status === 'Checked In'
                   ? 'bg-emerald-600 text-white animate-pulse'
-                  : 'bg-slate-100 text-slate-600'
+                  : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
               }`}>
                 <span className="w-2 h-2 rounded-full bg-current" />
                 {activeShift && activeShift.status === 'Checked In' ? 'Active Shift in Progress' : 'No Shift Active'}
               </span>
 
               {activeShift && (
-                <span className="text-xs font-semibold text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md">
+                <span className="rounded-md bg-slate-100 px-2 py-0.5 text-xs font-semibold text-slate-600 dark:bg-slate-800 dark:text-slate-300">
                   {activeShift.eventTitle}
                 </span>
               )}
@@ -349,13 +349,13 @@ export const AttendanceView: React.FC<AttendanceViewProps> = ({
                 onClick={() => setSelectedMethod(m.id as CheckInMethod)}
                 className={`p-3 rounded-xl border text-left transition-all ${
                   isSelected
-                    ? 'border-emerald-600 bg-emerald-50/70 shadow-xs ring-1 ring-emerald-500'
-                    : 'border-slate-200 hover:border-slate-300 bg-white'
+                    ? 'border-emerald-600 bg-emerald-50/70 shadow-xs ring-1 ring-emerald-500 dark:border-emerald-500 dark:bg-emerald-950/70 dark:ring-emerald-500/60'
+                    : 'border-slate-200 bg-white hover:border-slate-300 dark:border-slate-700 dark:bg-slate-900 dark:hover:border-slate-600'
                 }`}
               >
-                <Icon className={`w-5 h-5 mb-1.5 ${isSelected ? 'text-emerald-700' : 'text-slate-500'}`} />
-                <span className="text-xs font-bold text-slate-900 block leading-tight">{m.label}</span>
-                <span className="text-[11px] text-slate-500 block mt-0.5">{m.desc}</span>
+                <Icon className={`mb-1.5 h-5 w-5 ${isSelected ? 'text-emerald-700 dark:text-emerald-300' : 'text-slate-500 dark:text-slate-400'}`} />
+                <span className="block text-xs font-bold leading-tight text-slate-900 dark:text-slate-100">{m.label}</span>
+                <span className="mt-0.5 block text-[11px] text-slate-500 dark:text-slate-400">{m.desc}</span>
               </button>
             );
           })}

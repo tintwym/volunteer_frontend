@@ -20,6 +20,7 @@ import {
   Search,
   ExternalLink,
 } from 'lucide-react';
+import { AppearancePicker } from '@/components/theme/AppearancePicker';
 import { OrganiserSystemSettings, User } from '../types';
 import { OrganizationProfileModule } from './settings/OrganizationProfileModule';
 import { VolunteerScreeningModule } from './settings/VolunteerScreeningModule';
@@ -245,6 +246,8 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
           </button>
         </div>
       </div>
+
+      <AppearancePicker />
 
       {/* Navigation Bar & Module Switcher */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 pb-3">

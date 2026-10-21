@@ -178,10 +178,10 @@ END:VCALENDAR`;
                 <button
                   key={cat}
                   onClick={() => setSelectedCategory(cat)}
-                  className={`px-3 py-1.5 rounded-lg whitespace-nowrap transition-all font-medium ${
+                  className={`whitespace-nowrap rounded-lg px-3 py-1.5 font-medium transition-all ${
                     selectedCategory === cat
                       ? 'bg-emerald-600 text-white shadow-xs'
-                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700'
                   }`}
                 >
                   {cat}
@@ -459,17 +459,17 @@ END:VCALENDAR`;
                   return (
                     <div
                       key={idx}
-                      className={`min-h-[75px] p-1.5 border rounded-lg text-left transition-colors ${
+                      className={`min-h-[75px] rounded-lg border p-1.5 text-left transition-colors ${
                         isValidDay 
                           ? matchingEvents.length > 0 
-                            ? 'bg-emerald-50/70 border-emerald-300' 
-                            : 'bg-slate-50/50 border-slate-100 hover:bg-slate-50' 
-                          : 'bg-slate-100/30 border-transparent text-slate-300'
+                            ? 'border-emerald-300 bg-emerald-50/70 dark:border-emerald-700 dark:bg-emerald-950/60' 
+                            : 'border-slate-100 bg-slate-50/50 hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900/50 dark:hover:bg-slate-800' 
+                          : 'border-transparent bg-slate-100/30 text-slate-300 dark:bg-slate-950/40 dark:text-slate-600'
                       }`}
                     >
                       {isValidDay && (
                         <>
-                          <span className={`font-semibold ${matchingEvents.length > 0 ? 'text-emerald-900 font-bold' : 'text-slate-600'}`}>
+                          <span className={`font-semibold ${matchingEvents.length > 0 ? 'font-bold text-emerald-900 dark:text-emerald-200' : 'text-slate-600 dark:text-slate-400'}`}>
                             {day}
                           </span>
                           {matchingEvents.map(me => (

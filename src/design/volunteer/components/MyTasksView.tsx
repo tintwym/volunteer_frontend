@@ -110,10 +110,10 @@ export const MyTasksView: React.FC<MyTasksViewProps> = ({
               <button
                 key={st}
                 onClick={() => setFilterStatus(st)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
                   filterStatus === st
-                    ? 'bg-slate-900 text-white'
-                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                    ? 'bg-slate-900 text-white dark:bg-emerald-600'
+                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700'
                 }`}
               >
                 {st === 'all' ? 'All Tasks' : st}
@@ -140,18 +140,18 @@ export const MyTasksView: React.FC<MyTasksViewProps> = ({
       </div>
 
       {/* Task Lifecycle Notice */}
-      <div className="bg-emerald-50/70 border border-emerald-200 rounded-xl p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 text-xs text-emerald-900">
+      <div className="flex flex-col items-start justify-between gap-3 rounded-xl border border-emerald-200 bg-emerald-50/70 p-4 text-xs text-emerald-900 md:flex-row md:items-center dark:border-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-100">
         <div className="flex items-center gap-2">
-          <PlayCircle className="w-4 h-4 text-emerald-600 shrink-0" />
+          <PlayCircle className="h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-300" />
           <span>
             <strong>Task Lifecycle:</strong> Assigned → Accepted → In Progress → Completed. Keep your Team Leader updated in real-time.
           </span>
         </div>
-        <div className="flex items-center gap-2 text-slate-600 font-medium">
+        <div className="flex items-center gap-2 font-medium text-slate-600 dark:text-slate-300">
           <span>Need guidance?</span>
           <button 
             onClick={() => onNavigateToLeaderChat && onNavigateToLeaderChat('Marcus Reed')}
-            className="text-emerald-700 underline font-semibold hover:text-emerald-800"
+            className="font-semibold text-emerald-700 underline hover:text-emerald-800 dark:text-emerald-300 dark:hover:text-emerald-200"
           >
             Message Team Leader
           </button>

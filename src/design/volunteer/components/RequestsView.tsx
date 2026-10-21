@@ -179,7 +179,7 @@ export const RequestsView: React.FC<RequestsViewProps> = ({
 
                 {/* Leader Response if provided */}
                 {req.leaderResponse && (
-                  <div className="p-3 bg-emerald-50/70 border border-emerald-200 rounded-xl text-xs text-emerald-950 space-y-1">
+                  <div className="space-y-1 rounded-xl border border-emerald-200 bg-emerald-50/70 p-3 text-xs text-emerald-950 dark:border-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-100">
                     <div className="font-bold flex items-center gap-1.5 text-emerald-800">
                       <MessageSquare className="w-3.5 h-3.5" />
                       <span>Team Leader Sign-off Note:</span>

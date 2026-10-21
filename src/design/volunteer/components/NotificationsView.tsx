@@ -189,7 +189,7 @@ export const NotificationsView: React.FC<NotificationsViewProps> = ({
             </label>
           </div>
 
-          <div className="p-3 bg-emerald-50/70 border border-emerald-200/60 rounded-xl text-[11px] text-emerald-900">
+          <div className="rounded-xl border border-emerald-200/60 bg-emerald-50/70 p-3 text-[11px] text-emerald-900 dark:border-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-100">
             Automated notifications ensure you never miss attendance check-ins or verification milestones.
           </div>
         </div>

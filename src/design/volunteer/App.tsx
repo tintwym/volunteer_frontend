@@ -63,7 +63,8 @@ import { BadgesMilestonesView } from './components/BadgesMilestonesView';
 import { LogHoursModal } from './components/LogHoursModal';
 import { ShareMilestoneModal } from './components/ShareMilestoneModal';
 import { EventDetailModal } from './components/EventDetailModal';
-import { AnimatedPage, AnimatePresence, motion, Spinner } from '@/components/motion/ui';
+import { RoleWorkspaceLoading } from '@/components/motion/RoleWorkspaceLoading';
+import { AnimatedPage, AnimatePresence, motion } from '@/components/motion/ui';
 import { useTheme } from '@/components/theme/ThemeProvider';
 import { useAuth } from '@/components/auth/AuthProvider';
 import { api, errorMessage, formatDate, formatTime, todayIso, type ApiMessage, type Channel } from '@/lib/api';
@@ -722,14 +723,7 @@ export default function App() {
   };
 
   if (live && liveLoading) {
-    return (
-      <div className="flex min-h-screen flex-col items-center justify-center gap-3 bg-slate-50 text-slate-500">
-        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-600 text-white shadow-sm">
-          <Spinner className="h-5 w-5" />
-        </div>
-        <p className="text-sm font-medium">Loading your volunteer workspace…</p>
-      </div>
-    );
+    return <RoleWorkspaceLoading label="your volunteer workspace" />;
   }
 
   return (

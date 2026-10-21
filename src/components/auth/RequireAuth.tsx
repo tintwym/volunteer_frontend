@@ -1,6 +1,7 @@
 "use client";
 
 import { useAuth } from "@/components/auth/AuthProvider";
+import { RoleWorkspaceLoading } from "@/components/motion/RoleWorkspaceLoading";
 import { dashboardPathForRole, isRole, type Role } from "@/lib/auth";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
@@ -33,11 +34,7 @@ export function RequireAuth({
   }, [user, loading, role, router, logout]);
 
   if (loading || !user || !isRole(user.role)) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-stone-50 text-stone-500">
-        Loading…
-      </div>
-    );
+    return <RoleWorkspaceLoading label="your account" />;
   }
 
   if (role) {

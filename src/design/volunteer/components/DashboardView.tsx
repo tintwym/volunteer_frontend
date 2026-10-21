@@ -285,12 +285,12 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 <div
                   key={task.id}
                   onClick={() => onToggleTaskStatus && onToggleTaskStatus(task.id)}
-                  className={`p-3.5 rounded-xl border cursor-pointer transition-all flex items-start gap-3 ${
+                  className={`flex cursor-pointer items-start gap-3 rounded-xl border p-3.5 transition-all ${
                     isDone
-                      ? 'bg-emerald-50/60 border-emerald-300 text-emerald-950'
+                      ? 'border-emerald-300 bg-emerald-50/60 text-emerald-950 dark:border-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-100'
                       : isInProg
-                      ? 'bg-amber-50/60 border-amber-300 text-amber-950'
-                      : 'bg-slate-50 border-slate-200 text-slate-800 hover:border-slate-300'
+                      ? 'border-amber-300 bg-amber-50/60 text-amber-950 dark:border-amber-700 dark:bg-amber-950/50 dark:text-amber-100'
+                      : 'border-slate-200 bg-slate-50 text-slate-800 hover:border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:hover:border-slate-600'
                   }`}
                 >
                   <div className="mt-0.5">

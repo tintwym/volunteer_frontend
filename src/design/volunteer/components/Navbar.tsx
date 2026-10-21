@@ -12,6 +12,7 @@ import {
   X,
   Settings
 } from 'lucide-react';
+import { ThemeCycleButton } from '@/components/theme/ThemeCycleButton';
 import { VolunteerProfile } from '../types';
 
 interface NavbarProps {
@@ -114,6 +115,8 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </span>
               )}
             </button>
+
+            <ThemeCycleButton className="rounded-lg p-2 text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white" />
 
             {/* System Settings Quick Button */}
             <button

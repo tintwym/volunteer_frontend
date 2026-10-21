@@ -160,17 +160,17 @@ export const GeneralSettings: React.FC<GeneralSettingsProps> = ({ settings, onCh
                     onClick={() => handleThemeChange(option.id)}
                     className={`p-2.5 rounded-xl border text-left transition-all ${
                       selected
-                        ? 'bg-emerald-50 border-emerald-400 ring-1 ring-emerald-400'
-                        : 'bg-slate-50 border-slate-200 hover:bg-slate-100'
+                        ? 'bg-emerald-50 border-emerald-400 ring-1 ring-emerald-400 dark:bg-emerald-950/50 dark:border-emerald-500 dark:ring-emerald-500'
+                        : 'bg-slate-50 border-slate-200 hover:bg-slate-100 dark:bg-slate-800 dark:border-slate-700 dark:hover:bg-slate-700'
                     }`}
                   >
                     <div className="flex items-center gap-1.5 mb-0.5">
-                      <Icon className={`w-3.5 h-3.5 ${selected ? 'text-emerald-700' : 'text-slate-500'}`} />
-                      <span className={`text-xs font-bold ${selected ? 'text-emerald-950' : 'text-slate-800'}`}>
+                      <Icon className={`w-3.5 h-3.5 ${selected ? 'text-emerald-700 dark:text-emerald-300' : 'text-slate-500 dark:text-slate-400'}`} />
+                      <span className={`text-xs font-bold ${selected ? 'text-emerald-950 dark:text-emerald-100' : 'text-slate-800 dark:text-slate-100'}`}>
                         {option.label}
                       </span>
                     </div>
-                    <span className="text-[10px] text-slate-400">{option.hint}</span>
+                    <span className="text-[10px] text-slate-400 dark:text-slate-500">{option.hint}</span>
                   </button>
                 );
               })}

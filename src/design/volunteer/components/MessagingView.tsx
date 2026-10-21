@@ -136,8 +136,10 @@ export const MessagingView: React.FC<MessagingViewProps> = ({
               <button
                 key={conv.id}
                 onClick={() => setActiveConvId(conv.id)}
-                className={`w-full p-3.5 text-left flex items-start gap-3 transition-colors ${
-                  isSelected ? 'bg-emerald-50/70 border-l-4 border-emerald-600' : 'hover:bg-slate-50'
+                className={`flex w-full items-start gap-3 p-3.5 text-left transition-colors ${
+                  isSelected
+                    ? 'border-l-4 border-emerald-600 bg-emerald-50/70 dark:border-emerald-500 dark:bg-emerald-950/60'
+                    : 'hover:bg-slate-50 dark:hover:bg-slate-800/80'
                 }`}
               >
                 <div className="relative shrink-0">

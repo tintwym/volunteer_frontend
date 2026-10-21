@@ -209,17 +209,17 @@ export const MyScheduleView: React.FC<MyScheduleViewProps> = ({
               return (
                 <div
                   key={day}
-                  className={`min-h-[75px] p-1.5 rounded-xl border text-left flex flex-col justify-between transition-colors ${
+                  className={`flex min-h-[75px] flex-col justify-between rounded-xl border p-1.5 text-left transition-colors ${
                     hasFest
-                      ? 'border-emerald-400 bg-emerald-50/60 font-bold'
+                      ? 'border-emerald-400 bg-emerald-50/60 font-bold dark:border-emerald-600 dark:bg-emerald-950/60'
                       : hasPantry
-                      ? 'border-blue-400 bg-blue-50/60 font-bold'
+                      ? 'border-blue-400 bg-blue-50/60 font-bold dark:border-blue-600 dark:bg-blue-950/60'
                       : hasCoast
-                      ? 'border-amber-400 bg-amber-50/60'
-                      : 'border-slate-100 bg-slate-50/40 hover:bg-slate-50'
+                      ? 'border-amber-400 bg-amber-50/60 dark:border-amber-600 dark:bg-amber-950/50'
+                      : 'border-slate-100 bg-slate-50/40 hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900/40 dark:hover:bg-slate-800'
                   }`}
                 >
-                  <span className="text-slate-700">{day}</span>
+                  <span className="text-slate-700 dark:text-slate-300">{day}</span>
                   {hasFest && (
                     <span className="text-[10px] bg-emerald-600 text-white p-1 rounded font-semibold leading-tight block">
                       08:00 AM • Festival

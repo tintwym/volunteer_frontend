@@ -63,10 +63,10 @@ export const TerminalCheckinSettings: React.FC<TerminalCheckinSettingsProps> = (
             return (
               <label
                 key={method.id}
-                className={`flex items-start gap-3 p-3.5 border rounded-xl cursor-pointer transition-all ${
+                className={`flex cursor-pointer items-start gap-3 rounded-xl border p-3.5 transition-all ${
                   isSelected
-                    ? 'bg-emerald-50/70 border-emerald-400 ring-1 ring-emerald-400 shadow-2xs'
-                    : 'bg-slate-50 border-slate-200 hover:bg-slate-100'
+                    ? 'border-emerald-400 bg-emerald-50/70 shadow-2xs ring-1 ring-emerald-400 dark:border-emerald-500 dark:bg-emerald-950/70 dark:ring-emerald-500/60'
+                    : 'border-slate-200 bg-slate-50 hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700'
                 }`}
               >
                 <input
@@ -75,19 +75,19 @@ export const TerminalCheckinSettings: React.FC<TerminalCheckinSettingsProps> = (
                   value={method.id}
                   checked={isSelected}
                   onChange={() => onChange({ defaultCheckInMethod: method.id })}
-                  className="accent-emerald-600 mt-1"
+                  className="mt-1 accent-emerald-600"
                 />
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
-                    <Icon className={`w-4 h-4 ${isSelected ? 'text-emerald-700' : 'text-slate-500'}`} />
-                    <span className="text-xs font-bold text-slate-900">{method.title}</span>
+                    <Icon className={`h-4 w-4 ${isSelected ? 'text-emerald-700 dark:text-emerald-300' : 'text-slate-500 dark:text-slate-400'}`} />
+                    <span className="text-xs font-bold text-slate-900 dark:text-slate-100">{method.title}</span>
                     {isSelected && (
-                      <span className="text-[10px] font-bold text-emerald-700 bg-emerald-100 px-1.5 py-0.5 rounded">
+                      <span className="rounded bg-emerald-100 px-1.5 py-0.5 text-[10px] font-bold text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300">
                         Active
                       </span>
                     )}
                   </div>
-                  <p className="text-[11px] text-slate-500 mt-0.5 leading-relaxed">{method.desc}</p>
+                  <p className="mt-0.5 text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">{method.desc}</p>
                 </div>
               </label>
             );
