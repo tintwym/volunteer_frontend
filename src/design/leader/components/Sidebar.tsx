@@ -23,6 +23,7 @@ import {
   Settings
 } from 'lucide-react';
 import { SignOutButton } from '@/components/auth/SignOutButton';
+import { useTheme } from '@/components/theme/ThemeProvider';
 
 interface SidebarProps {
   currentTab: string;
@@ -45,6 +46,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
   unreadMessagesCount,
   inProgressTasksCount
 }) => {
+  const { isDark } = useTheme();
+
   const navSections = [
     {
       heading: 'Operations',
@@ -60,21 +63,21 @@ export const Sidebar: React.FC<SidebarProps> = ({
           label: 'My Team (20)',
           icon: Users,
           badge: 'Assigned',
-          badgeColor: 'bg-emerald-100 text-emerald-800'
+          badgeColor: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300'
         },
         {
           id: 'tasks',
           label: 'Task Management',
           icon: CheckSquare,
           badge: inProgressTasksCount > 0 ? `${inProgressTasksCount} active` : null,
-          badgeColor: 'bg-blue-100 text-blue-800'
+          badgeColor: 'bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300'
         },
         {
           id: 'attendance',
           label: 'Team Attendance',
           icon: UserCheck,
           badge: '18 / 20',
-          badgeColor: 'bg-emerald-100 text-emerald-800'
+          badgeColor: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300'
         },
         {
           id: 'schedule',
@@ -87,7 +90,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           label: 'Comms & Relay',
           icon: MessageSquareText,
           badge: unreadMessagesCount > 0 ? `${unreadMessagesCount} new` : 'Broadcast',
-          badgeColor: 'bg-amber-100 text-amber-800'
+          badgeColor: 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300'
         }
       ]
     },
@@ -99,21 +102,21 @@ export const Sidebar: React.FC<SidebarProps> = ({
           label: 'Incident Reporting',
           icon: AlertTriangle,
           badge: openIncidentsCount > 0 ? `${openIncidentsCount} open` : null,
-          badgeColor: 'bg-rose-100 text-rose-800'
+          badgeColor: 'bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300'
         },
         {
           id: 'training',
           label: 'Training Readiness',
           icon: GraduationCap,
           badge: '1 action',
-          badgeColor: 'bg-amber-100 text-amber-800'
+          badgeColor: 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300'
         },
         {
           id: 'requests',
           label: 'Support Requests',
           icon: HelpCircle,
           badge: pendingRequestsCount > 0 ? `${pendingRequestsCount} pending` : null,
-          badgeColor: 'bg-amber-100 text-amber-800'
+          badgeColor: 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300'
         },
         {
           id: 'progress',
@@ -126,7 +129,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           label: 'Volunteer Feedback',
           icon: Star,
           badge: '7 dims',
-          badgeColor: 'bg-purple-100 text-purple-800'
+          badgeColor: 'bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300'
         }
       ]
     },
@@ -144,7 +147,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           label: 'Recognition & Badges',
           icon: Award,
           badge: 'Certificates',
-          badgeColor: 'bg-indigo-100 text-indigo-800'
+          badgeColor: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-950 dark:text-indigo-300'
         }
       ]
     },
@@ -163,43 +166,44 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   return (
     <aside
-      className={`relative bg-slate-900 text-slate-300 flex flex-col transition-all duration-300 ease-in-out select-none z-20 shrink-0 ${
-        isCollapsed ? 'w-18' : 'w-64'
-      }`}
+      className={`relative flex h-full min-h-0 flex-col transition-all duration-300 ease-in-out select-none z-20 shrink-0 border-r
+        bg-white text-slate-700 border-slate-200
+        dark:bg-slate-900 dark:text-slate-300 dark:border-slate-800
+        ${isCollapsed ? 'w-[4.5rem]' : 'w-64'}`}
     >
-      {/* Brand Header */}
+      {/* Brand */}
       <div
-        className={`h-16 flex items-center border-b border-slate-800 ${
-          isCollapsed ? 'justify-center px-2' : 'justify-between px-4'
+        className={`shrink-0 h-14 flex items-center border-b border-slate-200 dark:border-slate-800 ${
+          isCollapsed ? 'justify-center px-2' : 'justify-between px-3'
         }`}
       >
         {!isCollapsed ? (
-          <div className="flex items-center gap-2.5 overflow-hidden">
-            <div className="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center text-white shrink-0 font-bold shadow-xs">
+          <div className="flex items-center gap-2.5 overflow-hidden min-w-0">
+            <div className="w-8 h-8 rounded-lg bg-emerald-600 dark:bg-emerald-500 flex items-center justify-center text-white shrink-0">
               <HeartHandshake className="w-4 h-4" />
             </div>
             <div className="truncate">
-              <span className="text-sm font-bold text-white tracking-wide block truncate">
+              <span className="text-sm font-bold text-slate-900 dark:text-white tracking-wide block truncate">
                 CAN Leader Portal
               </span>
-              <span className="text-[10px] text-emerald-400 block font-medium">
+              <span className="text-[10px] text-emerald-700 dark:text-emerald-400 block font-medium">
                 Team Alpha Supervisor
               </span>
             </div>
           </div>
         ) : (
-          <div className="w-9 h-9 rounded-lg bg-emerald-500 flex items-center justify-center text-white font-bold shadow-xs">
+          <div className="w-9 h-9 rounded-lg bg-emerald-600 dark:bg-emerald-500 flex items-center justify-center text-white">
             <HeartHandshake className="w-5 h-5" />
           </div>
         )}
 
-        {/* Collapse toggle button */}
         <button
+          type="button"
           onClick={onToggleCollapse}
           className={
             isCollapsed
-              ? 'absolute -right-3 top-5 z-10 w-6 h-6 rounded-full bg-slate-800 border border-slate-600 shadow-sm flex items-center justify-center text-slate-300 hover:text-white hover:bg-emerald-600 hover:border-emerald-500 transition-colors cursor-pointer'
-              : 'p-1.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors cursor-pointer'
+              ? 'absolute -right-3 top-4 z-10 w-6 h-6 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 shadow-sm flex items-center justify-center text-slate-500 dark:text-slate-300 hover:text-emerald-700 dark:hover:text-white hover:bg-emerald-50 dark:hover:bg-emerald-600 transition-colors cursor-pointer'
+              : 'p-1.5 text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors cursor-pointer shrink-0'
           }
           title={isCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
           aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
@@ -208,22 +212,45 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </button>
       </div>
 
-      {/* Main Navigation with Sections */}
+      {/* Role sits under brand — not at the bottom of the viewport */}
+      {!isCollapsed ? (
+        <div className="shrink-0 mx-3 mt-3 rounded-xl bg-emerald-50 border border-emerald-200/80 px-3 py-2.5 dark:bg-emerald-950/40 dark:border-emerald-800/60">
+          <div className="flex items-center gap-1.5 text-emerald-700 dark:text-emerald-400 font-semibold">
+            <ShieldCheck className="w-3.5 h-3.5 shrink-0" />
+            <span className="text-[11px]">Role: Volunteer Leader</span>
+          </div>
+          <p className="mt-1 text-slate-600 dark:text-slate-400 text-[10px] leading-relaxed">
+            Supervising <strong className="text-slate-800 dark:text-slate-200">Team Alpha</strong>{' '}
+            (Registration & Welcome).
+          </p>
+        </div>
+      ) : (
+        <div
+          className="shrink-0 py-2 text-center text-emerald-600 dark:text-emerald-400"
+          title="Volunteer Leader · Team Alpha"
+        >
+          <ShieldCheck className="w-4 h-4 mx-auto" />
+        </div>
+      )}
+
+      {/* Nav fills remaining height and scrolls; items stay at the top */}
       <nav
-        className={`flex-1 py-3 overflow-y-auto ${
+        className={`flex-1 min-h-0 overflow-y-auto py-3 ${
           isCollapsed
             ? 'px-2 space-y-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden'
             : 'px-3 space-y-4'
         }`}
       >
         {navSections.map((section, sIdx) => (
-          <div key={sIdx} className="space-y-1">
+          <div key={section.heading} className="space-y-1">
             {!isCollapsed ? (
-              <div className="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-500 pb-1">
+              <div className="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 pb-1">
                 {section.heading}
               </div>
             ) : (
-              sIdx > 0 && <div className="mx-2 mb-2 border-t border-slate-800" aria-hidden />
+              sIdx > 0 && (
+                <div className="mx-2 mb-2 border-t border-slate-200 dark:border-slate-800" aria-hidden />
+              )
             )}
 
             {section.items.map((item) => {
@@ -233,15 +260,20 @@ export const Sidebar: React.FC<SidebarProps> = ({
               return (
                 <button
                   key={item.id}
+                  type="button"
                   onClick={() => onSelectTab(item.id)}
                   title={isCollapsed ? item.label : undefined}
                   className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium transition-all duration-150 cursor-pointer ${
                     isActive
-                      ? 'bg-emerald-600 text-white font-semibold shadow-xs shadow-emerald-950/20'
-                      : 'text-slate-300 hover:text-white hover:bg-slate-800/80'
+                      ? 'bg-emerald-600 text-white font-semibold shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-300 dark:hover:text-white dark:hover:bg-slate-800/80'
                   } ${isCollapsed ? 'justify-center px-2' : ''}`}
                 >
-                  <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-slate-400'}`} />
+                  <Icon
+                    className={`w-4 h-4 shrink-0 ${
+                      isActive ? 'text-white' : 'text-slate-400'
+                    }`}
+                  />
 
                   {!isCollapsed && (
                     <div className="flex-1 text-left flex items-center justify-between min-w-0">
@@ -251,7 +283,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
                           className={`text-[9px] font-semibold px-1.5 py-0.5 rounded-full shrink-0 ml-1.5 ${
                             isActive
                               ? 'bg-white/20 text-white'
-                              : item.badgeColor || 'bg-slate-800 text-slate-300'
+                              : item.badgeColor ||
+                                'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
                           }`}
                         >
                           {item.badge}
@@ -266,24 +299,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
         ))}
       </nav>
 
-      {/* Leader Admin Status Box */}
-      {!isCollapsed ? (
-        <div className="p-3 m-3 rounded-xl bg-slate-800/60 border border-slate-700/60 text-xs">
-          <div className="flex items-center gap-1.5 text-emerald-400 font-semibold mb-1">
-            <ShieldCheck className="w-3.5 h-3.5" />
-            <span className="text-[11px]">Role: Volunteer Leader</span>
-          </div>
-          <p className="text-slate-400 text-[10px] leading-relaxed">
-            Supervising <strong>Team Alpha</strong> (Registration & Welcome). Operational supervisor between Organiser and Volunteers.
-          </p>
-        </div>
-      ) : (
-        <div className="p-2 text-center text-emerald-400 text-xs mb-2" title="Volunteer Leader Scope">
-          <ShieldCheck className="w-4 h-4 mx-auto" />
-        </div>
-      )}
-      <div className="px-3 pb-3">
-        <SignOutButton compact={isCollapsed} tone="dark" className={isCollapsed ? 'w-full' : ''} />
+      {/* Sign out directly under the menu, not stranded at the screen bottom */}
+      <div className="shrink-0 border-t border-slate-200 dark:border-slate-800 p-3">
+        <SignOutButton
+          compact={isCollapsed}
+          tone={isDark ? 'dark' : 'light'}
+          className="w-full"
+        />
       </div>
     </aside>
   );

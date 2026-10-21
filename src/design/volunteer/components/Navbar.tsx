@@ -35,14 +35,14 @@ export const Navbar: React.FC<NavbarProps> = ({
   setIsMobileMenuOpen
 }) => {
   return (
-    <header className="sticky top-0 z-30 bg-white/95 backdrop-blur border-b border-slate-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <header className="sticky top-0 z-30 bg-white/95 backdrop-blur border-b border-slate-200 dark:bg-slate-900/95 dark:border-slate-800">
+      <div className="w-full px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo & Platform Name */}
           <div className="flex items-center gap-3">
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden p-2 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors"
+              className="md:hidden p-2 rounded-lg text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800 transition-colors"
               aria-label="Toggle Navigation Menu"
             >
               {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -56,10 +56,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <HeartHandshake className="w-6 h-6" />
               </div>
               <div>
-                <span className="text-lg font-bold tracking-tight text-slate-900 block leading-tight">
+                <span className="text-lg font-bold tracking-tight text-slate-900 dark:text-slate-100 block leading-tight">
                   Volunteer<span className="text-emerald-600">Hub</span>
                 </span>
-                <span className="text-xs font-medium text-slate-600 block">
+                <span className="text-xs font-medium text-slate-600 dark:text-slate-400 block">
                   Volunteer Portal & Impact Hub
                 </span>
               </div>
@@ -67,17 +67,17 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
 
           {/* Quick Metrics Bar in Center (desktop) */}
-          <div className="hidden lg:flex items-center gap-4 bg-slate-50 border border-slate-200 rounded-full px-4 py-1.5 text-xs">
-            <div className="flex items-center gap-1.5 text-slate-600 font-medium">
+          <div className="hidden lg:flex items-center gap-4 bg-slate-50 border border-slate-200 dark:bg-slate-800/80 dark:border-slate-700 rounded-full px-4 py-1.5 text-xs">
+            <div className="flex items-center gap-1.5 text-slate-600 dark:text-slate-300 font-medium">
               <Clock className="w-3.5 h-3.5 text-emerald-600" />
               <span>Verified Service:</span>
-              <strong className="text-slate-900 font-bold">{profile.totalHours} hrs</strong>
+              <strong className="text-slate-900 dark:text-slate-100 font-bold">{profile.totalHours} hrs</strong>
             </div>
-            <span className="text-slate-300">|</span>
-            <div className="flex items-center gap-1.5 text-slate-600 font-medium">
+            <span className="text-slate-300 dark:text-slate-600">|</span>
+            <div className="flex items-center gap-1.5 text-slate-600 dark:text-slate-300 font-medium">
               <Award className="w-3.5 h-3.5 text-amber-500" />
               <span>Milestone Level:</span>
-              <span className="font-semibold text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200">
+              <span className="font-semibold text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200 dark:text-amber-300 dark:bg-amber-950/50 dark:border-amber-800">
                 Gold Volunteer
               </span>
             </div>
@@ -89,7 +89,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <button
               id="navbar-messages-btn"
               onClick={() => setActiveTab('messages')}
-              className="relative p-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors"
+              className="relative p-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-300 dark:hover:text-white dark:hover:bg-slate-800 transition-colors"
               title="Organizer Messages"
             >
               <MessageSquare className="w-5 h-5" />
@@ -104,7 +104,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <button
               id="navbar-notifications-btn"
               onClick={() => setActiveTab('notifications')}
-              className="relative p-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors"
+              className="relative p-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-300 dark:hover:text-white dark:hover:bg-slate-800 transition-colors"
               title="Automated Email Notifications"
             >
               <Bell className="w-5 h-5" />
@@ -121,8 +121,8 @@ export const Navbar: React.FC<NavbarProps> = ({
               onClick={() => setActiveTab('settings')}
               className={`p-2 rounded-lg transition-colors ${
                 activeTab === 'settings'
-                  ? 'bg-emerald-100 text-emerald-900 font-bold'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                  ? 'bg-emerald-100 text-emerald-900 font-bold dark:bg-emerald-950 dark:text-emerald-200'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-300 dark:hover:text-white dark:hover:bg-slate-800'
               }`}
               title="Volunteer & System Settings"
             >
@@ -132,7 +132,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             {/* Volunteer Profile Badge */}
             <button
               onClick={() => setActiveTab('profile')}
-              className="flex items-center gap-2 pl-2 sm:pl-3 border-l border-slate-200 hover:opacity-80 transition-opacity text-left"
+              className="flex items-center gap-2 pl-2 sm:pl-3 border-l border-slate-200 dark:border-slate-700 hover:opacity-80 transition-opacity text-left"
               title="View Profile Settings"
             >
               <img
@@ -141,10 +141,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                 className="w-8 h-8 sm:w-9 sm:h-9 rounded-full object-cover ring-2 ring-emerald-500/20"
               />
               <div className="hidden md:block text-left">
-                <div className="text-xs font-bold text-slate-900 leading-tight flex items-center gap-1">
+                <div className="text-xs font-bold text-slate-900 dark:text-slate-100 leading-tight flex items-center gap-1">
                   {profile.name}
                 </div>
-                <div className="text-[11px] text-slate-600 leading-none">
+                <div className="text-[11px] text-slate-600 dark:text-slate-400 leading-none">
                   {profile.role}
                 </div>
               </div>

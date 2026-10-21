@@ -61,7 +61,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     : [];
 
   return (
-    <header className="sticky top-0 z-30 bg-white border-b border-slate-200 shadow-xs">
+    <header className="sticky top-0 z-30 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shadow-xs">
       <div className="px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
         {/* Left: Organization / Portal title */}
         <div className="flex items-center gap-3 min-w-0">

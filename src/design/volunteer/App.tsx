@@ -734,7 +734,7 @@ export default function App() {
 
   return (
     <motion.div
-      className="min-h-screen bg-slate-100/60 text-slate-900 flex flex-col font-sans antialiased selection:bg-emerald-500 selection:text-white"
+      className="min-h-screen bg-slate-100/60 text-slate-900 dark:bg-slate-950 dark:text-slate-100 flex flex-col font-sans antialiased selection:bg-emerald-500 selection:text-white"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.35 }}
@@ -752,8 +752,8 @@ export default function App() {
       />
 
       {liveError && (
-        <div role="alert" className="max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 pt-4">
-          <div className="flex items-center justify-between gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+        <div role="alert" className="w-full px-3 sm:px-4 lg:px-6 pt-4">
+          <div className="flex items-center justify-between gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800 dark:border-red-900 dark:bg-red-950/50 dark:text-red-200">
             <span>{liveError}</span>
             <button onClick={() => void reload()} className="font-semibold underline">Try again</button>
           </div>
@@ -786,8 +786,8 @@ export default function App() {
         ) : null}
       </AnimatePresence>
 
-      {/* Main Layout Container with Sidebar & Content */}
-      <div className="max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 flex-1 flex flex-col md:flex-row gap-6 pt-4 pb-12">
+      {/* Full-bleed layout: sidebar + content use the full viewport width */}
+      <div className="w-full flex-1 flex flex-col md:flex-row gap-0 md:gap-0 pt-0 pb-0 min-h-0">
         {/* Responsive Sidebar */}
         <Sidebar
           activeTab={activeTab}
@@ -806,7 +806,7 @@ export default function App() {
         />
 
         {/* Dynamic Content View Area */}
-        <main className="flex-1 min-w-0">
+        <main className="flex-1 min-w-0 px-3 sm:px-4 lg:px-6 pt-4 pb-12">
           <AnimatedPage id={activeTab}>
           {/* Section 3.1: Dashboard Overview */}
           {activeTab === 'dashboard' && (
