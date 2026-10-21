@@ -26,6 +26,7 @@ import {
   Settings
 } from 'lucide-react';
 import { SignOutButton } from '@/components/auth/SignOutButton';
+import { useTheme } from '@/components/theme/ThemeProvider';
 import { VolunteerProfile } from '../types';
 import { nextHourMilestone } from '../data/milestones';
 
@@ -60,6 +61,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
   isMobileMenuOpen,
   setIsMobileMenuOpen
 }) => {
+  const { isDark } = useTheme();
+
   const navSections = [
     {
       title: 'Volunteer Shifts',
@@ -325,7 +328,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <ChevronRight className="w-3 h-3" />
             </button>
           </div>
-          <SignOutButton className="w-full" />
+          <SignOutButton className="w-full" tone={isDark ? 'dark' : 'light'} />
         </div>
       </aside>
     </>

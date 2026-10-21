@@ -70,14 +70,14 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
           <div className="truncate">
             <div className="flex items-center gap-2">
-              <span className="font-bold text-slate-900 tracking-tight text-base sm:text-lg">
+              <span className="font-bold tracking-tight text-base text-slate-900 sm:text-lg dark:text-slate-100">
                 Community Action Network
               </span>
-              <span className="hidden md:inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+              <span className="hidden md:inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-xs font-semibold text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
                 Leader Admin
               </span>
             </div>
-            <p className="text-xs text-slate-500 truncate">
+            <p className="truncate text-xs text-slate-500 dark:text-slate-400">
               Leader Portal • Roster Management & Event Coordination
             </p>
           </div>
@@ -96,7 +96,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 setShowSearchResults(true);
               }}
               onFocus={() => setShowSearchResults(true)}
-              className="w-full pl-9 pr-8 py-2 text-sm bg-slate-50 hover:bg-slate-100/80 focus:bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors"
+              className="w-full rounded-lg border border-slate-200 bg-slate-50 py-2 pl-9 pr-8 text-sm transition-colors hover:bg-slate-100/80 focus:border-emerald-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-800 dark:focus:bg-slate-800"
             />
             {searchQuery && (
               <button
@@ -104,7 +104,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   setSearchQuery('');
                   setShowSearchResults(false);
                 }}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -113,16 +113,16 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           {/* Search dropdown */}
           {showSearchResults && searchQuery.trim() && (
-            <div className="absolute left-0 right-0 mt-1.5 bg-white border border-slate-200 rounded-xl shadow-xl overflow-hidden z-50 max-h-80 overflow-y-auto">
+            <div className="absolute left-0 right-0 z-50 mt-1.5 max-h-80 overflow-hidden overflow-y-auto rounded-xl border border-slate-200 bg-white shadow-xl dark:border-slate-700 dark:bg-slate-900">
               {filteredVolunteers.length === 0 && filteredShifts.length === 0 ? (
-                <div className="p-4 text-center text-sm text-slate-500">
+                <div className="p-4 text-center text-sm text-slate-500 dark:text-slate-400">
                   No volunteers or events found matching "{searchQuery}"
                 </div>
               ) : (
-                <div className="divide-y divide-slate-100">
+                <div className="divide-y divide-slate-100 dark:divide-slate-800">
                   {filteredVolunteers.length > 0 && (
                     <div className="p-2">
-                      <div className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider px-2 py-1">
+                      <div className="px-2 py-1 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
                         Volunteers ({filteredVolunteers.length})
                       </div>
                       {filteredVolunteers.slice(0, 4).map((vol) => (
@@ -134,16 +134,16 @@ export const Navbar: React.FC<NavbarProps> = ({
                             setShowSearchResults(false);
                             setSearchQuery('');
                           }}
-                          className="flex items-center justify-between p-2 rounded-lg hover:bg-slate-50 cursor-pointer text-sm"
+                          className="flex cursor-pointer items-center justify-between rounded-lg p-2 text-sm hover:bg-slate-50 dark:hover:bg-slate-800"
                         >
                           <div className="flex items-center gap-2.5">
                             <img src={vol.avatar} alt={vol.name} className="w-7 h-7 rounded-full object-cover" />
                             <div>
-                              <div className="font-medium text-slate-800">{vol.name}</div>
-                              <div className="text-xs text-slate-500">{vol.role} • {vol.verifiedHours} hrs verified</div>
+                              <div className="font-medium text-slate-800 dark:text-slate-100">{vol.name}</div>
+                              <div className="text-xs text-slate-500 dark:text-slate-400">{vol.role} • {vol.verifiedHours} hrs verified</div>
                             </div>
                           </div>
-                          <span className="text-xs text-emerald-600 font-medium">View Profile &rarr;</span>
+                          <span className="text-xs font-medium text-emerald-600 dark:text-emerald-400">View Profile &rarr;</span>
                         </div>
                       ))}
                     </div>
@@ -193,9 +193,9 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Quick Announce Button */}
           <button
             onClick={onOpenQuickBroadcast}
-            className="hidden lg:inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors cursor-pointer"
+            className="hidden lg:inline-flex cursor-pointer items-center gap-1.5 rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-700 transition-colors hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
           >
-            <Mail className="w-3.5 h-3.5 text-slate-500" />
+            <Mail className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
             <span>Quick Announce</span>
           </button>
 
@@ -203,7 +203,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           <div className="relative">
             <button
               onClick={() => setShowNotificationDropdown(!showNotificationDropdown)}
-              className="relative p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
+              className="relative cursor-pointer rounded-lg p-2 text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white"
               aria-label="Automated notifications"
             >
               <Bell className="w-5 h-5" />
@@ -216,11 +216,11 @@ export const Navbar: React.FC<NavbarProps> = ({
 
             {/* Notification Dropdown */}
             {showNotificationDropdown && (
-              <div className="absolute right-0 mt-2 w-80 sm:w-96 bg-white border border-slate-200 rounded-xl shadow-xl overflow-hidden z-50">
-                <div className="p-3.5 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+              <div className="absolute right-0 z-50 mt-2 w-80 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xl sm:w-96 dark:border-slate-700 dark:bg-slate-900">
+                <div className="flex items-center justify-between border-b border-slate-200 bg-slate-50 p-3.5 dark:border-slate-700 dark:bg-slate-800">
                   <div>
-                    <h4 className="text-sm font-semibold text-slate-900">Leader Dispatch & Alerts</h4>
-                    <p className="text-xs text-slate-500">Automated triggers & approvals</p>
+                    <h4 className="text-sm font-semibold text-slate-900 dark:text-slate-100">Leader Dispatch & Alerts</h4>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">Automated triggers & approvals</p>
                   </div>
                   <span className="px-2 py-0.5 text-xs font-medium bg-emerald-100 text-emerald-800 rounded-full">
                     Live Status
@@ -295,7 +295,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Portal Settings Button */}
           <button
             onClick={() => onSelectTab('settings')}
-            className="p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
+            className="cursor-pointer rounded-lg p-2 text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white"
             title="Portal Settings"
             aria-label="Portal Settings"
           >
@@ -305,19 +305,19 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Leader Profile Badge */}
           <button
             onClick={() => onSelectTab('settings')}
-            className="flex items-center gap-2 pl-2 sm:pl-3 border-l border-slate-200 hover:opacity-80 transition-opacity cursor-pointer text-left"
+            className="flex cursor-pointer items-center gap-2 border-l border-slate-200 pl-2 text-left transition-opacity hover:opacity-80 sm:pl-3 dark:border-slate-700"
             title="View Leader Profile & Settings"
           >
             <img
               src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&auto=format&fit=crop&q=80"
               alt="Sarah Jenkins"
-              className="w-8 h-8 rounded-full object-cover ring-2 ring-emerald-500/30"
+              className="h-8 w-8 rounded-full object-cover ring-2 ring-emerald-500/30"
             />
-            <div className="hidden sm:block text-left">
-              <div className="text-xs font-bold text-slate-900 flex items-center gap-1">
+            <div className="hidden text-left sm:block">
+              <div className="flex items-center gap-1 text-xs font-bold text-slate-900 dark:text-slate-100">
                 Sarah Jenkins
               </div>
-              <div className="text-[11px] text-slate-500 font-medium">Volunteer Leader</div>
+              <div className="text-[11px] font-medium text-slate-500 dark:text-slate-400">Volunteer Leader</div>
             </div>
           </button>
         </div>

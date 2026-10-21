@@ -93,7 +93,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   return (
     <header
       id="top-navbar"
-      className="h-20 bg-white border-b border-slate-200 px-4 sm:px-6 flex items-center justify-between gap-4 sticky top-0 z-20"
+      className="sticky top-0 z-20 flex h-20 items-center justify-between gap-4 border-b border-slate-200 bg-white px-4 sm:px-6 dark:border-slate-800 dark:bg-slate-900"
     >
       {/* Global Search */}
       <div className="flex-1 max-w-md relative">
@@ -105,12 +105,12 @@ export const Navbar: React.FC<NavbarProps> = ({
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search shifts, channels, volunteers, skills..."
-            className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 transition-all"
+            className="w-full rounded-xl border border-slate-200 bg-slate-50 py-2 pl-10 pr-4 text-sm text-slate-900 placeholder:text-slate-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:placeholder:text-slate-500"
           />
           {searchQuery && (
             <button
               onClick={() => setSearchQuery('')}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-slate-400 hover:text-slate-600"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
             >
               Clear
             </button>
@@ -121,11 +121,11 @@ export const Navbar: React.FC<NavbarProps> = ({
       {/* Right Controls */}
       <div className="flex items-center gap-3">
         {/* Organizer Workspace Badge */}
-        <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-200">
+        <div className="hidden sm:flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-1.5 dark:border-slate-700 dark:bg-slate-800">
           <ShieldCheck className="w-4 h-4 text-emerald-600" />
           <div className="flex items-center gap-1.5">
-            <span className="text-xs font-bold text-slate-800">Organizer Mode</span>
-            <span className="text-[10px] font-extrabold uppercase bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded">
+            <span className="text-xs font-bold text-slate-800 dark:text-slate-100">Organizer Mode</span>
+            <span className="rounded bg-emerald-100 px-1.5 py-0.5 text-[10px] font-extrabold uppercase text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
               Lead
             </span>
           </div>
@@ -144,7 +144,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         <button
           id="header-verify-hours-button"
           onClick={onOpenLogHoursModal}
-          className="hidden lg:flex items-center gap-2 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 text-xs font-semibold px-3 py-2 rounded-xl shadow-xs transition-colors"
+          className="hidden lg:flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 shadow-xs transition-colors hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
           title="Verify or credit volunteer service hours"
         >
           <ClipboardCheck className="w-4 h-4 text-emerald-600" />
@@ -156,7 +156,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           <button
             id="notifications-bell-button"
             onClick={() => setNotificationsOpen(!notificationsOpen)}
-            className="relative p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition-colors"
+            className="relative rounded-xl p-2 text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white"
             title="Notifications"
           >
             <Bell className="w-5 h-5" />
@@ -164,10 +164,10 @@ export const Navbar: React.FC<NavbarProps> = ({
           </button>
 
           {notificationsOpen && (
-            <div className="absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-2xl shadow-xl border border-slate-200 p-3 z-50">
-              <div className="flex items-center justify-between px-2 pb-2.5 border-b border-slate-100">
+            <div className="absolute right-0 z-50 mt-2 w-80 rounded-2xl border border-slate-200 bg-white p-3 shadow-xl sm:w-96 dark:border-slate-700 dark:bg-slate-900">
+              <div className="flex items-center justify-between border-b border-slate-100 px-2 pb-2.5 dark:border-slate-800">
                 <div className="flex items-center gap-1.5">
-                  <span className="text-xs font-bold text-slate-900">Activity Notifications</span>
+                  <span className="text-xs font-bold text-slate-900 dark:text-slate-100">Activity Notifications</span>
                   <span className="text-[10px] bg-emerald-100 text-emerald-800 font-semibold px-1.5 py-0.5 rounded-full">
                     4 new
                   </span>
@@ -219,14 +219,14 @@ export const Navbar: React.FC<NavbarProps> = ({
           type="button"
           id="navbar-settings-btn"
           onClick={() => onNavigateToTab('settings')}
-          className="p-2 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-xl transition-colors relative"
+          className="relative rounded-xl p-2 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-800 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100"
           title="Platform Settings"
         >
           <Settings className="w-5 h-5" />
         </button>
 
         {/* Profile Avatar */}
-        <div className="flex items-center gap-2 pl-2 border-l border-slate-200">
+        <div className="flex items-center gap-2 border-l border-slate-200 pl-2 dark:border-slate-700">
           <button
             type="button"
             onClick={() => onNavigateToTab('settings')}

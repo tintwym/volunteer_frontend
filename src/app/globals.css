@@ -112,6 +112,70 @@
   backdrop-filter: blur(2px);
 }
 
+/*
+ * Role portals (volunteer / leader / organiser) ship many light-only utility
+ * classes. Remap the common surfaces so dark mode stays readable without
+ * rewriting every view file.
+ */
+.cg-role-portal {
+  color: #0f172a; /* slate-900 */
+  background-color: #f1f5f9; /* slate-100 */
+}
+
+.dark .cg-role-portal {
+  color: #f1f5f9; /* slate-100 */
+  background-color: #020617; /* slate-950 */
+}
+
+.dark .cg-role-portal :where(.bg-white, .bg-white\/95, .bg-white\/90) {
+  background-color: #0f172a; /* slate-900 */
+}
+
+.dark .cg-role-portal :where(.bg-slate-50, .bg-slate-50\/80, .bg-slate-100, .bg-slate-100\/60) {
+  background-color: #1e293b; /* slate-800 */
+}
+
+.dark .cg-role-portal :where(.text-slate-900, .text-slate-800) {
+  color: #f1f5f9; /* slate-100 */
+}
+
+.dark .cg-role-portal :where(.text-slate-700, .text-slate-600) {
+  color: #cbd5e1; /* slate-300 */
+}
+
+.dark .cg-role-portal :where(.text-slate-500, .text-slate-400) {
+  color: #94a3b8; /* slate-400 */
+}
+
+.dark .cg-role-portal :where(.border-slate-100, .border-slate-200) {
+  border-color: #334155; /* slate-700 */
+}
+
+.dark .cg-role-portal :where(.divide-slate-100, .divide-slate-200) > :not([hidden]) ~ :not([hidden]) {
+  border-color: #334155;
+}
+
+.dark .cg-role-portal :where(.hover\:bg-slate-50:hover, .hover\:bg-slate-100:hover, .hover\:bg-slate-100\/80:hover) {
+  background-color: #334155; /* slate-700 */
+}
+
+.dark .cg-role-portal :where(.bg-slate-50\/50) {
+  background-color: rgb(30 41 59 / 0.5);
+}
+
+.dark .cg-role-portal input:where(.bg-slate-50, .bg-white),
+.dark .cg-role-portal textarea:where(.bg-slate-50, .bg-white),
+.dark .cg-role-portal select:where(.bg-slate-50, .bg-white) {
+  background-color: #1e293b;
+  color: #f1f5f9;
+  border-color: #475569;
+}
+
+.dark .cg-role-portal input::placeholder,
+.dark .cg-role-portal textarea::placeholder {
+  color: #64748b;
+}
+
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
