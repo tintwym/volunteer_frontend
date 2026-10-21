@@ -16,7 +16,24 @@ export interface AuthResponse {
   user: AuthUser;
 }
 
-const API_URL = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080").replace(/\/+$/, "");
+const CONFIGURED_API_URL = (
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"
+).replace(/\/+$/, "");
+
+/**
+ * Browser calls on deployed hosts go through the Next.js `/backend` rewrite (same origin)
+ * so CORS mismatches on Render cannot block login. Localhost still hits the API URL directly.
+ */
+function getApiBase(): string {
+  if (typeof window !== "undefined") {
+    const host = window.location.hostname;
+    if (host !== "localhost" && host !== "127.0.0.1") {
+      return `${window.location.origin}/backend`;
+    }
+  }
+  return CONFIGURED_API_URL;
+}
+
 const TOKEN_KEY = "cg_access_token";
 /** Auth session user — keep separate from landing prototype `cg_user`. */
 const USER_KEY = "cg_auth_user";
@@ -65,7 +82,7 @@ export const SEED_ACCOUNTS: ReadonlyArray<{
 ];
 
 export function getApiUrl() {
-  return API_URL;
+  return getApiBase();
 }
 
 export function isDemoToken(token: string | null | undefined): boolean {
@@ -217,17 +234,38 @@ function looksLikeFrontendUrl(url: string): boolean {
   }
 }
 
+async function fetchWithColdStartRetry(
+  url: string,
+  init: RequestInit,
+  attempts = 3
+): Promise<Response> {
+  let lastError: unknown;
+  for (let i = 0; i < attempts; i++) {
+    try {
+      return await fetch(url, init);
+    } catch (err) {
+      lastError = err;
+      // Render free tier can take 30–60s to wake; retry a couple of times.
+      if (i < attempts - 1) {
+        await new Promise((r) => setTimeout(r, 2500 * (i + 1)));
+      }
+    }
+  }
+  throw lastError;
+}
+
 export async function apiFetch<T>(
   path: string,
   options: RequestInit = {}
 ): Promise<T> {
-  if (looksLikeFrontendUrl(API_URL)) {
+  if (looksLikeFrontendUrl(CONFIGURED_API_URL)) {
     throw new ApiError(
       "NEXT_PUBLIC_API_URL points at the frontend, not the backend. Set it to your Render API URL (e.g. https://volunteer-backend-7m4w.onrender.com) and redeploy.",
       0
     );
   }
 
+  const apiBase = getApiBase();
   const token = getStoredToken();
   const headers = new Headers(options.headers);
   headers.set("Content-Type", "application/json");
@@ -235,13 +273,13 @@ export async function apiFetch<T>(
 
   let res: Response;
   try {
-    res = await fetch(`${API_URL}${path}`, {
+    res = await fetchWithColdStartRetry(`${apiBase}${path}`, {
       ...options,
       headers,
     });
   } catch {
     throw new ApiError(
-      "Cannot reach the API. Make sure the backend is running on " + API_URL,
+      `Cannot reach the API at ${CONFIGURED_API_URL}. The Render free tier may be waking up — wait about a minute and try again. If this keeps happening, confirm CORS allows this site and the backend is deployed.`,
       0
     );
   }
@@ -249,7 +287,7 @@ export async function apiFetch<T>(
   const contentType = res.headers.get("content-type") ?? "";
   if (!contentType.includes("application/json")) {
     throw new ApiError(
-      `The API at ${API_URL} did not return JSON (got ${res.status}). Check NEXT_PUBLIC_API_URL — it must be the Render backend, not the Vercel site.`,
+      `The API at ${CONFIGURED_API_URL} did not return JSON (got ${res.status}). Check NEXT_PUBLIC_API_URL — it must be the Render backend, not the Vercel site.`,
       res.status
     );
   }
