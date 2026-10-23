@@ -18,7 +18,6 @@ import {
   Award,
   ChevronLeft,
   ChevronRight,
-  ShieldCheck,
   HeartHandshake,
   Settings
 } from 'lucide-react';
@@ -212,27 +211,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
           {isCollapsed ? <ChevronRight className="w-3.5 h-3.5" /> : <ChevronLeft className="w-4 h-4" />}
         </button>
       </div>
-
-      {/* Role sits under brand — not at the bottom of the viewport */}
-      {!isCollapsed ? (
-        <div className="shrink-0 mx-3 mt-3 rounded-xl bg-emerald-50 border border-emerald-200/80 px-3 py-2.5 dark:bg-emerald-950/40 dark:border-emerald-800/60">
-          <div className="flex items-center gap-1.5 text-emerald-700 dark:text-emerald-400 font-semibold">
-            <ShieldCheck className="w-3.5 h-3.5 shrink-0" />
-            <span className="text-[11px]">Role: Volunteer Leader</span>
-          </div>
-          <p className="mt-1 text-slate-600 dark:text-slate-400 text-[10px] leading-relaxed">
-            Supervising <strong className="text-slate-800 dark:text-slate-200">Team Alpha</strong>{' '}
-            (Registration & Welcome).
-          </p>
-        </div>
-      ) : (
-        <div
-          className="shrink-0 py-2 text-center text-emerald-600 dark:text-emerald-400"
-          title="Volunteer Leader · Team Alpha"
-        >
-          <ShieldCheck className="w-4 h-4 mx-auto" />
-        </div>
-      )}
 
       {/* Nav fills remaining height and scrolls; items stay at the top */}
       <nav
