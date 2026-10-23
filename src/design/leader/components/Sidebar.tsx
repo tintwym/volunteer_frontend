@@ -24,6 +24,7 @@ import {
 } from 'lucide-react';
 import { SignOutButton } from '@/components/auth/SignOutButton';
 import { useTheme } from '@/components/theme/ThemeProvider';
+import { CollapsedNavTooltip } from '@/components/ui/CollapsedNavTooltip';
 
 interface SidebarProps {
   currentTab: string;
@@ -258,41 +259,46 @@ export const Sidebar: React.FC<SidebarProps> = ({
               const isActive = currentTab === item.id;
 
               return (
-                <button
+                <CollapsedNavTooltip
                   key={item.id}
-                  type="button"
-                  onClick={() => onSelectTab(item.id)}
-                  title={isCollapsed ? item.label : undefined}
-                  className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium transition-all duration-150 cursor-pointer ${
-                    isActive
-                      ? 'bg-emerald-600 text-white font-semibold shadow-xs'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-300 dark:hover:text-white dark:hover:bg-slate-800/80'
-                  } ${isCollapsed ? 'justify-center px-2' : ''}`}
+                  label={item.label}
+                  enabled={isCollapsed}
                 >
-                  <Icon
-                    className={`w-4 h-4 shrink-0 ${
-                      isActive ? 'text-white' : 'text-slate-400'
-                    }`}
-                  />
+                  <button
+                    type="button"
+                    onClick={() => onSelectTab(item.id)}
+                    aria-label={item.label}
+                    className={`flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2 text-xs font-medium transition-all duration-150 ${
+                      isActive
+                        ? 'bg-emerald-600 font-semibold text-white shadow-xs'
+                        : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800/80 dark:hover:text-white'
+                    } ${isCollapsed ? 'justify-center px-2' : ''}`}
+                  >
+                    <Icon
+                      className={`h-4 w-4 shrink-0 ${
+                        isActive ? 'text-white' : 'text-slate-400'
+                      }`}
+                    />
 
-                  {!isCollapsed && (
-                    <div className="flex-1 text-left flex items-center justify-between min-w-0">
-                      <span className="truncate">{item.label}</span>
-                      {item.badge && (
-                        <span
-                          className={`text-[9px] font-semibold px-1.5 py-0.5 rounded-full shrink-0 ml-1.5 ${
-                            isActive
-                              ? 'bg-white/20 text-white'
-                              : item.badgeColor ||
-                                'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
-                          }`}
-                        >
-                          {item.badge}
-                        </span>
-                      )}
-                    </div>
-                  )}
-                </button>
+                    {!isCollapsed && (
+                      <div className="flex min-w-0 flex-1 items-center justify-between text-left">
+                        <span className="truncate">{item.label}</span>
+                        {item.badge && (
+                          <span
+                            className={`ml-1.5 shrink-0 rounded-full px-1.5 py-0.5 text-[9px] font-semibold ${
+                              isActive
+                                ? 'bg-white/20 text-white'
+                                : item.badgeColor ||
+                                  'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
+                            }`}
+                          >
+                            {item.badge}
+                          </span>
+                        )}
+                      </div>
+                    )}
+                  </button>
+                </CollapsedNavTooltip>
               );
             })}
           </div>

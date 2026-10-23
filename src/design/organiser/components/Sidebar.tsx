@@ -29,6 +29,7 @@ import {
 } from 'lucide-react';
 import { SignOutButton } from '@/components/auth/SignOutButton';
 import { useTheme } from '@/components/theme/ThemeProvider';
+import { CollapsedNavTooltip } from '@/components/ui/CollapsedNavTooltip';
 import { User } from '../types';
 
 export type ActiveTab =
@@ -294,40 +295,46 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 const Icon = item.icon;
                 const isActive = activeTab === item.id;
                 return (
-                  <button
+                  <CollapsedNavTooltip
                     key={item.id}
-                    id={`nav-tab-${item.id}`}
-                    onClick={() => setActiveTab(item.id)}
-                    className={`w-full flex items-center rounded-xl text-xs font-semibold transition-all relative ${
-                      collapsed ? 'justify-center py-2.5' : 'gap-3 px-3 py-2'
-                    } ${
-                      isActive
-                        ? 'bg-emerald-600 text-white shadow-xs shadow-emerald-600/20'
-                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/80 dark:text-slate-300 dark:hover:text-white dark:hover:bg-slate-800/80'
-                    }`}
-                    title={collapsed ? item.label : undefined}
+                    label={item.label}
+                    enabled={collapsed}
                   >
-                    <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-slate-500 dark:text-slate-400'}`} />
-                    {!collapsed && (
-                      <span className="flex-1 text-left truncate">{item.label}</span>
-                    )}
-                    {!collapsed && item.badge && (
-                      <span
-                        className={`text-[10px] font-bold px-1.5 py-0.5 rounded-md ${
-                          isActive ? 'bg-white/25 text-white' : item.badgeColor
-                        }`}
-                      >
-                        {item.badge}
-                      </span>
-                    )}
-                    {collapsed && item.badge && (
-                      <span
-                        className={`absolute top-1.5 left-1/2 ml-1.5 w-2 h-2 rounded-full ring-2 ${
-                          isActive ? 'bg-white ring-emerald-600' : 'bg-emerald-500 ring-white dark:ring-slate-900'
-                        }`}
-                      />
-                    )}
-                  </button>
+                    <button
+                      id={`nav-tab-${item.id}`}
+                      type="button"
+                      onClick={() => setActiveTab(item.id)}
+                      aria-label={item.label}
+                      className={`relative flex w-full items-center rounded-xl text-xs font-semibold transition-all ${
+                        collapsed ? 'justify-center py-2.5' : 'gap-3 px-3 py-2'
+                      } ${
+                        isActive
+                          ? 'bg-emerald-600 text-white shadow-xs shadow-emerald-600/20'
+                          : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/80 dark:text-slate-300 dark:hover:text-white dark:hover:bg-slate-800/80'
+                      }`}
+                    >
+                      <Icon className={`h-4 w-4 shrink-0 ${isActive ? 'text-white' : 'text-slate-500 dark:text-slate-400'}`} />
+                      {!collapsed && (
+                        <span className="flex-1 truncate text-left">{item.label}</span>
+                      )}
+                      {!collapsed && item.badge && (
+                        <span
+                          className={`rounded-md px-1.5 py-0.5 text-[10px] font-bold ${
+                            isActive ? 'bg-white/25 text-white' : item.badgeColor
+                          }`}
+                        >
+                          {item.badge}
+                        </span>
+                      )}
+                      {collapsed && item.badge && (
+                        <span
+                          className={`absolute top-1.5 left-1/2 ml-1.5 h-2 w-2 rounded-full ring-2 ${
+                            isActive ? 'bg-white ring-emerald-600' : 'bg-emerald-500 ring-white dark:ring-slate-900'
+                          }`}
+                        />
+                      )}
+                    </button>
+                  </CollapsedNavTooltip>
                 );
               })}
             </div>
