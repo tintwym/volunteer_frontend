@@ -6,7 +6,6 @@ import confetti from 'canvas-confetti';
 import {
   CURRENT_ORGANIZER,
   CURRENT_VOLUNTEER,
-  OTHER_USERS,
   INITIAL_SHIFTS,
   INITIAL_CHANNELS,
   INITIAL_MESSAGES,
@@ -32,15 +31,13 @@ import {
 } from './types';
 import { Sidebar, ActiveTab } from './components/Sidebar';
 import { Navbar } from './components/Navbar';
-import { OverviewDashboard } from './components/OverviewDashboard';
-import { SchedulingView } from './components/SchedulingView';
 import { MessagingView } from './components/MessagingView';
 import { AutomationsView } from './components/AutomationsView';
 import { ReportingView } from './components/ReportingView';
 import { RecognitionView } from './components/RecognitionView';
 import { LogHoursModal } from './components/LogHoursModal';
 import { CreateShiftModal } from './components/CreateShiftModal';
-import { CheckCircle2, AlertCircle } from 'lucide-react';
+import { CheckCircle2 } from 'lucide-react';
 
 // Organiser Modules (1.1 - 1.15)
 import { OrganiserDashboardView } from './components/OrganiserDashboardView';

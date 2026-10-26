@@ -17,7 +17,6 @@ import {
   ShieldAlert,
   BookOpen,
   CheckSquare,
-  HeartHandshake,
   BarChart3,
   Award,
   KeyRound,
@@ -229,9 +228,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
         }`}
       >
         <div className="flex items-center gap-3 overflow-hidden">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center text-white shadow-sm shrink-0">
-            <HeartHandshake className="w-5 h-5" />
-          </div>
+          <img
+            src="/brand/logo.png"
+            alt=""
+            width={40}
+            height={40}
+            className="w-10 h-10 rounded-xl object-cover shadow-sm ring-1 ring-black/5 shrink-0"
+          />
           {!collapsed && (
             <div className="min-w-0">
               <h1 className="font-bold text-base text-slate-900 tracking-tight leading-none truncate dark:text-slate-100">

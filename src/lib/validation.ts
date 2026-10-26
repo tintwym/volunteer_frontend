@@ -102,8 +102,3 @@ export function validateAcceptInvite(input: {
 
   return errors;
 }
-
-export function firstError(errors: FieldErrors): string | null {
-  const values = Object.values(errors);
-  return values.length > 0 ? values[0] : null;
-}

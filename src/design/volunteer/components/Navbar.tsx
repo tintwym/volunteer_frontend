@@ -3,7 +3,6 @@
 
 import React from 'react';
 import { 
-  HeartHandshake, 
   Bell, 
   MessageSquare, 
   Award,
@@ -53,9 +52,13 @@ export const Navbar: React.FC<NavbarProps> = ({
               onClick={() => setActiveTab('dashboard')}
               className="flex items-center gap-2.5 text-left focus:outline-none group"
             >
-              <div className="w-10 h-10 rounded-xl bg-emerald-600 flex items-center justify-center text-white shadow-sm shadow-emerald-200 group-hover:bg-emerald-700 transition-colors">
-                <HeartHandshake className="w-6 h-6" />
-              </div>
+              <img
+                src="/brand/logo.png"
+                alt=""
+                width={40}
+                height={40}
+                className="w-10 h-10 rounded-xl object-cover shadow-sm ring-1 ring-black/5 group-hover:scale-105 transition-transform"
+              />
               <div>
                 <span className="text-lg font-bold tracking-tight text-slate-900 dark:text-slate-100 block leading-tight">
                   Volunteer<span className="text-emerald-600">Hub</span>

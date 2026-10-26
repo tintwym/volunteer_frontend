@@ -18,7 +18,6 @@ import {
   Award,
   ChevronLeft,
   ChevronRight,
-  HeartHandshake,
   Settings
 } from 'lucide-react';
 import { SignOutButton } from '@/components/auth/SignOutButton';
@@ -179,9 +178,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
       >
         {!isCollapsed ? (
           <div className="flex items-center gap-2.5 overflow-hidden min-w-0">
-            <div className="w-8 h-8 rounded-lg bg-emerald-600 dark:bg-emerald-500 flex items-center justify-center text-white shrink-0">
-              <HeartHandshake className="w-4 h-4" />
-            </div>
+            <img
+              src="/brand/logo.png"
+              alt=""
+              width={32}
+              height={32}
+              className="w-8 h-8 rounded-lg object-cover ring-1 ring-black/5 shrink-0"
+            />
             <div className="truncate">
               <span className="text-sm font-bold text-slate-900 dark:text-white tracking-wide block truncate">
                 CAN Leader Portal
@@ -192,9 +195,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </div>
           </div>
         ) : (
-          <div className="w-9 h-9 rounded-lg bg-emerald-600 dark:bg-emerald-500 flex items-center justify-center text-white">
-            <HeartHandshake className="w-5 h-5" />
-          </div>
+          <img
+            src="/brand/logo.png"
+            alt=""
+            width={36}
+            height={36}
+            className="w-9 h-9 rounded-lg object-cover ring-1 ring-black/5"
+          />
         )}
 
         <button

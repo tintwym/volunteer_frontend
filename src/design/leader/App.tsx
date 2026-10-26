@@ -60,7 +60,7 @@ import { VolunteerFeedbackView } from './components/VolunteerFeedbackView';
 import { AutomatedEmailView } from './components/AutomatedEmailView';
 import { RecognitionMilestonesView } from './components/RecognitionMilestonesView';
 import { SettingsView } from './components/SettingsView';
-import { CheckCircle2, AlertCircle, X, Send } from 'lucide-react';
+import { CheckCircle2, AlertCircle, X } from 'lucide-react';
 import { AnimatedPage, motion } from '@/components/motion/ui';
 
 export default function App() {

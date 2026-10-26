@@ -5,7 +5,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { PageView, Language } from '../../types';
 import {
-  HeartHandshake,
   Search,
   Bell,
   Sun,
@@ -147,9 +146,13 @@ export const Navbar: React.FC = () => {
           className="flex items-center gap-3 text-left group focus:outline-none"
           aria-label="CommonGround Home"
         >
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-500 text-white flex items-center justify-center shadow-md shadow-emerald-600/20 group-hover:scale-105 transition-transform">
-            <HeartHandshake className="w-6 h-6" />
-          </div>
+          <img
+            src="/brand/logo.png"
+            alt=""
+            width={40}
+            height={40}
+            className="w-10 h-10 rounded-xl object-cover shadow-md shadow-amber-700/10 ring-1 ring-black/5 group-hover:scale-105 transition-transform"
+          />
           <div>
             <span className="font-editorial text-xl font-black tracking-tight text-stone-900 dark:text-stone-100 flex items-center gap-1">
               CommonGround

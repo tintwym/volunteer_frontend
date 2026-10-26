@@ -41,7 +41,7 @@ export const NotificationsModal: React.FC = () => {
       try {
         new Notification('CommonGround Push Notification', {
           body: '🌱 New volunteer shift matching your skills: "Weekend Urban Farm Caregiver" needs 3 volunteers!',
-          icon: '/favicon.svg'
+          icon: '/brand/logo.png'
         });
       } catch {
         // fallback

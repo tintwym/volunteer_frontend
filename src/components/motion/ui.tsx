@@ -74,19 +74,6 @@ export function FadeInView({
   );
 }
 
-export function ShellEntrance({ children }: { children: ReactNode }) {
-  return (
-    <motion.div
-      className="contents"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.35, ease: easeOut }}
-    >
-      {children}
-    </motion.div>
-  );
-}
-
 /** Compact spinner for auth/submit buttons and live loaders. */
 export function Spinner({ className = "h-4 w-4" }: { className?: string }) {
   return (

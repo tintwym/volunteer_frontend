@@ -21,8 +21,12 @@ export const metadata: Metadata = {
   description:
     "Discover volunteer opportunities, connect with your community, and track impact.",
   icons: {
-    icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
-    apple: [{ url: "/apple-icon" }],
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/brand/favicon-32.png", type: "image/png", sizes: "32x32" },
+      { url: "/brand/icon-192.png", type: "image/png", sizes: "192x192" },
+    ],
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
   },
 };
 

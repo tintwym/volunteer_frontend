@@ -44,50 +44,6 @@ export const CURRENT_VOLUNTEER: User = {
   skills: ['Food Preparation', 'Carpentry', 'First Aid / CPR', 'Youth Mentoring', 'Driver License'],
 };
 
-export const OTHER_USERS: User[] = [
-  CURRENT_ORGANIZER,
-  CURRENT_VOLUNTEER,
-  {
-    id: 'user-vol-2',
-    name: 'Sophia Chen',
-    email: 'sophia.chen@example.org',
-    role: 'coordinator',
-    avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&auto=format&fit=crop&q=80',
-    totalHours: 198.0,
-    badgesCount: 11,
-    joinedDate: '2023-09-01',
-    organization: 'HopeHarbor Volunteer Alliance',
-    title: 'Eco-Action Coordinator',
-    skills: ['Botanical Surveying', 'Team Coordination', 'Social Outreach'],
-  },
-  {
-    id: 'user-vol-3',
-    name: 'Jamal Washington',
-    email: 'jamal.w@example.com',
-    role: 'participant',
-    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
-    totalHours: 76.5,
-    badgesCount: 5,
-    joinedDate: '2024-06-18',
-    organization: 'HopeHarbor Volunteer Alliance',
-    title: 'Pantry Lead Volunteer',
-    skills: ['Heavy Lifting', 'Inventory Control', 'Spanish Bilingual'],
-  },
-  {
-    id: 'user-vol-4',
-    name: 'Aisha Patel',
-    email: 'aisha.p@example.com',
-    role: 'participant',
-    avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80',
-    totalHours: 52.0,
-    badgesCount: 4,
-    joinedDate: '2025-01-12',
-    organization: 'HopeHarbor Volunteer Alliance',
-    title: 'STEM Tutor',
-    skills: ['Mathematics', 'Python Basics', 'Curriculum Design'],
-  },
-];
-
 export const INITIAL_SHIFTS: VolunteerShift[] = [
   {
     id: 'shift-101',

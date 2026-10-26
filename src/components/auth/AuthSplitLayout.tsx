@@ -1,7 +1,8 @@
 "use client";
 
+import { BrandLogo } from "@/components/brand/BrandLogo";
 import { FadeIn } from "@/components/motion/ui";
-import { CalendarCheck, Clock, HeartHandshake, Users } from "lucide-react";
+import { CalendarCheck, Clock, Users } from "lucide-react";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
@@ -25,9 +26,7 @@ export function AuthSplitLayout({ title, subtitle, children }: AuthSplitLayoutPr
         <div className="pointer-events-none absolute -bottom-32 -left-16 h-[28rem] w-[28rem] rounded-full bg-white/5" />
 
         <Link href="/" className="relative flex items-center gap-3 transition-opacity hover:opacity-90">
-          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/15 backdrop-blur-md">
-            <HeartHandshake className="h-5 w-5" />
-          </span>
+          <BrandLogo size={40} className="bg-white" priority />
           <span className="font-editorial text-xl font-black tracking-tight">
             CommonGround
           </span>
@@ -61,9 +60,7 @@ export function AuthSplitLayout({ title, subtitle, children }: AuthSplitLayoutPr
       <main className="flex w-full flex-col items-center justify-center px-6 py-12 lg:w-1/2">
         <FadeIn className="w-full max-w-sm" y={12}>
           <Link href="/" className="mb-10 flex items-center gap-2 transition-opacity hover:opacity-90 lg:hidden">
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-600 text-white">
-              <HeartHandshake className="h-5 w-5" />
-            </span>
+            <BrandLogo size={36} priority />
             <span className="font-editorial text-lg font-black tracking-tight text-stone-900">
               CommonGround
             </span>
