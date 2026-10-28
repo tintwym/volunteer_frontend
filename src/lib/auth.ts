@@ -43,44 +43,6 @@ export const LANDING_LOGGED_IN_KEY = "cg_is_logged_in";
 
 const ROLES: Role[] = ["ORGANIZER", "VOLUNTEER_LEADER", "VOLUNTEER"];
 
-/** Password shared by backend-seeded role accounts (`SEED_DEMO=true` / `local` profile). */
-export const SEED_ACCOUNT_PASSWORD = "Password123!";
-
-/** One seeded account per role — sign in with email + password (no one-click login). */
-export const SEED_ACCOUNTS: ReadonlyArray<{
-  role: Role;
-  label: string;
-  fullName: string;
-  email: string;
-  organizationName: string;
-  phone: string;
-}> = [
-  {
-    role: "ORGANIZER",
-    label: "Organizer",
-    fullName: "Marcus Vance",
-    email: "marcus@greenroots.org",
-    organizationName: "Green Roots Collective",
-    phone: "+1 206 555 0101",
-  },
-  {
-    role: "VOLUNTEER_LEADER",
-    label: "Leader",
-    fullName: "Jordan Lee",
-    email: "jordan.lee@commonground.org",
-    organizationName: "Green Roots Collective",
-    phone: "+1 206 555 0102",
-  },
-  {
-    role: "VOLUNTEER",
-    label: "Volunteer",
-    fullName: "Alex Rivera",
-    email: "alex.rivera@commonground.org",
-    organizationName: "Green Roots Collective",
-    phone: "+1 206 555 0103",
-  },
-];
-
 export function getApiUrl() {
   return getApiBase();
 }

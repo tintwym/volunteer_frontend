@@ -10,13 +10,7 @@ import {
   TextField,
 } from "@/components/auth/AuthFields";
 import { AnimatePresence } from "@/components/motion/ui";
-import {
-  login,
-  dashboardPathForRole,
-  isRole,
-  SEED_ACCOUNTS,
-  SEED_ACCOUNT_PASSWORD,
-} from "@/lib/auth";
+import { login, dashboardPathForRole, isRole } from "@/lib/auth";
 import { validateLogin } from "@/lib/validation";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -144,25 +138,6 @@ export function LoginForm() {
           busyLabel="Signing in…"
         />
       </form>
-
-      <div className="rounded-lg border border-stone-200 bg-stone-50 p-3">
-        <p className="mb-1 text-xs font-medium text-stone-500">
-          Seeded role accounts (sign in with email + password)
-        </p>
-        <p className="mb-2 text-[11px] text-stone-400">
-          Password for all: <span className="font-mono text-stone-600">{SEED_ACCOUNT_PASSWORD}</span>
-        </p>
-        <ul className="space-y-1.5 text-xs text-stone-700">
-          {SEED_ACCOUNTS.map(({ role, label, email: seedEmail, fullName }) => (
-            <li key={role}>
-              <span className="font-semibold">{label}</span>
-              <span className="block truncate text-[11px] text-stone-500">
-                {fullName} · {seedEmail}
-              </span>
-            </li>
-          ))}
-        </ul>
-      </div>
 
       <p className="text-center text-sm text-stone-600">
         New organization?{" "}
