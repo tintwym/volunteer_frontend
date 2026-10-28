@@ -666,7 +666,7 @@ export default function App() {
 
   return (
     <motion.div
-      className="cg-role-portal flex h-screen overflow-hidden bg-slate-50 font-sans-body text-slate-900 dark:bg-slate-950 dark:text-slate-100"
+      className="cg-role-portal flex h-screen overflow-hidden bg-cg-canvas font-sans-body text-cg-text dark:bg-cg-canvas dark:text-cg-text"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.35 }}
@@ -693,7 +693,7 @@ export default function App() {
       />
 
       {/* Main Content Area */}
-      <div className="flex h-screen min-w-0 flex-1 flex-col overflow-hidden bg-slate-50 dark:bg-slate-950">
+      <div className="flex h-screen min-w-0 flex-1 flex-col overflow-hidden bg-cg-canvas dark:bg-cg-canvas">
         {/* Top Navbar */}
         <Navbar
           currentUser={currentUser}
@@ -705,7 +705,7 @@ export default function App() {
         />
 
         {/* View Switcher: All 15 Organiser Modules */}
-        <main className="min-h-0 flex-1 overflow-y-auto bg-slate-50/80 p-4 sm:p-6 dark:bg-slate-950">
+        <main className="min-h-0 flex-1 overflow-y-auto bg-cg-canvas/80 p-4 sm:p-6 dark:bg-cg-canvas">
           <AnimatedPage id={activeTab}>
           {/* 1.1 Dashboard */}
           {activeTab === 'overview' && (

@@ -728,7 +728,7 @@ export default function App() {
 
   return (
     <motion.div
-      className="cg-role-portal min-h-screen bg-slate-100/60 text-slate-900 dark:bg-slate-950 dark:text-slate-100 flex flex-col font-sans antialiased selection:bg-emerald-500 selection:text-white"
+      className="cg-role-portal min-h-screen bg-cg-canvas text-cg-text dark:bg-cg-canvas dark:text-cg-text flex flex-col font-sans antialiased selection:bg-emerald-500 selection:text-white"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.35 }}

@@ -442,7 +442,7 @@ export default function App() {
 
   return (
     <motion.div
-      className="cg-role-portal flex h-svh min-h-0 flex-col overflow-hidden bg-slate-100 font-sans text-slate-800 antialiased selection:bg-emerald-500 selection:text-white dark:bg-slate-950 dark:text-slate-100"
+      className="cg-role-portal flex h-svh min-h-0 flex-col overflow-hidden bg-cg-canvas font-sans text-cg-text antialiased selection:bg-emerald-500 selection:text-white dark:bg-cg-canvas dark:text-cg-text"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.35 }}
@@ -476,7 +476,7 @@ export default function App() {
         />
 
         {/* Content View Container — full width of the remaining viewport */}
-        <main className="min-h-0 flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 bg-slate-50/80 dark:bg-slate-950">
+        <main className="min-h-0 flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 bg-cg-canvas/80 dark:bg-cg-canvas">
           <div className="w-full">
             <AnimatedPage id={currentTab}>
             {/* 1. Leader Dashboard (Section 2.1) */}

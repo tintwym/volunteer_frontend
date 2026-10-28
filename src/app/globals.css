@@ -7,10 +7,38 @@
     --font-sans: var(--font-plus-jakarta), "Plus Jakarta Sans", -apple-system,
       BlinkMacSystemFont, "Segoe UI", sans-serif;
     --font-serif: var(--font-lora), Lora, Georgia, serif;
+    /* CommonGround product tokens — sync with brand/colors.json */
+    --cg-primary: #059669;
+    --cg-primary-strong: #047857;
+    --cg-primary-soft: #10b981;
+    --cg-primary-container: #d1fae5;
+    --cg-on-primary-container: #064e3b;
+    --cg-canvas: #f4f7f5;
+    --cg-surface: #ffffff;
+    --cg-surface-muted: #ecf3ef;
+    --cg-surface-variant: #e4ede8;
+    --cg-border: #d3e0d9;
+    --cg-hairline: #c5d4cb;
+    --cg-text-primary: #0c1a14;
+    --cg-text-secondary: #5b6b63;
+    --cg-text-tertiary: #84948b;
     color-scheme: light;
   }
 
   .dark {
+    --cg-primary: #34d399;
+    --cg-primary-strong: #6ee7b7;
+    --cg-primary-container: #065f46;
+    --cg-on-primary-container: #d1fae5;
+    --cg-canvas: #0b1411;
+    --cg-surface: #15201c;
+    --cg-surface-muted: #1f2e28;
+    --cg-surface-variant: #1f2e28;
+    --cg-border: #2a3b34;
+    --cg-hairline: #2a3b34;
+    --cg-text-primary: #f8fafc;
+    --cg-text-secondary: #cbd5e1;
+    --cg-text-tertiary: #94a3b8;
     color-scheme: dark;
   }
 
@@ -56,6 +84,13 @@
   --font-editorial: var(--font-lora), Lora, Georgia, serif;
   /* Between stone-800 (#292524) and stone-900 (#1c1917) — used across landing dark UI */
   --color-stone-850: #231f1c;
+  /* Product brand aliases (logged-in portals + match native apps) */
+  --color-cg-primary: var(--cg-primary);
+  --color-cg-primary-strong: var(--cg-primary-strong);
+  --color-cg-canvas: var(--cg-canvas);
+  --color-cg-surface: var(--cg-surface);
+  --color-cg-border: var(--cg-border);
+  --color-cg-text: var(--cg-text-primary);
 }
 
 .font-editorial {
@@ -98,23 +133,58 @@
 }
 
 /*
- * Role portals (volunteer / leader / organiser) ship many light-only utility
- * classes. Remap surfaces + tinted chips so dark mode stays readable.
- * Without tint remaps, text-slate-* becomes light while bg-*-50 stays pale.
+ * Role portals (volunteer / leader / organiser) — mint paper + emerald brand
+ * (matches Android/iOS). Landing keeps stone and is outside this class.
+ * Slate utility classes are remapped so existing markup picks up mint neutrals.
  */
 .cg-role-portal {
-  color: #0f172a; /* slate-900 */
-  background-color: #f1f5f9; /* slate-100 */
+  color: var(--cg-text-primary);
+  background-color: var(--cg-canvas);
 }
 
-.dark .cg-role-portal {
-  color: #f1f5f9; /* slate-100 */
-  background-color: #020617; /* slate-950 */
+/* Light: cool slate utilities → mint paper / forest text */
+.cg-role-portal :where(
+  .bg-slate-50,
+  .bg-slate-50\/80,
+  .bg-slate-100,
+  .bg-slate-100\/60,
+  .bg-slate-100\/80
+) {
+  background-color: var(--cg-canvas);
 }
 
-/* Neutrals */
+.cg-role-portal :where(.bg-slate-50\/70, .bg-slate-50\/60, .bg-slate-50\/50, .bg-slate-50\/40) {
+  background-color: color-mix(in srgb, var(--cg-canvas) 85%, white);
+}
+
+.cg-role-portal :where(.text-slate-900, .text-slate-800) {
+  color: var(--cg-text-primary);
+}
+
+.cg-role-portal :where(.text-slate-700, .text-slate-600) {
+  color: var(--cg-text-secondary);
+}
+
+.cg-role-portal :where(.text-slate-500, .text-slate-400) {
+  color: var(--cg-text-tertiary);
+}
+
+.cg-role-portal :where(.border-slate-100, .border-slate-200, .border-slate-200\/60, .border-slate-300) {
+  border-color: var(--cg-border);
+}
+
+.cg-role-portal :where(
+  .hover\:bg-slate-50:hover,
+  .hover\:bg-slate-50\/70:hover,
+  .hover\:bg-slate-100:hover,
+  .hover\:bg-slate-100\/80:hover
+) {
+  background-color: var(--cg-surface-muted);
+}
+
+/* Dark: forest surfaces (not cool slate-950) */
 .dark .cg-role-portal :where(.bg-white, .bg-white\/95, .bg-white\/90, .bg-white\/80) {
-  background-color: #0f172a; /* slate-900 */
+  background-color: var(--cg-surface);
 }
 
 .dark .cg-role-portal :where(
@@ -126,13 +196,14 @@
   .bg-slate-50\/40,
   .bg-slate-100,
   .bg-slate-100\/60,
-  .bg-slate-100\/30
+  .bg-slate-100\/30,
+  .bg-slate-950
 ) {
-  background-color: #1e293b; /* slate-800 */
+  background-color: var(--cg-surface-muted);
 }
 
-.dark .cg-role-portal :where(.bg-slate-200, .bg-slate-200\/70, .bg-slate-200\/60) {
-  background-color: #334155; /* slate-700 */
+.dark .cg-role-portal :where(.bg-slate-200, .bg-slate-200\/70, .bg-slate-200\/60, .bg-slate-800, .bg-slate-800\/80) {
+  background-color: var(--cg-surface-variant);
 }
 
 /* Pastel tint surfaces → deep tinted panels */
@@ -221,21 +292,21 @@
 
 /* Cream certificate canvases (hex backgrounds) */
 .dark .cg-role-portal :where(.bg-\[\#faf8f5\], .bg-\[\#FAF9F5\], .bg-\[\#FAF8F5\]) {
-  background-color: #0f172a !important;
-  color: #f1f5f9;
+  background-color: var(--cg-surface) !important;
+  color: var(--cg-text-primary);
 }
 
 /* Text */
-.dark .cg-role-portal :where(.text-slate-900, .text-slate-800) {
-  color: #f1f5f9;
+.dark .cg-role-portal :where(.text-slate-900, .text-slate-800, .text-slate-100) {
+  color: var(--cg-text-primary);
 }
 
 .dark .cg-role-portal :where(.text-slate-700, .text-slate-600) {
-  color: #cbd5e1;
+  color: var(--cg-text-secondary);
 }
 
 .dark .cg-role-portal :where(.text-slate-500, .text-slate-400) {
-  color: #94a3b8;
+  color: var(--cg-text-tertiary);
 }
 
 .dark .cg-role-portal :where(.text-emerald-950, .text-emerald-900, .text-emerald-800) {
@@ -308,8 +379,8 @@
 }
 
 /* Borders */
-.dark .cg-role-portal :where(.border-slate-100, .border-slate-200, .border-slate-200\/60, .border-slate-300) {
-  border-color: #334155;
+.dark .cg-role-portal :where(.border-slate-100, .border-slate-200, .border-slate-200\/60, .border-slate-300, .border-slate-600, .border-slate-700) {
+  border-color: var(--cg-border);
 }
 
 .dark .cg-role-portal :where(
@@ -355,7 +426,7 @@
 }
 
 .dark .cg-role-portal :where(.divide-slate-100, .divide-slate-200) > :not([hidden]) ~ :not([hidden]) {
-  border-color: #334155;
+  border-color: var(--cg-border);
 }
 
 /* Hovers */
@@ -364,9 +435,11 @@
   .hover\:bg-slate-50\/70:hover,
   .hover\:bg-slate-100:hover,
   .hover\:bg-slate-100\/80:hover,
-  .hover\:bg-slate-200:hover
+  .hover\:bg-slate-200:hover,
+  .hover\:bg-slate-800:hover,
+  .hover\:bg-slate-800\/80:hover
 ) {
-  background-color: #334155;
+  background-color: var(--cg-surface-variant);
 }
 
 .dark .cg-role-portal :where(
@@ -391,19 +464,19 @@
 .dark .cg-role-portal input:where(.bg-slate-50, .bg-white),
 .dark .cg-role-portal textarea:where(.bg-slate-50, .bg-white),
 .dark .cg-role-portal select:where(.bg-slate-50, .bg-white) {
-  background-color: #1e293b;
-  color: #f1f5f9;
-  border-color: #475569;
+  background-color: var(--cg-surface-muted);
+  color: var(--cg-text-primary);
+  border-color: var(--cg-border);
 }
 
 .dark .cg-role-portal input::placeholder,
 .dark .cg-role-portal textarea::placeholder {
-  color: #64748b;
+  color: var(--cg-text-tertiary);
 }
 
-/* Filter / segmented control: selected white pill on slate track → clearer contrast */
+/* Filter / segmented control: selected white pill on mint track → clearer contrast */
 .dark .cg-role-portal :where(.bg-slate-100, .bg-slate-100\/60) :where(.bg-white) {
-  background-color: #334155; /* slate-700 — lifts selected chip above track */
+  background-color: var(--cg-surface-variant);
 }
 
 ::-webkit-scrollbar {
