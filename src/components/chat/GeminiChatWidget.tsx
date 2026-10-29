@@ -5,81 +5,106 @@ import { AnimatePresence, Spinner, motion } from "@/components/motion/ui";
 import { api, errorMessage } from "@/lib/api";
 import { getStoredToken, isDemoToken } from "@/lib/auth";
 import { MessageCircle, Send, Sparkles, X } from "lucide-react";
-import { useEffect, useId, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
 
 type ChatTurn = { id: string; role: "user" | "assistant"; content: string };
 
 const WELCOME =
   "Hi — I’m your CommonGround assistant. Ask about your hours, upcoming events, tasks, or how to use the app.";
 
+const SUGGESTIONS = [
+  "How many hours do I have?",
+  "What’s my next event?",
+  "Any open tasks?",
+] as const;
+
 export function GeminiChatWidget() {
   const { user, loading, isDemo } = useAuth();
   const reactId = useId();
+  const welcomeId = `${reactId}-welcome`;
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [messages, setMessages] = useState<ChatTurn[]>(() => [
-    { id: `${reactId}-welcome`, role: "assistant", content: WELCOME },
+    { id: welcomeId, role: "assistant", content: WELCOME },
   ]);
   const bottomRef = useRef<HTMLDivElement>(null);
-  const listRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
 
   const demoSession = isDemo || isDemoToken(getStoredToken());
   const visible = !loading && Boolean(user) && !demoSession;
+  const showSuggestions =
+    messages.length <= 1 && !sending && messages.every((m) => m.id === welcomeId || m.role === "assistant");
 
   useEffect(() => {
     if (!open) return;
     bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
   }, [messages, open, sending]);
 
-  if (!visible) return null;
+  useEffect(() => {
+    if (!open) return;
+    const t = window.setTimeout(() => inputRef.current?.focus(), 180);
+    return () => window.clearTimeout(t);
+  }, [open]);
 
-  async function onSend() {
-    const text = input.trim();
-    if (!text || sending) return;
-    setInput("");
-    setError(null);
-    const userTurn: ChatTurn = {
-      id: `${reactId}-${Date.now()}-u`,
-      role: "user",
-      content: text,
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
     };
-    const nextHistory = [...messages, userTurn];
-    setMessages(nextHistory);
-    setSending(true);
-    try {
-      // Skip the static welcome bubble; omit the message we just added (sent as `message`).
-      const history = nextHistory
-        .filter((m) => m.id !== `${reactId}-welcome`)
-        .slice(0, -1)
-        .map((m) => ({ role: m.role, content: m.content }));
-      const { reply } = await api.chat.send({ message: text, history });
-      setMessages((prev) => [
-        ...prev,
-        { id: `${reactId}-${Date.now()}-a`, role: "assistant", content: reply },
-      ]);
-    } catch (err) {
-      setError(errorMessage(err, "Could not reach the assistant."));
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: `${reactId}-${Date.now()}-err`,
-          role: "assistant",
-          content: "Sorry — I couldn’t answer that just now. Please try again in a moment.",
-        },
-      ]);
-    } finally {
-      setSending(false);
-    }
-  }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open]);
+
+  const sendText = useCallback(
+    async (raw: string) => {
+      const text = raw.trim();
+      if (!text || sending) return;
+      setInput("");
+      setError(null);
+      const userTurn: ChatTurn = {
+        id: `${reactId}-${Date.now()}-u`,
+        role: "user",
+        content: text,
+      };
+      const nextHistory = [...messages, userTurn];
+      setMessages(nextHistory);
+      setSending(true);
+      try {
+        const history = nextHistory
+          .filter((m) => m.id !== welcomeId)
+          .slice(0, -1)
+          .map((m) => ({ role: m.role, content: m.content }));
+        const { reply } = await api.chat.send({ message: text, history });
+        setMessages((prev) => [
+          ...prev,
+          { id: `${reactId}-${Date.now()}-a`, role: "assistant", content: reply },
+        ]);
+      } catch (err) {
+        setError(errorMessage(err, "Could not reach the assistant."));
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: `${reactId}-${Date.now()}-err`,
+            role: "assistant",
+            content: "Sorry — I couldn’t answer that just now. Please try again in a moment.",
+          },
+        ]);
+      } finally {
+        setSending(false);
+      }
+    },
+    [messages, reactId, sending, welcomeId]
+  );
+
+  if (!visible) return null;
 
   return (
     <div
       className="pointer-events-none fixed z-[75] flex flex-col items-end gap-3"
       style={{
         right: "max(1rem, env(safe-area-inset-right))",
-        // Clear leader/organiser bottom-right toasts (bottom-6) and home indicator.
         bottom: "max(5.5rem, calc(env(safe-area-inset-bottom) + 4.5rem))",
       }}
     >
@@ -91,18 +116,18 @@ export function GeminiChatWidget() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 12, scale: 0.98 }}
             transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-            className="pointer-events-auto flex h-[min(32rem,calc(100dvh-8rem))] w-[min(22rem,calc(100vw-2rem))] flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl shadow-slate-900/15"
+            className="pointer-events-auto flex h-[min(32rem,calc(100dvh-8rem))] w-[min(22rem,calc(100vw-2rem))] flex-col overflow-hidden rounded-2xl border border-[var(--cg-border)] bg-[var(--cg-surface)] shadow-2xl shadow-stone-900/20 dark:shadow-black/50"
             role="dialog"
-            aria-label="AI assistant"
+            aria-label="CommonGround assistant"
             aria-modal="false"
           >
-            <div className="flex items-center justify-between gap-2 border-b border-slate-100 bg-emerald-700 px-4 py-3 text-white">
+            <div className="flex items-center justify-between gap-2 border-b border-emerald-800/20 bg-[var(--cg-primary-strong)] px-4 py-3 text-white">
               <div className="flex min-w-0 items-center gap-2">
                 <Sparkles className="h-4 w-4 shrink-0 opacity-90" aria-hidden />
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-semibold">Assistant</p>
+                  <p className="truncate text-sm font-semibold">CommonGround Assistant</p>
                   <p className="truncate text-[11px] text-emerald-100/90">
-                    Context-aware · powered by Gemini
+                    Hours · events · tasks
                   </p>
                 </div>
               </div>
@@ -116,10 +141,7 @@ export function GeminiChatWidget() {
               </button>
             </div>
 
-            <div
-              ref={listRef}
-              className="flex-1 space-y-3 overflow-y-auto overscroll-contain bg-slate-50 px-3 py-3"
-            >
+            <div className="flex-1 space-y-3 overflow-y-auto overscroll-contain bg-[var(--cg-canvas)] px-3 py-3">
               {messages.map((m) => (
                 <div
                   key={m.id}
@@ -128,18 +150,35 @@ export function GeminiChatWidget() {
                   <div
                     className={`max-w-[85%] whitespace-pre-wrap break-words rounded-2xl px-3 py-2 text-sm leading-relaxed ${
                       m.role === "user"
-                        ? "bg-emerald-600 text-white"
-                        : "border border-slate-200 bg-white text-slate-700"
+                        ? "bg-[var(--cg-primary)] text-white"
+                        : "border border-[var(--cg-border)] bg-[var(--cg-surface)] text-[var(--cg-text-primary)]"
                     }`}
                   >
                     {m.content}
                   </div>
                 </div>
               ))}
+
+              {showSuggestions && (
+                <div className="flex flex-wrap gap-2 pt-1">
+                  {SUGGESTIONS.map((prompt) => (
+                    <button
+                      key={prompt}
+                      type="button"
+                      disabled={sending}
+                      onClick={() => void sendText(prompt)}
+                      className="rounded-full border border-[var(--cg-border)] bg-[var(--cg-surface)] px-3 py-1.5 text-left text-[11px] font-medium text-[var(--cg-text-secondary)] transition hover:border-[var(--cg-primary)] hover:text-[var(--cg-primary-strong)] disabled:opacity-50"
+                    >
+                      {prompt}
+                    </button>
+                  ))}
+                </div>
+              )}
+
               {sending && (
                 <div className="flex justify-start">
-                  <div className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-3 py-2 text-xs text-slate-500">
-                    <Spinner className="h-3.5 w-3.5 text-emerald-600" />
+                  <div className="inline-flex items-center gap-2 rounded-2xl border border-[var(--cg-border)] bg-[var(--cg-surface)] px-3 py-2 text-xs text-[var(--cg-text-secondary)]">
+                    <Spinner className="h-3.5 w-3.5 text-[var(--cg-primary)]" />
                     Thinking…
                   </div>
                 </div>
@@ -148,22 +187,23 @@ export function GeminiChatWidget() {
             </div>
 
             {error && (
-              <p className="border-t border-amber-100 bg-amber-50 px-3 py-1.5 text-xs text-amber-800">
+              <p className="border-t border-amber-200/80 bg-amber-50 px-3 py-1.5 text-xs text-amber-900 dark:border-amber-900/40 dark:bg-amber-950/50 dark:text-amber-100">
                 {error}
               </p>
             )}
 
             <form
-              className="flex items-end gap-2 border-t border-slate-100 bg-white p-3"
+              className="flex items-end gap-2 border-t border-[var(--cg-border)] bg-[var(--cg-surface)] p-3"
               onSubmit={(e) => {
                 e.preventDefault();
-                void onSend();
+                void sendText(input);
               }}
             >
               <label className="sr-only" htmlFor="cg-assistant-input">
                 Message
               </label>
               <textarea
+                ref={inputRef}
                 id="cg-assistant-input"
                 rows={2}
                 value={input}
@@ -171,17 +211,17 @@ export function GeminiChatWidget() {
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && !e.shiftKey) {
                     e.preventDefault();
-                    void onSend();
+                    void sendText(input);
                   }
                 }}
                 placeholder="Ask about your hours, events…"
-                className="min-h-[2.75rem] max-h-28 flex-1 resize-none rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-800 outline-none transition focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-500/20"
+                className="min-h-[2.75rem] max-h-28 flex-1 resize-none rounded-xl border border-[var(--cg-border)] bg-[var(--cg-surface-muted)] px-3 py-2 text-sm text-[var(--cg-text-primary)] outline-none transition placeholder:text-[var(--cg-text-tertiary)] focus:border-[var(--cg-primary)] focus:bg-[var(--cg-surface)] focus:ring-2 focus:ring-[var(--cg-primary)]/25"
                 disabled={sending}
               />
               <button
                 type="submit"
                 disabled={sending || !input.trim()}
-                className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-600 text-white transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-50"
+                className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--cg-primary)] text-white transition hover:bg-[var(--cg-primary-strong)] disabled:cursor-not-allowed disabled:opacity-50"
                 aria-label="Send message"
               >
                 {sending ? <Spinner className="h-4 w-4" /> : <Send className="h-4 w-4" />}
@@ -193,7 +233,7 @@ export function GeminiChatWidget() {
 
       <motion.button
         type="button"
-        className="pointer-events-auto inline-flex h-14 w-14 items-center justify-center rounded-full bg-emerald-600 text-white shadow-lg shadow-emerald-900/25 transition hover:bg-emerald-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
+        className="pointer-events-auto inline-flex h-14 w-14 items-center justify-center rounded-full bg-[var(--cg-primary)] text-white shadow-lg shadow-emerald-900/25 transition hover:bg-[var(--cg-primary-strong)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--cg-primary)]"
         onClick={() => setOpen((v) => !v)}
         aria-label={open ? "Close assistant" : "Open assistant"}
         aria-expanded={open}
