@@ -199,7 +199,7 @@ function looksLikeFrontendUrl(url: string): boolean {
 async function fetchWithColdStartRetry(
   url: string,
   init: RequestInit,
-  attempts = 3
+  attempts = 4
 ): Promise<Response> {
   let lastError: unknown;
   for (let i = 0; i < attempts; i++) {
@@ -207,13 +207,26 @@ async function fetchWithColdStartRetry(
       return await fetch(url, init);
     } catch (err) {
       lastError = err;
-      // Render free tier can take 30–60s to wake; retry a couple of times.
+      // Render free tier cold starts often take ~45–60s; retry with backoff.
       if (i < attempts - 1) {
-        await new Promise((r) => setTimeout(r, 2500 * (i + 1)));
+        await new Promise((r) => setTimeout(r, 4000 * (i + 1)));
       }
     }
   }
   throw lastError;
+}
+
+/**
+ * Fire-and-forget ping so Render can wake while the user is still on the landing/login page.
+ * Safe to call repeatedly; failures are ignored.
+ */
+export function warmupApi(): void {
+  if (typeof window === "undefined") return;
+  if (looksLikeFrontendUrl(CONFIGURED_API_URL)) return;
+  const url = `${getApiBase()}/actuator/health/liveness`;
+  void fetch(url, { method: "GET", cache: "no-store", keepalive: true }).catch(() => {
+    // Ignore — cold-start retries on real API calls still apply.
+  });
 }
 
 export async function apiFetch<T>(

@@ -12,6 +12,7 @@ import {
   getStoredUser,
   normalizeUser,
   isDemoToken,
+  warmupApi,
 } from "@/lib/auth";
 import {
   createContext,
@@ -71,6 +72,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } finally {
       setLoading(false);
     }
+  }, []);
+
+  useEffect(() => {
+    // Start waking Render as soon as the shell mounts (landing/login), before login/API calls.
+    warmupApi();
   }, []);
 
   useEffect(() => {
