@@ -1,8 +1,10 @@
 'use client';
 // @ts-nocheck
 
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import confetti from 'canvas-confetti';
+import { useAuth } from '@/components/auth/AuthProvider';
+import { api, errorMessage } from '@/lib/api';
 import {
   CURRENT_ORGANIZER,
   CURRENT_VOLUNTEER,
@@ -16,6 +18,12 @@ import {
   APPRECIATION_LETTER,
   REPORT_METRICS,
 } from './data/mockData';
+import {
+  loadOrganiserData,
+  organiserEventToInput,
+  toApiTaskPriority,
+  toApiTaskStatus,
+} from './live';
 import {
   User,
   UserRole,
@@ -87,7 +95,17 @@ import {
   OrganiserSystemSettings,
 } from './types';
 
-function safeParse<T>(key: string, fallback: T): T {
+const API_BACKED = new Set([
+  'vmp_shifts',
+  'vmp_org_events',
+  'vmp_org_roster',
+  'vmp_org_leaders',
+  'vmp_org_tasks',
+  'vmp_org_attendance',
+]);
+
+function safeParse<T>(key: string, fallback: T, live = false): T {
+  if (live && API_BACKED.has(key)) return fallback;
   try {
     const item = localStorage.getItem(key);
     if (!item) return fallback;
@@ -101,16 +119,21 @@ function safeParse<T>(key: string, fallback: T): T {
 }
 
 export default function App() {
+  const { user, isDemo } = useAuth();
+  const live = !!user && !isDemo;
+
   const [activeTab, setActiveTab] = useState<ActiveTab>('overview');
   const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [liveLoading, setLiveLoading] = useState(live);
+  const [liveError, setLiveError] = useState<string | null>(null);
 
   // User State - Organiser Lead
   const [currentUser, setCurrentUser] = useState<User>(CURRENT_ORGANIZER);
 
   // Core Data States
   const [shifts, setShifts] = useState<VolunteerShift[]>(() =>
-    safeParse('vmp_shifts', INITIAL_SHIFTS)
+    safeParse('vmp_shifts', live ? [] : INITIAL_SHIFTS, live)
   );
 
   const [channels, setChannels] = useState<Channel[]>(() =>
@@ -146,31 +169,31 @@ export default function App() {
 
   // Organiser Modules State (1.1 - 1.15)
   const [organiserEvents, setOrganiserEvents] = useState<OrganiserEvent[]>(() =>
-    safeParse('vmp_org_events', MOCK_ORGANISER_EVENTS)
+    safeParse('vmp_org_events', live ? [] : MOCK_ORGANISER_EVENTS, live)
   );
 
   const [volunteerRoster, setVolunteerRoster] = useState<DetailedVolunteerProfile[]>(() =>
-    safeParse('vmp_org_roster', MOCK_VOLUNTEER_ROSTER)
+    safeParse('vmp_org_roster', live ? [] : MOCK_VOLUNTEER_ROSTER, live)
   );
 
   const [volunteerLeaders, setVolunteerLeaders] = useState<VolunteerLeaderProfile[]>(() =>
-    safeParse('vmp_org_leaders', MOCK_VOLUNTEER_LEADERS)
+    safeParse('vmp_org_leaders', live ? [] : MOCK_VOLUNTEER_LEADERS, live)
   );
 
   const [operationalTeams, setOperationalTeams] = useState<OperationalTeam[]>(() =>
-    safeParse('vmp_org_teams', MOCK_OPERATIONAL_TEAMS)
+    safeParse('vmp_org_teams', MOCK_OPERATIONAL_TEAMS, live)
   );
 
   const [operationalTasks, setOperationalTasks] = useState<OperationalTask[]>(() =>
-    safeParse('vmp_org_tasks', MOCK_OPERATIONAL_TASKS)
+    safeParse('vmp_org_tasks', live ? [] : MOCK_OPERATIONAL_TASKS, live)
   );
 
   const [operationalShifts, setOperationalShifts] = useState<OperationalShiftSchedule[]>(() =>
-    safeParse('vmp_org_shifts', MOCK_OPERATIONAL_SHIFTS)
+    safeParse('vmp_org_shifts', MOCK_OPERATIONAL_SHIFTS, live)
   );
 
   const [attendanceRecords, setAttendanceRecords] = useState<AttendanceRecordItem[]>(() =>
-    safeParse('vmp_org_attendance', MOCK_ATTENDANCE_RECORDS)
+    safeParse('vmp_org_attendance', live ? [] : MOCK_ATTENDANCE_RECORDS, live)
   );
 
   const [broadcastAnnouncements, setBroadcastAnnouncements] = useState<BroadcastAnnouncement[]>(() =>
@@ -197,27 +220,56 @@ export default function App() {
     safeParse('vmp_system_settings', INITIAL_SYSTEM_SETTINGS)
   );
 
-  // Persist Organiser data
+  const persist = (key: string, value: unknown) => {
+    if (live && API_BACKED.has(key)) return;
+    localStorage.setItem(key, JSON.stringify(value));
+  };
+
+  const reloadLive = useCallback(async () => {
+    if (!live || !user) return;
+    try {
+      const snap = await loadOrganiserData(user, REPORT_METRICS, CURRENT_ORGANIZER);
+      setCurrentUser(snap.currentUser);
+      setOrganiserEvents(snap.organiserEvents);
+      setShifts(snap.shifts);
+      setVolunteerRoster(snap.volunteerRoster);
+      setVolunteerLeaders(snap.volunteerLeaders);
+      setOperationalTasks(snap.operationalTasks);
+      setAttendanceRecords(snap.attendanceRecords);
+      setMetrics(snap.metrics);
+      setLiveError(null);
+    } catch (err) {
+      setLiveError(errorMessage(err, 'Could not load organiser data.'));
+    } finally {
+      setLiveLoading(false);
+    }
+  }, [live, user]);
+
   useEffect(() => {
-    localStorage.setItem('vmp_org_events', JSON.stringify(organiserEvents));
+    void reloadLive();
+  }, [reloadLive]);
+
+  // Persist Organiser data (skip API-backed keys when live)
+  useEffect(() => {
+    persist('vmp_org_events', organiserEvents);
   }, [organiserEvents]);
   useEffect(() => {
-    localStorage.setItem('vmp_org_roster', JSON.stringify(volunteerRoster));
+    persist('vmp_org_roster', volunteerRoster);
   }, [volunteerRoster]);
   useEffect(() => {
-    localStorage.setItem('vmp_org_leaders', JSON.stringify(volunteerLeaders));
+    persist('vmp_org_leaders', volunteerLeaders);
   }, [volunteerLeaders]);
   useEffect(() => {
-    localStorage.setItem('vmp_org_teams', JSON.stringify(operationalTeams));
+    persist('vmp_org_teams', operationalTeams);
   }, [operationalTeams]);
   useEffect(() => {
-    localStorage.setItem('vmp_org_tasks', JSON.stringify(operationalTasks));
+    persist('vmp_org_tasks', operationalTasks);
   }, [operationalTasks]);
   useEffect(() => {
-    localStorage.setItem('vmp_org_shifts', JSON.stringify(operationalShifts));
+    persist('vmp_org_shifts', operationalShifts);
   }, [operationalShifts]);
   useEffect(() => {
-    localStorage.setItem('vmp_org_attendance', JSON.stringify(attendanceRecords));
+    persist('vmp_org_attendance', attendanceRecords);
   }, [attendanceRecords]);
   useEffect(() => {
     localStorage.setItem('vmp_org_announcements', JSON.stringify(broadcastAnnouncements));
@@ -245,7 +297,7 @@ export default function App() {
 
   // Persist to localStorage
   useEffect(() => {
-    localStorage.setItem('vmp_shifts', JSON.stringify(shifts));
+    persist('vmp_shifts', shifts);
   }, [shifts]);
 
   useEffect(() => {
@@ -273,6 +325,11 @@ export default function App() {
   };
 
   const handleResetAllData = () => {
+    if (live) {
+      void reloadLive();
+      showToast('Reloaded live organiser data from the server.');
+      return;
+    }
     localStorage.clear();
     setShifts(INITIAL_SHIFTS);
     setMessages(INITIAL_MESSAGES);
@@ -664,6 +721,14 @@ export default function App() {
   const pendingApprovalsCount = (approvalRequests || []).filter((r) => r.status === 'Pending').length;
   const openIncidentsCount = (incidentReports || []).filter((i) => i.status !== 'Resolved' && i.status !== 'Closed').length;
 
+  if (liveLoading) {
+    return (
+      <div className="cg-role-portal flex h-screen items-center justify-center bg-cg-canvas text-sm text-slate-600">
+        Loading organiser workspace…
+      </div>
+    );
+  }
+
   return (
     <motion.div
       className="cg-role-portal flex h-screen overflow-hidden bg-cg-canvas font-sans-body text-cg-text dark:bg-cg-canvas dark:text-cg-text"
@@ -671,6 +736,14 @@ export default function App() {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.35 }}
     >
+      {liveError ? (
+        <div className="absolute top-0 inset-x-0 z-50 border-b border-amber-200 bg-amber-50 px-4 py-2 text-xs text-amber-900 flex items-center justify-between gap-3">
+          <span>{liveError}</span>
+          <button type="button" className="font-semibold underline" onClick={() => void reloadLive()}>
+            Retry
+          </button>
+        </div>
+      ) : null}
       {/* Toast Notification */}
       {toastMessage && (
         <div className="fixed bottom-6 right-6 bg-slate-900 text-white px-4 py-3 rounded-2xl shadow-xl flex items-center gap-3 z-50 animate-fade-in border border-slate-700">
@@ -731,17 +804,48 @@ export default function App() {
           {activeTab === 'events' && (
             <EventManagementView
               events={organiserEvents}
-              onCreateEvent={(newEvent) => {
+              onCreateEvent={async (newEvent) => {
+                if (live) {
+                  try {
+                    await api.events.create(organiserEventToInput(newEvent));
+                    await reloadLive();
+                    showToast(`Event "${newEvent.name}" created successfully!`);
+                  } catch (err) {
+                    showToast(errorMessage(err));
+                  }
+                  return;
+                }
                 setOrganiserEvents((prev) => [newEvent, ...prev]);
                 showToast(`Event "${newEvent.name}" created successfully!`);
               }}
-              onUpdateEvent={(id, patch) => {
+              onUpdateEvent={async (id, patch) => {
+                if (live) {
+                  try {
+                    const current = organiserEvents.find((e) => e.id === id);
+                    await api.events.update(id, organiserEventToInput({ ...current, ...patch }));
+                    await reloadLive();
+                    showToast('Event updated.');
+                  } catch (err) {
+                    showToast(errorMessage(err));
+                  }
+                  return;
+                }
                 setOrganiserEvents((prev) =>
                   prev.map((e) => (e.id === id ? { ...e, ...patch } : e))
                 );
                 showToast('Event updated.');
               }}
-              onDeleteEvent={(id) => {
+              onDeleteEvent={async (id) => {
+                if (live) {
+                  try {
+                    await api.events.remove(id);
+                    await reloadLive();
+                    showToast('Event archived/deleted.');
+                  } catch (err) {
+                    showToast(errorMessage(err));
+                  }
+                  return;
+                }
                 setOrganiserEvents((prev) => prev.filter((e) => e.id !== id));
                 showToast('Event archived/deleted.');
               }}
@@ -753,7 +857,17 @@ export default function App() {
             <VolunteerManagementView
               volunteers={volunteerRoster}
               teams={operationalTeams}
-              onUpdateStatus={(volId, newStatus) => {
+              onUpdateStatus={async (volId, newStatus) => {
+                if (live) {
+                  try {
+                    await api.members.update(volId, { active: newStatus === 'Active' || newStatus === 'Approved' });
+                    await reloadLive();
+                    showToast(`Volunteer status changed to ${newStatus}.`);
+                  } catch (err) {
+                    showToast(errorMessage(err));
+                  }
+                  return;
+                }
                 setVolunteerRoster((prev) =>
                   prev.map((v) => (v.id === volId ? { ...v, status: newStatus } : v))
                 );
@@ -777,13 +891,33 @@ export default function App() {
                 setVolunteerLeaders((prev) => [leader, ...prev]);
                 showToast(`Appointed ${leader.name} as Volunteer Leader!`);
               }}
-              onUpdateLeaderStatus={(id, status) => {
+              onUpdateLeaderStatus={async (id, status) => {
+                if (live) {
+                  try {
+                    await api.members.update(id, { active: status === 'Active' });
+                    await reloadLive();
+                    showToast(`Leader status updated to ${status}.`);
+                  } catch (err) {
+                    showToast(errorMessage(err));
+                  }
+                  return;
+                }
                 setVolunteerLeaders((prev) =>
                   prev.map((l) => (l.id === id ? { ...l, status } : l))
                 );
                 showToast(`Leader status updated to ${status}.`);
               }}
-              onRemoveLeader={(id) => {
+              onRemoveLeader={async (id) => {
+                if (live) {
+                  try {
+                    await api.members.update(id, { role: 'VOLUNTEER', active: true });
+                    await reloadLive();
+                    showToast('Leader role revoked.');
+                  } catch (err) {
+                    showToast(errorMessage(err));
+                  }
+                  return;
+                }
                 setVolunteerLeaders((prev) => prev.filter((l) => l.id !== id));
                 showToast('Leader role revoked.');
               }}
@@ -819,17 +953,54 @@ export default function App() {
               tasks={operationalTasks}
               teams={operationalTeams}
               events={organiserEvents}
-              onCreateTask={(newTask) => {
+              onCreateTask={async (newTask) => {
+                if (live) {
+                  try {
+                    await api.tasks.create({
+                      title: newTask.name,
+                      description: newTask.description || null,
+                      priority: toApiTaskPriority(newTask.priority),
+                      assigneeId: newTask.assignedLeaderId || null,
+                      dueDate: newTask.dueDate || null,
+                      eventId: null,
+                    });
+                    await reloadLive();
+                    showToast(`Task "${newTask.name}" added to board.`);
+                  } catch (err) {
+                    showToast(errorMessage(err));
+                  }
+                  return;
+                }
                 setOperationalTasks((prev) => [newTask, ...prev]);
                 showToast(`Task "${newTask.name}" added to board.`);
               }}
-              onUpdateTaskStatus={(id, status) => {
+              onUpdateTaskStatus={async (id, status) => {
+                if (live) {
+                  try {
+                    await api.tasks.setStatus(id, toApiTaskStatus(status));
+                    await reloadLive();
+                    showToast(`Task marked as ${status}.`);
+                  } catch (err) {
+                    showToast(errorMessage(err));
+                  }
+                  return;
+                }
                 setOperationalTasks((prev) =>
                   prev.map((t) => (t.id === id ? { ...t, status } : t))
                 );
                 showToast(`Task marked as ${status}.`);
               }}
-              onDeleteTask={(id) => {
+              onDeleteTask={async (id) => {
+                if (live) {
+                  try {
+                    await api.tasks.remove(id);
+                    await reloadLive();
+                    showToast('Task removed.');
+                  } catch (err) {
+                    showToast(errorMessage(err));
+                  }
+                  return;
+                }
                 setOperationalTasks((prev) => prev.filter((t) => t.id !== id));
                 showToast('Task removed.');
               }}

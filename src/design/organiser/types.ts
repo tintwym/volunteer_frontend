@@ -252,6 +252,9 @@ export interface OrganiserEvent {
   assignedLeaders: string[];
   teams: string[];
   activityHistory: EventActivityLog[];
+  /** Preserved for live API round-trip (not shown on all forms). */
+  remote?: boolean;
+  meetingLink?: string | null;
 }
 
 export type VolunteerDatabaseStatus = 'Active' | 'Pending' | 'Approved' | 'Rejected' | 'Suspended';

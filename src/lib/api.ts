@@ -256,6 +256,13 @@ export const api = {
       get<{ unreadCount: number; items: ApiNotification[] }>(`/api/me/notifications?limit=${limit}`),
     markRead: (id: string) => send<ApiNotification>("POST", `/api/me/notifications/${id}/read`),
     markAllRead: () => send<void>("POST", "/api/me/notifications/read-all"),
+    registerDevice: (platform: "ANDROID" | "IOS", token: string) =>
+      send<{ id: string; platform: string; updatedAt: string }>("POST", "/api/me/devices", {
+        platform,
+        token,
+      }),
+    unregisterDevice: (token: string) =>
+      send<void>("DELETE", `/api/me/devices?token=${encodeURIComponent(token)}`),
   },
   tasks: {
     list: () => get<ApiTask[]>("/api/tasks"),
@@ -316,6 +323,31 @@ export function formatTime(value: string | null | undefined): string {
   const suffix = h >= 12 ? "PM" : "AM";
   const hour = h % 12 === 0 ? 12 : h % 12;
   return `${String(hour).padStart(2, "0")}:${String(m).padStart(2, "0")} ${suffix}`;
+}
+
+/** Keep API/storage times as `HH:mm` (forms + EventInput round-trip). */
+export function toHHmm(value: string | null | undefined, fallback = "09:00"): string {
+  if (!value) return fallback;
+  const ampm = value.trim().match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+  if (ampm) {
+    let h = Number(ampm[1]);
+    const m = ampm[2]!;
+    const suf = ampm[3]!.toUpperCase();
+    if (suf === "PM" && h < 12) h += 12;
+    if (suf === "AM" && h === 12) h = 0;
+    return `${String(h).padStart(2, "0")}:${m}`;
+  }
+  const parts = value.split(":");
+  if (parts.length >= 2) {
+    return `${parts[0]!.padStart(2, "0")}:${parts[1]!.padStart(2, "0")}`;
+  }
+  return fallback;
+}
+
+/** Normalize UI/API times to `HH:mm:ss` for EventInput. */
+export function toApiTime(value: string | null | undefined, fallback = "09:00"): string {
+  const hm = toHHmm(value, fallback);
+  return `${hm}:00`;
 }
 
 /** "2026-10-17" -> "Sat, Oct 17, 2026" (parsed as a local date, not UTC). */

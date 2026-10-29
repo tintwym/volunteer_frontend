@@ -1,7 +1,9 @@
 'use client';
 // @ts-nocheck
 
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useAuth } from '@/components/auth/AuthProvider';
+import { api, errorMessage } from '@/lib/api';
 import {
   INITIAL_SHIFTS,
   INITIAL_CHANNELS,
@@ -42,6 +44,12 @@ import {
   TaskStatus,
   AttendanceMark
 } from './types';
+import {
+  loadLeaderData,
+  toApiTaskPriority,
+  toApiTaskStatus,
+  type AttendanceMeta,
+} from './live';
 
 // Components
 import { Navbar } from './components/Navbar';
@@ -64,13 +72,17 @@ import { CheckCircle2, AlertCircle, X } from 'lucide-react';
 import { AnimatedPage, motion } from '@/components/motion/ui';
 
 export default function App() {
+  const { user, isDemo } = useAuth();
+  const live = !!user && !isDemo;
+
   const [currentTab, setCurrentTab] = useState<string>('dashboard');
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(false);
 
-  // Core State (Leader Domain Scope: 20 assigned volunteers)
-  const [volunteers, setVolunteers] = useState<Volunteer[]>(LEADER_ASSIGNED_VOLUNTEERS);
-  const [attendance, setAttendance] = useState<TodayAttendanceRecord[]>(INITIAL_TODAY_ATTENDANCE);
-  const [tasks, setTasks] = useState<TeamTask[]>(INITIAL_TEAM_TASKS);
+  // Core State — mock defaults; replaced by API when live
+  const [volunteers, setVolunteers] = useState<Volunteer[]>(() => (live ? [] : LEADER_ASSIGNED_VOLUNTEERS));
+  const [attendance, setAttendance] = useState<TodayAttendanceRecord[]>(() => (live ? [] : INITIAL_TODAY_ATTENDANCE));
+  const [attendanceMeta, setAttendanceMeta] = useState<Record<string, AttendanceMeta>>({});
+  const [tasks, setTasks] = useState<TeamTask[]>(() => (live ? [] : INITIAL_TEAM_TASKS));
   const [incidents, setIncidents] = useState<IncidentReport[]>(INITIAL_INCIDENTS);
   const [requests, setRequests] = useState<OperationalRequest[]>(INITIAL_OPERATIONAL_REQUESTS);
   const [trainingModules, setTrainingModules] = useState<TrainingModule[]>(INITIAL_TRAINING_MODULES);
@@ -79,7 +91,7 @@ export default function App() {
   const [announcements, setAnnouncements] = useState<OrganiserAnnouncement[]>(INITIAL_ORGANISER_ANNOUNCEMENTS);
 
   // Platform foundation states
-  const [shifts, setShifts] = useState<ShiftEvent[]>(INITIAL_SHIFTS);
+  const [shifts, setShifts] = useState<ShiftEvent[]>(() => (live ? [] : INITIAL_SHIFTS));
   const [channels, setChannels] = useState<ChatChannel[]>(INITIAL_CHANNELS);
   const [messages, setMessages] = useState<Record<string, ChatMessage[]>>(INITIAL_MESSAGES);
   const [emailTemplates, setEmailTemplates] = useState<AutomatedEmailTemplate[]>(INITIAL_EMAIL_TEMPLATES);
@@ -89,6 +101,9 @@ export default function App() {
 
   const [selectedChannelForMessaging, setSelectedChannelForMessaging] = useState<string>('ch-team-alpha');
   const [selectedVolunteerForRecognition, setSelectedVolunteerForRecognition] = useState<Volunteer | null>(null);
+  const [liveLoading, setLiveLoading] = useState(live);
+  const [liveError, setLiveError] = useState<string | null>(null);
+  const [focusEventTitle, setFocusEventTitle] = useState<string | null>(null);
 
   // Toast feedback
   const [toastMessage, setToastMessage] = useState<{ text: string; type: 'success' | 'alert' | 'info' } | null>(null);
@@ -100,8 +115,48 @@ export default function App() {
     }, 4000);
   };
 
+  const reloadLive = useCallback(async () => {
+    if (!live || !user) return;
+    try {
+      const snap = await loadLeaderData(user);
+      setVolunteers(snap.volunteers);
+      setShifts(snap.shifts);
+      setTasks(snap.tasks);
+      setAttendance(snap.attendance);
+      setAttendanceMeta(snap.attendanceMeta);
+      setFocusEventTitle(snap.focusEventTitle);
+      setLiveError(null);
+    } catch (err) {
+      setLiveError(errorMessage(err, 'Could not load leader data.'));
+    } finally {
+      setLiveLoading(false);
+    }
+  }, [live, user]);
+
+  useEffect(() => {
+    void reloadLive();
+  }, [reloadLive]);
+
   // 1. Task Handlers
-  const handleUpdateTaskStatus = (taskId: string, status: TaskStatus) => {
+  const handleUpdateTaskStatus = async (taskId: string, status: TaskStatus) => {
+    if (live) {
+      const apiStatus = toApiTaskStatus(status);
+      if (!apiStatus) {
+        setTasks(prev =>
+          prev.map(t => (t.id === taskId ? { ...t, status, isEscalated: status === 'Escalated' } : t))
+        );
+        showToast(`Task marked "${status}" (local)`, 'info');
+        return;
+      }
+      try {
+        await api.tasks.setStatus(taskId, apiStatus);
+        await reloadLive();
+        showToast(`Task updated to "${status}"`, 'info');
+      } catch (err) {
+        showToast(errorMessage(err), 'alert');
+      }
+      return;
+    }
     setTasks(prev =>
       prev.map(t =>
         t.id === taskId
@@ -172,7 +227,24 @@ export default function App() {
     );
   };
 
-  const handleAddNewTask = (newTask: Omit<TeamTask, 'id'>) => {
+  const handleAddNewTask = async (newTask: Omit<TeamTask, 'id'>) => {
+    if (live) {
+      try {
+        const assigneeId = newTask.assignments[0]?.volunteerId ?? null;
+        await api.tasks.create({
+          title: newTask.title,
+          description: newTask.description || null,
+          priority: toApiTaskPriority(newTask.priority),
+          assigneeId,
+          dueDate: newTask.deadline || null,
+        });
+        await reloadLive();
+        showToast(`Created new operational task: "${newTask.title}"`, 'success');
+      } catch (err) {
+        showToast(errorMessage(err), 'alert');
+      }
+      return;
+    }
     const task: TeamTask = {
       ...newTask,
       id: `task-${Date.now()}`
@@ -182,7 +254,48 @@ export default function App() {
   };
 
   // 2. Attendance Handlers
-  const handleMarkAttendance = (volunteerId: string, status: AttendanceMark, time?: string) => {
+  const handleMarkAttendance = async (volunteerId: string, status: AttendanceMark, time?: string) => {
+    if (live) {
+      const meta = attendanceMeta[volunteerId];
+      if (!meta) {
+        showToast('No registration found for this volunteer on the focus shift.', 'alert');
+        return;
+      }
+      const row = attendance.find(a => a.volunteerId === volunteerId);
+      try {
+        if (status === 'Absent') {
+          // Backend only allows no-show from CONFIRMED (not after check-in).
+          if (row?.checkInTime || row?.status === 'Present' || row?.status === 'Late' || row?.status === 'Early Departure') {
+            showToast('Cannot mark absent after check-in. Use Early Departure to check out.', 'alert');
+            return;
+          }
+          if (row?.status === 'Absent') {
+            return;
+          }
+          await api.events.noShow(meta.eventId, meta.registrationId);
+        } else if (status === 'Early Departure') {
+          if (!row?.checkInTime) {
+            showToast('Check in the volunteer before recording early departure.', 'alert');
+            return;
+          }
+          if (!row.checkOutTime) {
+            await api.events.staffCheckOut(meta.eventId, meta.registrationId);
+          }
+        } else if (status === 'Present' || status === 'Late') {
+          // Late is not persisted separately — both map to staff check-in.
+          if (!row?.checkInTime) {
+            await api.events.staffCheckIn(meta.eventId, meta.registrationId);
+          }
+          // Already checked in: leave state as-is (do not treat Present as checkout).
+        }
+        await reloadLive();
+        const vol = volunteers.find(v => v.id === volunteerId);
+        showToast(`Attendance updated: ${vol?.name} marked ${status}`, 'success');
+      } catch (err) {
+        showToast(errorMessage(err), 'alert');
+      }
+      return;
+    }
     const nowTime = time || new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     setAttendance(prev =>
       prev.map(a => {
@@ -430,6 +543,11 @@ export default function App() {
   };
 
   const handleResetDemoData = () => {
+    if (live) {
+      void reloadLive();
+      showToast('Reloaded live leader data from the server', 'info');
+      return;
+    }
     setVolunteers(LEADER_ASSIGNED_VOLUNTEERS);
     setAttendance(INITIAL_TODAY_ATTENDANCE);
     setTasks(INITIAL_TEAM_TASKS);
@@ -440,6 +558,14 @@ export default function App() {
 
   const activeMessages = messages[selectedChannelForMessaging] || messages['ch-announcements'] || [];
 
+  if (liveLoading) {
+    return (
+      <div className="cg-role-portal flex h-svh items-center justify-center bg-cg-canvas text-sm text-slate-600">
+        Loading leader workspace…
+      </div>
+    );
+  }
+
   return (
     <motion.div
       className="cg-role-portal flex h-svh min-h-0 flex-col overflow-hidden bg-cg-canvas font-sans text-cg-text antialiased selection:bg-emerald-500 selection:text-white dark:bg-cg-canvas dark:text-cg-text"
@@ -447,6 +573,19 @@ export default function App() {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.35 }}
     >
+      {liveError ? (
+        <div className="border-b border-amber-200 bg-amber-50 px-4 py-2 text-xs text-amber-900 flex items-center justify-between gap-3">
+          <span>{liveError}</span>
+          <button type="button" className="font-semibold underline" onClick={() => void reloadLive()}>
+            Retry
+          </button>
+        </div>
+      ) : null}
+      {live && focusEventTitle ? (
+        <div className="border-b border-emerald-100 bg-emerald-50/80 px-4 py-1.5 text-[11px] text-emerald-900">
+          Attendance roll call focused on: <span className="font-semibold">{focusEventTitle}</span>
+        </div>
+      ) : null}
       {/* Top Navbar */}
       <Navbar
         volunteers={volunteers}
