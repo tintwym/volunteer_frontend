@@ -275,7 +275,7 @@ export const CommunicationRelayView: React.FC<CommunicationRelayViewProps> = ({
           <div className="flex-1 flex flex-col justify-between bg-white">
             <div className="flex-1 p-4 overflow-y-auto space-y-3">
               {messages.map((msg) => {
-                const isLeader = msg.senderName.includes('Sarah Jenkins') || msg.senderRole === 'Organizer';
+                const isLeader = msg.senderRole === 'Leader' || msg.senderRole === 'Organizer';
 
                 return (
                   <div

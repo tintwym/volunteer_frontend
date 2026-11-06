@@ -237,6 +237,44 @@ export default function App() {
       setOperationalTasks(snap.operationalTasks);
       setAttendanceRecords(snap.attendanceRecords);
       setMetrics(snap.metrics);
+      setOperationalTeams([]);
+      setOperationalShifts([]);
+      setBroadcastAnnouncements([]);
+      setTrainingMaterials([]);
+      setIncidentReports([]);
+      setApprovalRequests([]);
+      setFeedbackSurveys([]);
+      setChannels([]);
+      setMessages([]);
+      setAutomations([]);
+      setDeliveryLogs([]);
+      setCertificate((prev) => ({
+        ...prev,
+        recipientName: '',
+        hoursVerified: 0,
+        verificationCode: '',
+        organizationName: snap.currentUser.organization || prev.organizationName,
+        directorName: snap.currentUser.name,
+        directorTitle: 'Organiser',
+        causeFocus: '',
+        customPraise: '',
+        qrVerificationUrl: '',
+      }));
+      setAppreciationLetter((prev) => ({
+        ...prev,
+        recipientName: '',
+        salutation: 'Dear volunteer,',
+        hoursVerified: 0,
+        achievements: [],
+        customBody: '',
+        organizationName: snap.currentUser.organization || prev.organizationName,
+        signatoryName: snap.currentUser.name,
+        signatoryTitle: 'Organiser',
+      }));
+      setSystemSettings((prev) => ({
+        ...prev,
+        organizationName: snap.currentUser.organization || prev.organizationName,
+      }));
       setLiveError(null);
     } catch (err) {
       setLiveError(errorMessage(err, 'Could not load organiser data.'));
@@ -248,6 +286,47 @@ export default function App() {
   useEffect(() => {
     void reloadLive();
   }, [reloadLive]);
+
+  // Drop scripted sample records as soon as a real session is active.
+  useEffect(() => {
+    if (!live || !user) return;
+    const orgName = user.organizationName || 'Your organization';
+    setOperationalTeams([]);
+    setOperationalShifts([]);
+    setBroadcastAnnouncements([]);
+    setTrainingMaterials([]);
+    setIncidentReports([]);
+    setApprovalRequests([]);
+    setFeedbackSurveys([]);
+    setChannels([]);
+    setMessages([]);
+    setAutomations([]);
+    setDeliveryLogs([]);
+    setSystemSettings((prev) => ({ ...prev, organizationName: orgName }));
+    setCertificate((prev) => ({
+      ...prev,
+      recipientName: '',
+      hoursVerified: 0,
+      verificationCode: '',
+      organizationName: orgName,
+      directorName: user.fullName,
+      directorTitle: 'Organiser',
+      causeFocus: '',
+      customPraise: '',
+      qrVerificationUrl: '',
+    }));
+    setAppreciationLetter((prev) => ({
+      ...prev,
+      recipientName: '',
+      salutation: 'Dear volunteer,',
+      hoursVerified: 0,
+      achievements: [],
+      customBody: '',
+      organizationName: orgName,
+      signatoryName: user.fullName,
+      signatoryTitle: 'Organiser',
+    }));
+  }, [live, user]);
 
   // Persist Organiser data (skip API-backed keys when live)
   useEffect(() => {
@@ -775,6 +854,7 @@ export default function App() {
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
           onNavigateToTab={(tab) => setActiveTab(tab)}
+          hideSampleAlerts={live}
         />
 
         {/* View Switcher: All 15 Organiser Modules */}

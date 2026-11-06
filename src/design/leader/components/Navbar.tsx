@@ -27,6 +27,8 @@ interface NavbarProps {
   onOpenQuickBroadcast: () => void;
   onSelectTab: (tabId: string) => void;
   onSelectVolunteer?: (vol: Volunteer) => void;
+  leaderName?: string;
+  leaderAvatar?: string;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -36,7 +38,9 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenScheduleShift,
   onOpenQuickBroadcast,
   onSelectTab,
-  onSelectVolunteer
+  onSelectVolunteer,
+  leaderName = 'Volunteer Leader',
+  leaderAvatar
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearchResults, setShowSearchResults] = useState(false);
@@ -312,13 +316,13 @@ export const Navbar: React.FC<NavbarProps> = ({
             title="View Leader Profile & Settings"
           >
             <img
-              src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&auto=format&fit=crop&q=80"
-              alt="Sarah Jenkins"
+              src={leaderAvatar || 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&auto=format&fit=crop&q=80'}
+              alt={leaderName}
               className="h-8 w-8 rounded-full object-cover ring-2 ring-emerald-500/30"
             />
             <div className="hidden text-left sm:block">
               <div className="flex items-center gap-1 text-xs font-bold text-slate-900 dark:text-slate-100">
-                Sarah Jenkins
+                {leaderName}
               </div>
               <div className="text-[11px] font-medium text-slate-500 dark:text-slate-400">Volunteer Leader</div>
             </div>

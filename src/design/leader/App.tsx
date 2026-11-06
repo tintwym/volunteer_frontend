@@ -3,7 +3,7 @@
 
 import React, { useCallback, useEffect, useState } from 'react';
 import { useAuth } from '@/components/auth/AuthProvider';
-import { api, errorMessage } from '@/lib/api';
+import { api, avatarFor, errorMessage } from '@/lib/api';
 import {
   INITIAL_SHIFTS,
   INITIAL_CHANNELS,
@@ -74,6 +74,8 @@ import { AnimatedPage, motion } from '@/components/motion/ui';
 export default function App() {
   const { user, isDemo } = useAuth();
   const live = !!user && !isDemo;
+  const leaderName = user?.fullName || 'Volunteer Leader';
+  const leaderAvatar = user ? avatarFor(user.fullName) : '';
 
   const [currentTab, setCurrentTab] = useState<string>('dashboard');
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(false);
@@ -83,20 +85,20 @@ export default function App() {
   const [attendance, setAttendance] = useState<TodayAttendanceRecord[]>(() => (live ? [] : INITIAL_TODAY_ATTENDANCE));
   const [attendanceMeta, setAttendanceMeta] = useState<Record<string, AttendanceMeta>>({});
   const [tasks, setTasks] = useState<TeamTask[]>(() => (live ? [] : INITIAL_TEAM_TASKS));
-  const [incidents, setIncidents] = useState<IncidentReport[]>(INITIAL_INCIDENTS);
-  const [requests, setRequests] = useState<OperationalRequest[]>(INITIAL_OPERATIONAL_REQUESTS);
-  const [trainingModules, setTrainingModules] = useState<TrainingModule[]>(INITIAL_TRAINING_MODULES);
-  const [volunteerTraining, setVolunteerTraining] = useState<VolunteerTrainingStatus[]>(INITIAL_VOLUNTEER_TRAINING);
-  const [feedbacks, setFeedbacks] = useState<VolunteerFeedbackRecord[]>(INITIAL_FEEDBACK_RECORDS);
-  const [announcements, setAnnouncements] = useState<OrganiserAnnouncement[]>(INITIAL_ORGANISER_ANNOUNCEMENTS);
+  const [incidents, setIncidents] = useState<IncidentReport[]>(() => (live ? [] : INITIAL_INCIDENTS));
+  const [requests, setRequests] = useState<OperationalRequest[]>(() => (live ? [] : INITIAL_OPERATIONAL_REQUESTS));
+  const [trainingModules, setTrainingModules] = useState<TrainingModule[]>(() => (live ? [] : INITIAL_TRAINING_MODULES));
+  const [volunteerTraining, setVolunteerTraining] = useState<VolunteerTrainingStatus[]>(() => (live ? [] : INITIAL_VOLUNTEER_TRAINING));
+  const [feedbacks, setFeedbacks] = useState<VolunteerFeedbackRecord[]>(() => (live ? [] : INITIAL_FEEDBACK_RECORDS));
+  const [announcements, setAnnouncements] = useState<OrganiserAnnouncement[]>(() => (live ? [] : INITIAL_ORGANISER_ANNOUNCEMENTS));
 
   // Platform foundation states
   const [shifts, setShifts] = useState<ShiftEvent[]>(() => (live ? [] : INITIAL_SHIFTS));
-  const [channels, setChannels] = useState<ChatChannel[]>(INITIAL_CHANNELS);
-  const [messages, setMessages] = useState<Record<string, ChatMessage[]>>(INITIAL_MESSAGES);
-  const [emailTemplates, setEmailTemplates] = useState<AutomatedEmailTemplate[]>(INITIAL_EMAIL_TEMPLATES);
-  const [emailLogs, setEmailLogs] = useState<EmailLogEntry[]>(INITIAL_EMAIL_LOGS);
-  const [certificates, setCertificates] = useState<CertificateRecord[]>(INITIAL_CERTIFICATES);
+  const [channels, setChannels] = useState<ChatChannel[]>(() => (live ? [] : INITIAL_CHANNELS));
+  const [messages, setMessages] = useState<Record<string, ChatMessage[]>>(() => (live ? {} : INITIAL_MESSAGES));
+  const [emailTemplates, setEmailTemplates] = useState<AutomatedEmailTemplate[]>(() => (live ? [] : INITIAL_EMAIL_TEMPLATES));
+  const [emailLogs, setEmailLogs] = useState<EmailLogEntry[]>(() => (live ? [] : INITIAL_EMAIL_LOGS));
+  const [certificates, setCertificates] = useState<CertificateRecord[]>(() => (live ? [] : INITIAL_CERTIFICATES));
   const [allBadges, setAllBadges] = useState<Badge[]>(INITIAL_BADGES);
 
   const [selectedChannelForMessaging, setSelectedChannelForMessaging] = useState<string>('ch-team-alpha');
@@ -104,6 +106,22 @@ export default function App() {
   const [liveLoading, setLiveLoading] = useState(live);
   const [liveError, setLiveError] = useState<string | null>(null);
   const [focusEventTitle, setFocusEventTitle] = useState<string | null>(null);
+
+  // Session can hydrate after the first render, which would otherwise keep sample records.
+  useEffect(() => {
+    if (!live) return;
+    setIncidents([]);
+    setRequests([]);
+    setTrainingModules([]);
+    setVolunteerTraining([]);
+    setFeedbacks([]);
+    setAnnouncements([]);
+    setChannels([]);
+    setMessages({});
+    setEmailTemplates([]);
+    setEmailLogs([]);
+    setCertificates([]);
+  }, [live]);
 
   // Toast feedback
   const [toastMessage, setToastMessage] = useState<{ text: string; type: 'success' | 'alert' | 'info' } | null>(null);
@@ -398,10 +416,10 @@ export default function App() {
       title: `Training Blocker: ${volunteerName}`,
       description: `${volunteerName} has incomplete mandatory module. ${reason}`,
       severity: 'Medium',
-      affectedTeam: 'Team Alpha - Registration',
+      affectedTeam: 'Operations',
       affectedVolunteerName: volunteerName,
       location: 'Registration Counter',
-      reportedBy: 'Sarah Jenkins (Leader)',
+      reportedBy: leaderName,
       notes: 'Requested Organiser permission or float swap until certified.'
     });
   };
@@ -414,7 +432,7 @@ export default function App() {
       ...feedbackData,
       id: `fb-${Date.now()}`,
       date: new Date().toISOString().split('T')[0],
-      leaderName: 'Sarah Jenkins (Leader)'
+      leaderName
     };
     setFeedbacks(prev => [newFb, ...prev]);
     showToast(`Feedback and recommendation recorded for ${newFb.volunteerName}`, 'success');
@@ -430,9 +448,9 @@ export default function App() {
     const relayedMsg: ChatMessage = {
       id: `msg-${Date.now()}`,
       channelId: 'ch-announcements',
-      senderId: 'leader-sarah',
-      senderName: 'Sarah Jenkins (Leader)',
-      senderAvatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80',
+      senderId: user?.id || 'leader',
+      senderName: leaderName,
+      senderAvatar: leaderAvatar,
       senderRole: 'Leader',
       content: `📢 [LEADER RELAY]: ${customRelayMessage}`,
       timestamp: 'Just now'
@@ -443,16 +461,16 @@ export default function App() {
       'ch-announcements': [...(prev['ch-announcements'] || []), relayedMsg]
     }));
 
-    showToast('Organiser announcement relayed to Team Alpha!', 'success');
+    showToast('Announcement relayed to the team.', 'success');
   };
 
   const handleBroadcastUrgentMessage = (urgentText: string) => {
     const broadcastMsg: ChatMessage = {
       id: `msg-${Date.now()}`,
       channelId: 'ch-announcements',
-      senderId: 'leader-sarah',
-      senderName: 'Sarah Jenkins (Leader)',
-      senderAvatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80',
+      senderId: user?.id || 'leader',
+      senderName: leaderName,
+      senderAvatar: leaderAvatar,
       senderRole: 'Leader',
       content: `🚨 URGENT BROADCAST: ${urgentText}`,
       timestamp: 'Just now'
@@ -470,9 +488,9 @@ export default function App() {
     const newMsg: ChatMessage = {
       id: `msg-${Date.now()}`,
       channelId: selectedChannelForMessaging,
-      senderId: 'leader-sarah',
-      senderName: 'Sarah Jenkins (Leader)',
-      senderAvatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80',
+      senderId: user?.id || 'leader',
+      senderName: leaderName,
+      senderAvatar: leaderAvatar,
       senderRole: 'Leader',
       content: text,
       timestamp: 'Just now'
@@ -492,9 +510,9 @@ export default function App() {
       urgency: 'Normal',
       title: `Schedule Adjustment Request for ${shift?.title || 'Shift'}`,
       description: reason,
-      leaderId: 'leader-sarah',
-      leaderName: 'Sarah Jenkins',
-      teamName: 'Team Alpha - Registration'
+      leaderId: user?.id || 'leader',
+      leaderName,
+      teamName: 'Operations'
     });
   };
 
@@ -503,10 +521,10 @@ export default function App() {
       type: 'Team member replacement',
       urgency: 'Urgent',
       title: `Replacement Volunteer for ${volunteerName}`,
-      description: `Need replacement for ${volunteerName} on duty. Requesting float volunteer from Organiser reserve pool.`,
-      leaderId: 'leader-sarah',
-      leaderName: 'Sarah Jenkins',
-      teamName: 'Team Alpha - Registration'
+      description: `Need replacement for ${volunteerName} on duty. Requesting a reserve volunteer from the organiser.`,
+      leaderId: user?.id || 'leader',
+      leaderName,
+      teamName: 'Operations'
     });
   };
 
@@ -593,6 +611,8 @@ export default function App() {
         emailLogs={emailLogs}
         onOpenScheduleShift={() => setCurrentTab('schedule')}
         onOpenQuickBroadcast={() => setCurrentTab('communication')}
+        leaderName={leaderName}
+        leaderAvatar={leaderAvatar}
         onSelectTab={(tabId) => setCurrentTab(tabId)}
         onSelectVolunteer={(vol) => {
           setSelectedVolunteerForRecognition(vol);
@@ -789,6 +809,9 @@ export default function App() {
                 attendance={attendance}
                 shifts={shifts}
                 onResetData={handleResetDemoData}
+                leaderName={leaderName}
+                leaderEmail={user?.email || ''}
+                leaderPhone={user?.phone || ''}
               />
             )}
             </AnimatedPage>

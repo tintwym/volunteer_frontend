@@ -3,8 +3,6 @@
 import { useAuth } from "@/components/auth/AuthProvider";
 import {
   FormNotice,
-  GoogleButton,
-  OrDivider,
   PasswordField,
   SubmitButton,
   TextField,
@@ -75,14 +73,6 @@ export function SignupForm() {
 
   return (
     <div className="space-y-6">
-      <GoogleButton
-        onClick={() => {
-          setFormError(null);
-          setNotice("Google sign-up is coming soon. Please continue with email.");
-        }}
-      />
-      <OrDivider />
-
       <form onSubmit={onSubmit} noValidate className="space-y-4">
         <TextField
           label="Full name"

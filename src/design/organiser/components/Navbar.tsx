@@ -26,6 +26,8 @@ interface NavbarProps {
   searchQuery: string;
   setSearchQuery: (q: string) => void;
   onNavigateToTab: (tab: any) => void;
+  /** Hide scripted sample alerts when the portal is signed in to a real organisation. */
+  hideSampleAlerts?: boolean;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -35,11 +37,12 @@ export const Navbar: React.FC<NavbarProps> = ({
   searchQuery,
   setSearchQuery,
   onNavigateToTab,
+  hideSampleAlerts = false,
 }) => {
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const notifRef = useRef<HTMLDivElement>(null);
 
-  const notifications = [
+  const notifications = hideSampleAlerts ? [] : [
     {
       id: 'n-1',
       title: 'Volunteer Shift Full',
@@ -161,7 +164,9 @@ export const Navbar: React.FC<NavbarProps> = ({
             title="Notifications"
           >
             <Bell className="w-5 h-5" />
-            <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-rose-500 ring-2 ring-white" />
+            {!hideSampleAlerts ? (
+              <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-rose-500 ring-2 ring-white" />
+            ) : null}
           </button>
 
           {notificationsOpen && (
@@ -170,7 +175,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <div className="flex items-center gap-1.5">
                   <span className="text-xs font-bold text-slate-900 dark:text-slate-100">Activity Notifications</span>
                   <span className="text-[10px] bg-emerald-100 text-emerald-800 font-semibold px-1.5 py-0.5 rounded-full">
-                    4 new
+                    {notifications.length} new
                   </span>
                 </div>
                 <button
@@ -182,6 +187,9 @@ export const Navbar: React.FC<NavbarProps> = ({
               </div>
 
               <div className="mt-2 space-y-1 max-h-80 overflow-y-auto">
+                {notifications.length === 0 ? (
+                  <p className="px-2 py-6 text-center text-xs text-slate-500">No new alerts.</p>
+                ) : null}
                 {notifications.map((n) => {
                   const Icon = n.icon;
                   return (

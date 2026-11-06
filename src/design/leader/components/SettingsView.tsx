@@ -30,22 +30,28 @@ interface SettingsViewProps {
   attendance: TodayAttendanceRecord[];
   shifts: ShiftEvent[];
   onResetData?: () => void;
+  leaderName?: string;
+  leaderEmail?: string;
+  leaderPhone?: string;
 }
 
 export const SettingsView: React.FC<SettingsViewProps> = ({
   volunteers,
   attendance,
   shifts,
-  onResetData
+  onResetData,
+  leaderName,
+  leaderEmail,
+  leaderPhone
 }) => {
   // Settings tab navigation
   const [activeSubTab, setActiveSubTab] = useState<'profile' | 'alerts' | 'protocols' | 'data'>('profile');
 
   // 1. Leader Profile & Station Details
   const [profile, setProfile] = useState({
-    name: 'Sarah Jenkins',
-    email: 'sarah.jenkins@can-events.org',
-    phone: '(555) 382-9910',
+    name: leaderName || 'Volunteer Leader',
+    email: leaderEmail || '',
+    phone: leaderPhone || '',
     title: 'Volunteer Leader (Operational Supervisor)',
     team: 'Team Alpha',
     zone: 'Zone A - Main Lobby & Check-In Desk',
