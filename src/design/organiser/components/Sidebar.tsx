@@ -11,9 +11,7 @@ import {
   Layers,
   ClipboardList,
   UserCheck,
-  MessageSquareText,
   Megaphone,
-  MailCheck,
   ShieldAlert,
   BookOpen,
   CheckSquare,
@@ -140,25 +138,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
       group: 'Communication & Safety',
       items: [
         {
-          id: 'messaging' as ActiveTab,
-          label: 'Live Messaging',
-          icon: MessageSquareText,
-          badge: unreadCount > 0 ? unreadCount : null,
-          badgeColor: 'bg-rose-500 text-white',
-        },
-        {
           id: 'communication' as ActiveTab,
           label: 'Broadcast Dispatch',
           icon: Megaphone,
           badge: '4 Tiers',
           badgeColor: 'bg-amber-100 text-amber-800',
-        },
-        {
-          id: 'automations' as ActiveTab,
-          label: 'Email Automations',
-          icon: MailCheck,
-          badge: 'Active',
-          badgeColor: 'bg-indigo-600 text-white',
         },
         {
           id: 'incidents' as ActiveTab,
@@ -261,27 +245,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </button>
       </div>
 
-      {/* Organizer Workspace Pill */}
-      {!collapsed && (
-        <div className="px-3.5 py-2.5 mx-3 my-2 rounded-xl bg-slate-50 border border-slate-200 dark:bg-slate-800/80 dark:border-slate-700">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-500" />
-              <span className="text-xs font-bold text-slate-800 dark:text-slate-100">Organizer Hub</span>
-            </div>
-            <span className="text-[10px] uppercase tracking-wider font-extrabold px-1.5 py-0.5 rounded bg-indigo-100 text-indigo-800 dark:bg-indigo-950 dark:text-indigo-300">
-              Operations Lead
-            </span>
-          </div>
-        </div>
-      )}
-
       {/* Navigation Items */}
       <nav
         className={`flex-1 min-h-0 py-3 overflow-y-auto ${
           collapsed
             ? 'px-2 space-y-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden'
-            : 'px-3 space-y-4'
+            : 'px-3 pt-3 space-y-4'
         }`}
       >
         {navSections.map((section, sIdx) => (
@@ -353,15 +322,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
               <span>Community Impact</span>
             </div>
-            <div className="mt-2 flex items-baseline justify-between">
-              <div>
-                <p className="text-xl font-bold text-slate-900 dark:text-slate-100">4,824.5</p>
-                <p className="text-[11px] text-slate-600 dark:text-slate-400">Hours served this year</p>
-              </div>
-              <div className="text-right">
-                <p className="text-sm font-bold text-emerald-700 dark:text-emerald-400">$161,572</p>
-                <p className="text-[10px] text-slate-500 dark:text-slate-400">Value generated</p>
-              </div>
+            <div className="mt-2">
+              <p className="text-xl font-bold text-slate-900 dark:text-slate-100">4,824.5</p>
+              <p className="text-[11px] text-slate-600 dark:text-slate-400">Hours served this year</p>
             </div>
           </div>
         ) : (

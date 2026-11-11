@@ -23,6 +23,8 @@ import {
   Twitter,
   Facebook,
   PartyPopper,
+  Plus,
+  X,
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import {
@@ -31,6 +33,14 @@ import {
   AppreciationLetterData,
   User,
 } from '../types';
+
+type BadgeDraft = {
+  title: string;
+  description: string;
+  category: Badge['category'];
+  tier: Badge['tier'];
+  maxProgress: number;
+};
 
 const TIER_EMOJI: Record<string, string> = {
   bronze: '🥉',
@@ -49,7 +59,16 @@ interface RecognitionViewProps {
   currentUser: User;
   onUpdateCertificate?: (cert: CertificateData) => void;
   onUpdateLetter?: (letter: AppreciationLetterData) => void;
+  onCreateBadge?: (badge: Badge) => void;
 }
+
+const EMPTY_BADGE_DRAFT: BadgeDraft = {
+  title: '',
+  description: '',
+  category: 'milestone',
+  tier: 'bronze',
+  maxProgress: 1,
+};
 
 export const RecognitionView: React.FC<RecognitionViewProps> = ({
   badges = [],
@@ -58,12 +77,16 @@ export const RecognitionView: React.FC<RecognitionViewProps> = ({
   currentUser,
   onUpdateCertificate,
   onUpdateLetter,
+  onCreateBadge,
 }) => {
   const [activeSubTab, setActiveSubTab] = useState<'badges' | 'certificate' | 'letter' | 'social'>('badges');
   const [selectedBadge, setSelectedBadge] = useState<Badge | null>(null);
   const [copiedSocialText, setCopiedSocialText] = useState<boolean>(false);
   const [isEditingCertificate, setIsEditingCertificate] = useState<boolean>(false);
   const [isEditingLetter, setIsEditingLetter] = useState<boolean>(false);
+  const [showCreateBadge, setShowCreateBadge] = useState(false);
+  const [badgeDraft, setBadgeDraft] = useState<BadgeDraft>(EMPTY_BADGE_DRAFT);
+  const [badgeError, setBadgeError] = useState('');
 
   // Editable certificate fields
   const [certData, setCertData] = useState<CertificateData>(certificate);
@@ -140,6 +163,44 @@ export const RecognitionView: React.FC<RecognitionViewProps> = ({
     if (badge.isUnlocked) {
       triggerCelebration();
     }
+  };
+
+  const openCreateBadge = () => {
+    setBadgeDraft(EMPTY_BADGE_DRAFT);
+    setBadgeError('');
+    setShowCreateBadge(true);
+  };
+
+  const handleCreateBadge = () => {
+    const title = badgeDraft.title.trim();
+    const description = badgeDraft.description.trim();
+    if (!title) {
+      setBadgeError('Badge title is required.');
+      return;
+    }
+    if (!description) {
+      setBadgeError('Badge description is required.');
+      return;
+    }
+    const maxProgress = Math.max(1, Number(badgeDraft.maxProgress) || 1);
+    const newBadge: Badge = {
+      id: `badge-custom-${Date.now()}`,
+      title,
+      description,
+      category: badgeDraft.category,
+      icon: 'Award',
+      tier: badgeDraft.tier,
+      progress: 0,
+      maxProgress,
+      isUnlocked: false,
+      colorBg: 'bg-emerald-500/10 text-emerald-800 dark:bg-emerald-500/15 dark:text-emerald-300',
+      colorBorder: 'border-emerald-400/40',
+    };
+    onCreateBadge?.(newBadge);
+    setShowCreateBadge(false);
+    setBadgeDraft(EMPTY_BADGE_DRAFT);
+    setBadgeError('');
+    setActiveSubTab('badges');
   };
 
   const handlePrint = () => {
@@ -238,20 +299,33 @@ export const RecognitionView: React.FC<RecognitionViewProps> = ({
       {/* 1. BADGES TAB */}
       {activeSubTab === 'badges' && (
         <div className="space-y-4">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <h2 className="text-sm font-bold text-slate-900 uppercase tracking-wider">
                 Earned Achievement Badges & Milestones
               </h2>
               <p className="text-xs text-slate-400">Click any badge to view milestone progress and celebrate</p>
             </div>
-            <button
-              onClick={triggerCelebration}
-              className="flex items-center gap-1.5 text-xs font-bold text-amber-700 bg-amber-50 hover:bg-amber-100 border border-amber-200 px-3 py-1.5 rounded-xl transition-colors"
-            >
-              <PartyPopper className="w-4 h-4" />
-              <span>Celebrate Impact</span>
-            </button>
+            <div className="flex items-center gap-2">
+              {isOrganizer && (
+                <button
+                  type="button"
+                  id="create-new-badge-btn"
+                  onClick={openCreateBadge}
+                  className="flex items-center gap-1.5 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 px-3 py-1.5 rounded-xl transition-colors shadow-xs"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Create New Badge</span>
+                </button>
+              )}
+              <button
+                onClick={triggerCelebration}
+                className="flex items-center gap-1.5 text-xs font-bold text-amber-700 bg-amber-50 hover:bg-amber-100 border border-amber-200 px-3 py-1.5 rounded-xl transition-colors"
+              >
+                <PartyPopper className="w-4 h-4" />
+                <span>Celebrate Impact</span>
+              </button>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -779,6 +853,148 @@ export const RecognitionView: React.FC<RecognitionViewProps> = ({
                   <span>Download Graphic for Instagram / LinkedIn</span>
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showCreateBadge && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="create-badge-title"
+        >
+          <div className="w-full max-w-lg rounded-2xl border border-slate-200 bg-white shadow-xl dark:border-slate-700 dark:bg-slate-900">
+            <div className="flex items-center justify-between border-b border-slate-100 px-5 py-4 dark:border-slate-800">
+              <div>
+                <h3 id="create-badge-title" className="text-base font-bold text-slate-900 dark:text-slate-100">
+                  Create New Badge
+                </h3>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Define a milestone badge volunteers can earn through service.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowCreateBadge(false)}
+                className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-slate-800 dark:hover:text-slate-200"
+                aria-label="Close"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="space-y-4 px-5 py-4">
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1.5 dark:text-slate-300">
+                  Badge title
+                </label>
+                <input
+                  type="text"
+                  value={badgeDraft.title}
+                  onChange={(e) => setBadgeDraft((prev) => ({ ...prev, title: e.target.value }))}
+                  placeholder="e.g. Weekend Warrior"
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-900 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1.5 dark:text-slate-300">
+                  Description
+                </label>
+                <textarea
+                  value={badgeDraft.description}
+                  onChange={(e) => setBadgeDraft((prev) => ({ ...prev, description: e.target.value }))}
+                  rows={3}
+                  placeholder="What do volunteers need to achieve?"
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-900 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1.5 dark:text-slate-300">
+                    Category
+                  </label>
+                  <select
+                    value={badgeDraft.category}
+                    onChange={(e) =>
+                      setBadgeDraft((prev) => ({
+                        ...prev,
+                        category: e.target.value as Badge['category'],
+                      }))
+                    }
+                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-900 focus:border-emerald-600 focus:outline-none dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
+                  >
+                    <option value="hours">Hours</option>
+                    <option value="milestone">Milestone</option>
+                    <option value="leadership">Leadership</option>
+                    <option value="impact">Impact</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1.5 dark:text-slate-300">
+                    Tier
+                  </label>
+                  <select
+                    value={badgeDraft.tier}
+                    onChange={(e) =>
+                      setBadgeDraft((prev) => ({
+                        ...prev,
+                        tier: e.target.value as Badge['tier'],
+                      }))
+                    }
+                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-900 focus:border-emerald-600 focus:outline-none dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
+                  >
+                    <option value="bronze">Bronze</option>
+                    <option value="silver">Silver</option>
+                    <option value="gold">Gold</option>
+                    <option value="platinum">Platinum</option>
+                    <option value="diamond">Diamond</option>
+                    <option value="mythic">Mythic</option>
+                    <option value="immortal">Immortal</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1.5 dark:text-slate-300">
+                    Target progress
+                  </label>
+                  <input
+                    type="number"
+                    min={1}
+                    value={badgeDraft.maxProgress}
+                    onChange={(e) =>
+                      setBadgeDraft((prev) => ({
+                        ...prev,
+                        maxProgress: parseInt(e.target.value, 10) || 1,
+                      }))
+                    }
+                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-900 focus:border-emerald-600 focus:outline-none dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
+                  />
+                </div>
+              </div>
+
+              {badgeError && (
+                <p className="text-xs font-semibold text-rose-600">{badgeError}</p>
+              )}
+            </div>
+
+            <div className="flex items-center justify-end gap-2 border-t border-slate-100 px-5 py-4 dark:border-slate-800">
+              <button
+                type="button"
+                onClick={() => setShowCreateBadge(false)}
+                className="rounded-xl border border-slate-200 px-3.5 py-2 text-xs font-bold text-slate-600 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleCreateBadge}
+                className="rounded-xl bg-emerald-600 px-3.5 py-2 text-xs font-bold text-white hover:bg-emerald-700"
+              >
+                Create Badge
+              </button>
             </div>
           </div>
         </div>

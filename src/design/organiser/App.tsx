@@ -1248,6 +1248,10 @@ export default function App() {
               currentUser={currentUser}
               onUpdateCertificate={(c) => setCertificate(c)}
               onUpdateLetter={(l) => setAppreciationLetter(l)}
+              onCreateBadge={(badge) => {
+                setBadges((prev) => [badge, ...prev]);
+                showToast(`Badge "${badge.title}" created.`);
+              }}
             />
           )}
 
