@@ -61,7 +61,7 @@ export const ApprovalManagementView: React.FC<ApprovalManagementViewProps> = ({
   const filteredApprovals = (approvals || []).filter((app) => {
     const matchesType = typeFilter === 'All' || app.type === typeFilter;
     const matchesSearch =
-      (app.requesterName || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (app.requesterName || app.requestedBy || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
       (app.details || '').toLowerCase().includes(searchQuery.toLowerCase());
     return matchesType && matchesSearch;
   });
@@ -98,6 +98,8 @@ export const ApprovalManagementView: React.FC<ApprovalManagementViewProps> = ({
       case 'Role Change':
       case 'Team transfer':
       case 'Task reassignment':
+      case 'Hour log':
+        return <Clock className="w-4 h-4 text-teal-600" />;
       default:
         return <FileCheck2 className="w-4 h-4 text-teal-600" />;
     }
@@ -155,6 +157,7 @@ export const ApprovalManagementView: React.FC<ApprovalManagementViewProps> = ({
           <option value="Leave Request">Leave Request</option>
           <option value="Expense Reimbursement">Expense Reimbursement</option>
           <option value="Role Change">Role Change</option>
+          <option value="Hour log">Hour log</option>
         </SelectMenu>
       </div>
 

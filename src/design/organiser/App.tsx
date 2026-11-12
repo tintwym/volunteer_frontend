@@ -23,6 +23,7 @@ import {
   organiserEventToInput,
   toApiTaskPriority,
   toApiTaskStatus,
+  type OrganiserRoleMember,
 } from './live';
 import {
   User,
@@ -102,6 +103,10 @@ const API_BACKED = new Set([
   'vmp_org_leaders',
   'vmp_org_tasks',
   'vmp_org_attendance',
+  'vmp_org_incidents',
+  'vmp_org_approvals',
+  'vmp_channels',
+  'vmp_messages',
 ]);
 
 function safeParse<T>(key: string, fallback: T, live = false): T {
@@ -137,12 +142,14 @@ export default function App() {
   );
 
   const [channels, setChannels] = useState<Channel[]>(() =>
-    safeParse('vmp_channels', INITIAL_CHANNELS)
+    safeParse('vmp_channels', live ? [] : INITIAL_CHANNELS, live)
   );
 
   const [messages, setMessages] = useState<Message[]>(() =>
-    safeParse('vmp_messages', INITIAL_MESSAGES)
+    safeParse('vmp_messages', live ? [] : INITIAL_MESSAGES, live)
   );
+
+  const [roleMembers, setRoleMembers] = useState<OrganiserRoleMember[]>([]);
 
   const [automations, setAutomations] = useState<EmailAutomationTrigger[]>(() =>
     safeParse('vmp_automations', EMAIL_AUTOMATIONS)
@@ -205,11 +212,11 @@ export default function App() {
   );
 
   const [incidentReports, setIncidentReports] = useState<IncidentReport[]>(() =>
-    safeParse('vmp_org_incidents', MOCK_INCIDENTS)
+    safeParse('vmp_org_incidents', live ? [] : MOCK_INCIDENTS, live)
   );
 
   const [approvalRequests, setApprovalRequests] = useState<ApprovalRequestItem[]>(() =>
-    safeParse('vmp_org_approvals', MOCK_APPROVAL_REQUESTS)
+    safeParse('vmp_org_approvals', live ? [] : MOCK_APPROVAL_REQUESTS, live)
   );
 
   const [feedbackSurveys, setFeedbackSurveys] = useState<FeedbackSurveyItem[]>(() =>
@@ -236,16 +243,17 @@ export default function App() {
       setVolunteerLeaders(snap.volunteerLeaders);
       setOperationalTasks(snap.operationalTasks);
       setAttendanceRecords(snap.attendanceRecords);
+      setApprovalRequests(snap.approvalRequests);
+      setIncidentReports(snap.incidentReports);
+      setChannels(snap.channels);
+      setMessages(snap.messages);
+      setRoleMembers(snap.roleMembers);
       setMetrics(snap.metrics);
       setOperationalTeams([]);
       setOperationalShifts([]);
       setBroadcastAnnouncements([]);
       setTrainingMaterials([]);
-      setIncidentReports([]);
-      setApprovalRequests([]);
       setFeedbackSurveys([]);
-      setChannels([]);
-      setMessages([]);
       setAutomations([]);
       setDeliveryLogs([]);
       setCertificate((prev) => ({
@@ -295,11 +303,7 @@ export default function App() {
     setOperationalShifts([]);
     setBroadcastAnnouncements([]);
     setTrainingMaterials([]);
-    setIncidentReports([]);
-    setApprovalRequests([]);
     setFeedbackSurveys([]);
-    setChannels([]);
-    setMessages([]);
     setAutomations([]);
     setDeliveryLogs([]);
     setSystemSettings((prev) => ({ ...prev, organizationName: orgName }));
@@ -673,12 +677,25 @@ export default function App() {
   };
 
   // Send Chat Message
-  const handleSendMessage = (
+  const handleSendMessage = async (
     channelId: string,
     content: string,
     isUrgent?: boolean,
     attachmentName?: string
   ) => {
+    if (live) {
+      if (!content.trim()) return;
+      try {
+        const apiChannel = channelId as 'GENERAL' | 'ANNOUNCEMENTS' | 'LEADERS';
+        await api.messages.post(apiChannel, content.trim(), Boolean(isUrgent));
+        showToast('Message posted.');
+        await reloadLive();
+      } catch (err) {
+        showToast(errorMessage(err, 'Could not send message.'));
+      }
+      return;
+    }
+
     const newMsg: Message = {
       id: `msg-${Date.now()}`,
       channelId,
@@ -842,6 +859,11 @@ export default function App() {
         upcomingShiftsCount={upcomingShiftsCount}
         pendingApprovalsCount={pendingApprovalsCount}
         openIncidentsCount={openIncidentsCount}
+        liveMode={live}
+        eventsCount={organiserEvents.length}
+        volunteersCount={volunteerRoster.length}
+        leadersCount={volunteerLeaders.length}
+        hideScheduling={live}
       />
 
       {/* Main Content Area */}
@@ -1177,16 +1199,60 @@ export default function App() {
               incidents={incidentReports}
               events={organiserEvents}
               onCreateIncident={(newInc) => {
+                if (live) {
+                  void (async () => {
+                    try {
+                      await api.incidents.report({
+                        title: `[${newInc.type}] ${newInc.title}`.slice(0, 200),
+                        description: newInc.description || newInc.title,
+                        severity: (newInc.severity?.toUpperCase() ?? 'MEDIUM') as 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL',
+                        eventId: null,
+                      });
+                      showToast('Incident logged.');
+                      await reloadLive();
+                    } catch (err) {
+                      showToast(errorMessage(err, 'Could not log incident.'));
+                    }
+                  })();
+                  return;
+                }
                 setIncidentReports((prev) => [newInc, ...prev]);
                 showToast(`Incident ticket ${newInc.id} logged.`);
               }}
               onUpdateStatus={(id, status) => {
+                if (live && status === 'Resolved') {
+                  const incident = incidentReports.find((i) => i.id === id);
+                  void (async () => {
+                    try {
+                      await api.incidents.resolve(
+                        id,
+                        incident?.actionTaken || incident?.description || 'Resolved by organiser',
+                      );
+                      showToast('Incident marked resolved.');
+                      await reloadLive();
+                    } catch (err) {
+                      showToast(errorMessage(err, 'Could not resolve incident.'));
+                    }
+                  })();
+                  return;
+                }
+                if (live) {
+                  showToast('Only “Resolved” syncs to the server in live mode.');
+                  return;
+                }
                 setIncidentReports((prev) =>
                   prev.map((i) => (i.id === id ? { ...i, status } : i))
                 );
                 showToast(`Incident status marked as ${status}.`);
               }}
               onAddResolutionNote={(id, note) => {
+                if (live) {
+                  setIncidentReports((prev) =>
+                    prev.map((i) => (i.id === id ? { ...i, actionTaken: note } : i))
+                  );
+                  showToast('Resolution note saved locally until incident is resolved.');
+                  return;
+                }
                 setIncidentReports((prev) =>
                   prev.map((i) => (i.id === id ? { ...i, resolutionNotes: note } : i))
                 );
@@ -1200,6 +1266,21 @@ export default function App() {
             <ApprovalManagementView
               requests={approvalRequests}
               onDecideRequest={(id, decision, reason) => {
+                if (live) {
+                  void (async () => {
+                    try {
+                      await api.hours.review(id, {
+                        approve: decision === 'Approved',
+                        note: reason,
+                      });
+                      showToast(`Hour log ${decision === 'Approved' ? 'approved' : 'declined'}.`);
+                      await reloadLive();
+                    } catch (err) {
+                      showToast(errorMessage(err, 'Could not review hour log.'));
+                    }
+                  })();
+                  return;
+                }
                 setApprovalRequests((prev) =>
                   prev.map((r) =>
                     r.id === id
@@ -1215,6 +1296,18 @@ export default function App() {
                 showToast(`Request ${decision.toUpperCase()} successfully.`);
               }}
               onBatchApprove={(ids) => {
+                if (live) {
+                  void (async () => {
+                    try {
+                      await Promise.all(ids.map((id) => api.hours.review(id, { approve: true })));
+                      showToast(`${ids.length} hour logs approved.`);
+                      await reloadLive();
+                    } catch (err) {
+                      showToast(errorMessage(err, 'Batch approval failed.'));
+                    }
+                  })();
+                  return;
+                }
                 setApprovalRequests((prev) =>
                   prev.map((r) =>
                     ids.includes(r.id)
@@ -1257,7 +1350,28 @@ export default function App() {
 
           {/* 1.15 User & Role Management */}
           {activeTab === 'roles' && (
-            <UserRoleManagementView />
+            <UserRoleManagementView
+              live={live}
+              members={roleMembers}
+              onInvite={async (email, role) => {
+                try {
+                  await api.members.invite(email, role);
+                  showToast(`Invitation sent to ${email}.`);
+                  await reloadLive();
+                } catch (err) {
+                  showToast(errorMessage(err, 'Could not send invitation.'));
+                }
+              }}
+              onUpdateMember={async (id, input) => {
+                try {
+                  await api.members.update(id, input);
+                  showToast('Member account updated.');
+                  await reloadLive();
+                } catch (err) {
+                  showToast(errorMessage(err, 'Could not update member.'));
+                }
+              }}
+            />
           )}
 
           {/* Platform Settings */}

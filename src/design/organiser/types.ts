@@ -486,7 +486,8 @@ export type ApprovalRequestType =
   | 'Equipment request'
   | 'Expense Reimbursement'
   | 'Role Change'
-  | 'Schedule change';
+  | 'Schedule change'
+  | 'Hour log';
 
 export type ApprovalType = ApprovalRequestType;
 

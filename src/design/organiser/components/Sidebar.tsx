@@ -23,6 +23,7 @@ import {
   ChevronRight,
   Sparkles,
   Clock,
+  MessageSquare,
 } from 'lucide-react';
 import { SignOutButton } from '@/components/auth/SignOutButton';
 import { useTheme } from '@/components/theme/ThemeProvider';
@@ -59,6 +60,11 @@ interface SidebarProps {
   upcomingShiftsCount: number;
   pendingApprovalsCount?: number;
   openIncidentsCount?: number;
+  liveMode?: boolean;
+  eventsCount?: number;
+  volunteersCount?: number;
+  leadersCount?: number;
+  hideScheduling?: boolean;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -69,11 +75,27 @@ export const Sidebar: React.FC<SidebarProps> = ({
   currentUser,
   unreadCount,
   upcomingShiftsCount,
-  pendingApprovalsCount = 3,
-  openIncidentsCount = 1,
+  pendingApprovalsCount,
+  openIncidentsCount,
+  liveMode = false,
+  eventsCount,
+  volunteersCount,
+  leadersCount,
+  hideScheduling = false,
 }) => {
   const isOrganizer = currentUser.role === 'organizer';
   const { isDark } = useTheme();
+  const pendingBadge = pendingApprovalsCount ?? (liveMode ? 0 : 3);
+  const openIncidentsBadge = openIncidentsCount ?? (liveMode ? 0 : 1);
+
+  const hiddenInLive = new Set<ActiveTab>([
+    'teams',
+    'communication',
+    'automations',
+    'training',
+    'recognition',
+    ...(hideScheduling ? (['scheduling'] as ActiveTab[]) : []),
+  ]);
 
   const navSections = [
     {
@@ -89,21 +111,36 @@ export const Sidebar: React.FC<SidebarProps> = ({
           id: 'events' as ActiveTab,
           label: 'Event Management',
           icon: Calendar,
-          badge: '4',
+          badge:
+            eventsCount != null
+              ? String(eventsCount)
+              : liveMode
+                ? null
+                : '4',
           badgeColor: 'bg-emerald-100 text-emerald-800',
         },
         {
           id: 'volunteers' as ActiveTab,
           label: 'Volunteer Roster',
           icon: Users,
-          badge: '250',
+          badge:
+            volunteersCount != null
+              ? String(volunteersCount)
+              : liveMode
+                ? null
+                : '250',
           badgeColor: 'bg-slate-100 text-slate-700',
         },
         {
           id: 'leaders' as ActiveTab,
           label: 'Leader Hierarchy',
           icon: ShieldCheck,
-          badge: '15',
+          badge:
+            leadersCount != null
+              ? String(leadersCount)
+              : liveMode
+                ? null
+                : '15',
           badgeColor: 'bg-indigo-100 text-indigo-800',
         },
         {
@@ -129,7 +166,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           id: 'attendance' as ActiveTab,
           label: 'Attendance Audit',
           icon: UserCheck,
-          badge: '92%',
+          badge: liveMode ? null : '92%',
           badgeColor: 'bg-emerald-600 text-white',
         },
       ],
@@ -137,18 +174,29 @@ export const Sidebar: React.FC<SidebarProps> = ({
     {
       group: 'Communication & Safety',
       items: [
+        ...(liveMode
+          ? [
+              {
+                id: 'messaging' as ActiveTab,
+                label: 'Live Messaging',
+                icon: MessageSquare,
+                badge: unreadCount > 0 ? unreadCount : null,
+                badgeColor: 'bg-sky-600 text-white',
+              },
+            ]
+          : []),
         {
           id: 'communication' as ActiveTab,
           label: 'Broadcast Dispatch',
           icon: Megaphone,
-          badge: '4 Tiers',
+          badge: liveMode ? null : '4 Tiers',
           badgeColor: 'bg-amber-100 text-amber-800',
         },
         {
           id: 'incidents' as ActiveTab,
           label: 'Incident Management',
           icon: ShieldAlert,
-          badge: openIncidentsCount > 0 ? openIncidentsCount : null,
+          badge: openIncidentsBadge > 0 ? openIncidentsBadge : null,
           badgeColor: 'bg-rose-600 text-white',
         },
       ],
@@ -166,7 +214,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           id: 'approvals' as ActiveTab,
           label: 'Approval Center',
           icon: CheckSquare,
-          badge: pendingApprovalsCount > 0 ? pendingApprovalsCount : null,
+          badge: pendingBadge > 0 ? pendingBadge : null,
           badgeColor: 'bg-amber-500 text-white',
         },
         {
@@ -179,7 +227,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           id: 'recognition' as ActiveTab,
           label: 'Recognition & Badges',
           icon: Award,
-          badge: 'Milestones',
+          badge: liveMode ? null : 'Milestones',
           badgeColor: 'bg-amber-500 text-white',
         },
         {
@@ -197,6 +245,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
       ],
     },
   ];
+
+  const visibleSections = navSections
+    .map((section) => ({
+      ...section,
+      items: section.items.filter((item) => !(liveMode && hiddenInLive.has(item.id))),
+    }))
+    .filter((section) => section.items.length > 0);
 
   return (
     <aside
@@ -253,7 +308,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             : 'px-3 pt-3 space-y-4'
         }`}
       >
-        {navSections.map((section, sIdx) => (
+        {visibleSections.map((section, sIdx) => (
           <div key={sIdx} className="space-y-1">
             {!collapsed ? (
               <p className="px-3.5 py-1 text-[10px] font-extrabold uppercase tracking-wider text-slate-400 dark:text-slate-500">

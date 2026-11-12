@@ -2,14 +2,19 @@ import {
   api,
   avatarFor,
   formatClock,
+  timeAgo,
   toApiTime,
   toHHmm,
   todayIso,
   type ApiEvent,
+  type ApiHourLog,
+  type ApiIncident,
   type ApiMember,
+  type ApiMessage,
   type ApiOrganizationSummary,
   type ApiRegistration,
   type ApiTask,
+  type Channel as ApiChannel,
   type EventInput,
   type EventStatus as ApiEventStatus,
   type TaskPriority as ApiTaskPriority,
@@ -17,11 +22,17 @@ import {
 } from "@/lib/api";
 import type { AuthUser } from "@/lib/auth";
 import type {
+  ApprovalRequestItem,
   AttendanceRecordItem,
   AttendanceStatus,
   CauseCategory,
+  Channel,
   DetailedVolunteerProfile,
   EventStatus,
+  IncidentReport,
+  IncidentSeverity,
+  IncidentType,
+  Message,
   OrganiserEvent,
   OperationalTask,
   ReportMetrics,
@@ -33,6 +44,16 @@ import type {
   VolunteerShift,
 } from "./types";
 
+export interface OrganiserRoleMember {
+  id: string;
+  name: string;
+  email: string;
+  role: "Organiser" | "Volunteer Leader" | "Volunteer";
+  status: "Active" | "Suspended";
+  lastActive: string;
+  avatar: string;
+}
+
 export interface OrganiserLiveSnapshot {
   currentUser: User;
   organiserEvents: OrganiserEvent[];
@@ -41,6 +62,11 @@ export interface OrganiserLiveSnapshot {
   volunteerLeaders: VolunteerLeaderProfile[];
   operationalTasks: OperationalTask[];
   attendanceRecords: AttendanceRecordItem[];
+  approvalRequests: ApprovalRequestItem[];
+  incidentReports: IncidentReport[];
+  channels: Channel[];
+  messages: Message[];
+  roleMembers: OrganiserRoleMember[];
   metrics: ReportMetrics;
   orgSummary: ApiOrganizationSummary | null;
 }
@@ -345,13 +371,187 @@ export function toCurrentUser(user: AuthUser, base: User): User {
   };
 }
 
+const INCIDENT_TYPE_PREFIX = /^\[(.+?)\]\s*/;
+
+const UI_INCIDENT_TYPES: IncidentType[] = [
+  "Volunteer injury",
+  "Missing equipment",
+  "Lost person",
+  "Security issue",
+  "Conflict",
+  "Medical emergency",
+  "Safety issue",
+  "Volunteer misconduct",
+];
+
+function toOrganiserIncidentSeverity(severity: ApiIncident["severity"]): IncidentSeverity {
+  if (severity === "LOW") return "Low";
+  if (severity === "MEDIUM") return "Medium";
+  if (severity === "HIGH") return "High";
+  return "Critical";
+}
+
+export function toOrganiserIncident(i: ApiIncident): IncidentReport {
+  const match = i.title.match(INCIDENT_TYPE_PREFIX);
+  const rawType = match?.[1] ?? "";
+  const type =
+    (UI_INCIDENT_TYPES.find((t) => t.toLowerCase() === rawType.toLowerCase()) as IncidentType | undefined) ??
+    "Safety issue";
+  const title = match ? i.title.slice(match[0].length) : i.title;
+  return {
+    id: i.id,
+    title: title || i.title,
+    type,
+    severity: toOrganiserIncidentSeverity(i.severity),
+    reportedBy: i.reportedByName ?? "Unknown reporter",
+    reportedAt: timeAgo(i.createdAt),
+    assignedLeader: "Unassigned",
+    location: i.eventName ?? "On site",
+    status: i.status === "RESOLVED" ? "Resolved" : "Reported",
+    description: i.description,
+    evidence: "",
+    actionTaken: i.resolution ?? "",
+    notes: i.resolution
+      ? [
+          {
+            timestamp: i.resolvedAt ? timeAgo(i.resolvedAt) : timeAgo(i.createdAt),
+            author: i.resolvedByName ?? "Organiser",
+            text: i.resolution,
+          },
+        ]
+      : [],
+  };
+}
+
+export function toApprovalRequestItem(h: ApiHourLog): ApprovalRequestItem {
+  const status =
+    h.status === "PENDING" ? "Pending" : h.status === "APPROVED" ? "Approved" : "Rejected";
+  const avatar = avatarFor(h.userName);
+  return {
+    id: h.id,
+    type: "Hour log",
+    requestedBy: h.userName,
+    requesterName: h.userName,
+    requestorRole: "Volunteer",
+    avatar,
+    requesterAvatar: avatar,
+    details: [
+      `${h.hours} service hour${h.hours === 1 ? "" : "s"} on ${h.workDate}`,
+      h.eventName ? `Event: ${h.eventName}` : null,
+      h.description ? h.description : null,
+      h.source === "ATTENDANCE" ? "Source: attendance check-out" : "Source: manual log",
+    ]
+      .filter(Boolean)
+      .join(" · "),
+    submittedAt: timeAgo(h.createdAt),
+    status,
+    remarks: h.reviewNote ?? "",
+    priority: h.hours >= 8 ? "High" : h.hours >= 4 ? "Medium" : "Low",
+    history: [
+      {
+        date: timeAgo(h.createdAt),
+        action: "Hour log submitted",
+        author: h.userName,
+      },
+      ...(h.reviewedAt
+        ? [
+            {
+              date: timeAgo(h.reviewedAt),
+              action: status,
+              author: h.reviewedByName ?? "Organiser",
+              note: h.reviewNote ?? undefined,
+            },
+          ]
+        : []),
+    ],
+  };
+}
+
+function mapSenderRole(role: ApiMessage["senderRole"]): Message["senderRole"] {
+  if (role === "ORGANIZER") return "organizer";
+  if (role === "VOLUNTEER_LEADER") return "coordinator";
+  return "participant";
+}
+
+export function toOrganiserMessage(m: ApiMessage): Message {
+  return {
+    id: m.id,
+    channelId: m.channel,
+    senderId: m.senderId ?? "",
+    senderName: m.senderName,
+    senderRole: mapSenderRole(m.senderRole),
+    senderAvatar: avatarFor(m.senderName),
+    content: m.content,
+    timestamp: timeAgo(m.createdAt),
+    isUrgent: m.urgent,
+    reactions: [],
+  };
+}
+
+export function buildMessagingChannels(
+  general: ApiMessage[],
+  announcements: ApiMessage[],
+): Channel[] {
+  const define = (
+    id: ApiChannel,
+    name: string,
+    description: string,
+    isAnnouncements: boolean,
+    msgs: ApiMessage[],
+  ): Channel => ({
+    id,
+    name,
+    description,
+    isDirect: false,
+    isAnnouncements,
+    unreadCount: 0,
+    lastMessage: msgs[0]?.content,
+    lastMessageTime: msgs[0] ? timeAgo(msgs[0].createdAt) : undefined,
+  });
+  return [
+    define("ANNOUNCEMENTS", "Announcements", "Organiser broadcasts and urgent updates", true, announcements),
+    define("GENERAL", "General", "Open channel for volunteers and leaders", false, general),
+  ];
+}
+
+export function toRoleMember(m: ApiMember): OrganiserRoleMember {
+  const role =
+    m.role === "ORGANIZER"
+      ? "Organiser"
+      : m.role === "VOLUNTEER_LEADER"
+        ? "Volunteer Leader"
+        : "Volunteer";
+  return {
+    id: m.id,
+    name: m.fullName,
+    email: m.email,
+    role,
+    status: m.active ? "Active" : "Suspended",
+    lastActive: timeAgo(m.joinedAt),
+    avatar: avatarFor(m.fullName),
+  };
+}
+
+function mergeHourLogs(pending: ApiHourLog[], all: ApiHourLog[]): ApiHourLog[] {
+  const byId = new Map<string, ApiHourLog>();
+  for (const h of all) byId.set(h.id, h);
+  for (const h of pending) byId.set(h.id, h);
+  return [...byId.values()].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+}
+
 export async function loadOrganiserData(user: AuthUser, metricsFallback: ReportMetrics, userFallback: User): Promise<OrganiserLiveSnapshot> {
   const org = user.organizationName ?? "Your organization";
-  const [events, members, tasks, orgSummary] = await Promise.all([
+  const [events, members, tasks, orgSummary, pendingHours, allHours, incidents, generalMessages, announcementMessages] =
+    await Promise.all([
     api.events.list(false),
     api.members.list(),
     api.tasks.list(),
     api.dashboard.organization().catch(() => null),
+    api.hours.list("PENDING"),
+    api.hours.list(),
+    api.incidents.list(),
+    api.messages.list("GENERAL"),
+    api.messages.list("ANNOUNCEMENTS"),
   ]);
 
   const today = todayIso();
@@ -369,6 +569,12 @@ export async function loadOrganiserData(user: AuthUser, metricsFallback: ReportM
   const volunteers = members.filter((m) => m.role === "VOLUNTEER");
   const leaders = members.filter((m) => m.role === "VOLUNTEER_LEADER");
 
+  const hourLogs = mergeHourLogs(pendingHours, allHours);
+  const channels = buildMessagingChannels(generalMessages, announcementMessages);
+  const messages = [...generalMessages, ...announcementMessages]
+    .sort((a, b) => a.createdAt.localeCompare(b.createdAt))
+    .map(toOrganiserMessage);
+
   return {
     currentUser: toCurrentUser(user, userFallback),
     organiserEvents: events.filter((e) => e.status !== "DRAFT").map((e) => toOrganiserEvent(e, org)),
@@ -379,6 +585,11 @@ export async function loadOrganiserData(user: AuthUser, metricsFallback: ReportM
     attendanceRecords: regs
       .filter((r) => r.status === "CHECKED_IN" || r.status === "COMPLETED" || r.status === "NO_SHOW")
       .map(toAttendanceItem),
+    approvalRequests: hourLogs.map(toApprovalRequestItem),
+    incidentReports: incidents.map(toOrganiserIncident),
+    channels,
+    messages,
+    roleMembers: members.map(toRoleMember),
     metrics: toMetrics(orgSummary, metricsFallback),
     orgSummary,
   };

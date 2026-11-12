@@ -34,13 +34,22 @@ export const MessagingView: React.FC<MessagingViewProps> = ({
   onSendMessage,
   onAddReaction,
 }) => {
-  const [activeChannelId, setActiveChannelId] = useState<string>('chan-announcements');
+  const [activeChannelId, setActiveChannelId] = useState<string>('');
   const [inputText, setInputText] = useState<string>('');
   const [isUrgentAlert, setIsUrgentAlert] = useState<boolean>(false);
   const [selectedAttachment, setSelectedAttachment] = useState<string | null>(null);
   const [channelSearch, setChannelSearch] = useState<string>('');
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (activeChannelId) return;
+    const preferred =
+      (channels || []).find((c) => c.id === 'ANNOUNCEMENTS') ||
+      (channels || []).find((c) => c.id === 'chan-announcements') ||
+      (channels || [])[0];
+    if (preferred) setActiveChannelId(preferred.id);
+  }, [channels, activeChannelId]);
 
   const activeChannel = (channels || []).find((c) => c.id === activeChannelId) || (channels || [])[0];
   const channelMessages = (messages || []).filter((m) => m.channelId === activeChannelId);

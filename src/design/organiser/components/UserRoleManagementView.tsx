@@ -1,7 +1,7 @@
 'use client';
 // @ts-nocheck
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Users,
   Shield,
@@ -31,6 +31,13 @@ interface UserAccount {
 }
 
 interface UserRoleManagementViewProps {
+  live?: boolean;
+  members?: UserAccount[];
+  onInvite?: (email: string, role: 'VOLUNTEER' | 'VOLUNTEER_LEADER') => void | Promise<void>;
+  onUpdateMember?: (
+    id: string,
+    input: { role?: 'VOLUNTEER' | 'VOLUNTEER_LEADER'; active?: boolean },
+  ) => void | Promise<void>;
   onUpdateRole?: (userId: string, newRole: any) => void;
 }
 
@@ -100,14 +107,34 @@ const INITIAL_USERS: UserAccount[] = [
   },
 ];
 
-export const UserRoleManagementView: React.FC<UserRoleManagementViewProps> = () => {
+const uiRoleToApi = (role: UserAccount['role']): 'VOLUNTEER' | 'VOLUNTEER_LEADER' | null => {
+  if (role === 'Volunteer Leader') return 'VOLUNTEER_LEADER';
+  if (role === 'Volunteer') return 'VOLUNTEER';
+  return null;
+};
+
+export const UserRoleManagementView: React.FC<UserRoleManagementViewProps> = ({
+  live = false,
+  members,
+  onInvite,
+  onUpdateMember,
+}) => {
   const [users, setUsers] = useState<UserAccount[]>(INITIAL_USERS);
   const [searchQuery, setSearchQuery] = useState('');
   const [roleFilter, setRoleFilter] = useState<string>('All');
   const [editingUser, setEditingUser] = useState<UserAccount | null>(null);
   const [newRole, setNewRole] = useState<'Organiser' | 'Volunteer Leader' | 'Volunteer' | 'Participant'>('Volunteer');
+  const [inviteEmail, setInviteEmail] = useState('');
+  const [inviteRole, setInviteRole] = useState<'Volunteer' | 'Volunteer Leader'>('Volunteer');
+  const [inviteSubmitting, setInviteSubmitting] = useState(false);
 
-  const filteredUsers = (users || []).filter((u) => {
+  useEffect(() => {
+    if (live && members) setUsers(members);
+  }, [live, members]);
+
+  const displayedUsers = live && members ? members : users;
+
+  const filteredUsers = (displayedUsers || []).filter((u) => {
     const matchesSearch =
       (u.name || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
       (u.email || '').toLowerCase().includes(searchQuery.toLowerCase());
@@ -115,17 +142,27 @@ export const UserRoleManagementView: React.FC<UserRoleManagementViewProps> = () 
     return matchesSearch && matchesRole;
   });
 
-  const handleRoleChangeSubmit = (e: React.FormEvent) => {
+  const handleRoleChangeSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (editingUser) {
-      setUsers((prev) =>
-        prev.map((u) => (u.id === editingUser.id ? { ...u, role: newRole } : u))
-      );
+    if (!editingUser) return;
+    if (live && onUpdateMember) {
+      const apiRole = uiRoleToApi(newRole);
+      if (apiRole) await onUpdateMember(editingUser.id, { role: apiRole });
       setEditingUser(null);
+      return;
     }
+    setUsers((prev) => prev.map((u) => (u.id === editingUser.id ? { ...u, role: newRole } : u)));
+    setEditingUser(null);
   };
 
-  const toggleUserStatus = (userId: string) => {
+  const toggleUserStatus = async (userId: string) => {
+    const target = displayedUsers.find((u) => u.id === userId);
+    if (!target) return;
+    const nextActive = target.status !== 'Active';
+    if (live && onUpdateMember) {
+      await onUpdateMember(userId, { active: nextActive });
+      return;
+    }
     setUsers((prev) =>
       prev.map((u) => {
         if (u.id === userId) {
@@ -135,6 +172,21 @@ export const UserRoleManagementView: React.FC<UserRoleManagementViewProps> = () 
         return u;
       })
     );
+  };
+
+  const handleInviteSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!live || !onInvite || !inviteEmail.trim()) return;
+    setInviteSubmitting(true);
+    try {
+      await onInvite(
+        inviteEmail.trim(),
+        inviteRole === 'Volunteer Leader' ? 'VOLUNTEER_LEADER' : 'VOLUNTEER',
+      );
+      setInviteEmail('');
+    } finally {
+      setInviteSubmitting(false);
+    }
   };
 
   return (
@@ -206,6 +258,43 @@ export const UserRoleManagementView: React.FC<UserRoleManagementViewProps> = () 
         </div>
       </div>
 
+      {live ? (
+        <form
+          onSubmit={handleInviteSubmit}
+          className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs flex flex-col md:flex-row md:items-end gap-3"
+        >
+          <div className="flex-1 space-y-1">
+            <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Invite by email</label>
+            <input
+              type="email"
+              required
+              placeholder="volunteer@example.com"
+              value={inviteEmail}
+              onChange={(e) => setInviteEmail(e.target.value)}
+              className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-indigo-500 text-slate-900"
+            />
+          </div>
+          <div className="space-y-1">
+            <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Role</label>
+            <SelectMenu
+              value={inviteRole}
+              onChange={(e) => setInviteRole(e.target.value as 'Volunteer' | 'Volunteer Leader')}
+              className="text-xs font-semibold bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-700 min-w-[11rem]"
+            >
+              <option value="Volunteer">Volunteer</option>
+              <option value="Volunteer Leader">Volunteer Leader</option>
+            </SelectMenu>
+          </div>
+          <button
+            type="submit"
+            disabled={inviteSubmitting}
+            className="bg-indigo-600 hover:bg-indigo-500 disabled:opacity-60 text-white text-xs font-bold px-4 py-2.5 rounded-xl"
+          >
+            {inviteSubmitting ? 'Sending…' : 'Send invite'}
+          </button>
+        </form>
+      ) : null}
+
       {/* Users List & Controls */}
       <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-3">
         <div className="relative flex-1">
@@ -228,7 +317,7 @@ export const UserRoleManagementView: React.FC<UserRoleManagementViewProps> = () 
           <option value="Organiser">Organiser</option>
           <option value="Volunteer Leader">Volunteer Leader</option>
           <option value="Volunteer">Volunteer</option>
-          <option value="Participant">Participant</option>
+          {!live ? <option value="Participant">Participant</option> : null}
         </SelectMenu>
       </div>
 
@@ -290,7 +379,8 @@ export const UserRoleManagementView: React.FC<UserRoleManagementViewProps> = () 
                         setEditingUser(u);
                         setNewRole(u.role);
                       }}
-                      className="text-xs font-bold text-indigo-600 hover:text-indigo-700 p-1 cursor-pointer"
+                      disabled={live && u.role === 'Organiser'}
+                      className="text-xs font-bold text-indigo-600 hover:text-indigo-700 p-1 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
                       title="Change user role"
                     >
                       <Edit2 className="w-3.5 h-3.5" />
@@ -333,10 +423,10 @@ export const UserRoleManagementView: React.FC<UserRoleManagementViewProps> = () 
                   onChange={(e) => setNewRole(e.target.value as any)}
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 font-semibold"
                 >
-                  <option value="Organiser">Organiser (Full Platform Control)</option>
+                  {!live ? <option value="Organiser">Organiser (Full Platform Control)</option> : null}
                   <option value="Volunteer Leader">Volunteer Leader (Squad Management)</option>
                   <option value="Volunteer">Volunteer (Operational Contributor)</option>
-                  <option value="Participant">Participant (Guest / Attendee)</option>
+                  {!live ? <option value="Participant">Participant (Guest / Attendee)</option> : null}
                 </SelectMenu>
               </div>
 
